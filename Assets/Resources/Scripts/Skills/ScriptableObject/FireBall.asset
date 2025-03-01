@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4bdc3ce1a600744fbac221065511173, type: 3}
+  m_Name: FireBall
+  m_EditorClassIdentifier: 
+  damageCalculator: {fileID: 11400000, guid: 6e5294f56672bcf49b061baa5c8db531, type: 2}
+  attackType: 1
+  player: {fileID: 0}
+  coolDown: 3
+  fireBallObj: {fileID: 953012935713848762, guid: 864e77b12a281f54b81e4f1ac1fce509, type: 3}
