@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class FireBall : SkillObjectBase
@@ -7,6 +8,7 @@ public class FireBall : SkillObjectBase
     public int dmg;
     private Vector3 dir;
     private const int OBJECT_SPEED = 5;
+
 
     private void Start() 
     {
@@ -23,9 +25,10 @@ public class FireBall : SkillObjectBase
         transform.position += dir.normalized * OBJECT_SPEED * Time.deltaTime;
     }
 
-    public void ObjInit(Vector3 _dir, int _dmg, string _tag)
+    public void ObjInit(Transform _localScale, int _dmg, string _tag)
     {
-        dir = _dir;
+        dir = _localScale.localScale.x == -1 ? Vector3.left : Vector3.right;
+        transform.localScale = _localScale.localScale;
         dmg = _dmg;
         this.gameObject.tag = _tag;
     }

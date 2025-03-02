@@ -9,6 +9,11 @@ public class EnemyUI : MonoBehaviour
     [SerializeField] private Slider hpBar, stmBar;
     [SerializeField] private TextMeshProUGUI txt;
 
+    private void FixedUpdate() 
+    {
+        transform.localScale = transform.parent.localScale.x == -1 ? new Vector3(-1, 1, 1) : new Vector3(1, 1, 1);
+    }
+
     public void TextUpdate(string _text)
     {
         txt.text = _text;

@@ -136,7 +136,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         dir = new Vector3(moveX, 0).normalized;
 
         anim.SetBool("isMoving", true);
-        sprite.flipX = dir.normalized.x == 1 ? false : true;
+        transform.localScale = new Vector3(dir.x, 1, 1);
 
         transform.position += dir * curMoveSpeed * Time.deltaTime;
         if(Input.GetKeyDown(KeyCode.X))

@@ -118,7 +118,7 @@ public class EnemyController : MonoBehaviour, IDamagable
     {
         if(targeting)
         {
-            sprite.flipX = dir == -1 ? true : false;
+            transform.localScale = new Vector3(dir, 1, 1);
         }
     }
 
