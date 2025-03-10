@@ -9,12 +9,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamagable
 {
-    //엘렐레
-
     private enum State { Idle, Moving, Dash, Attacking }
 
     [SerializeField] private State currentState;
     [SerializeField] private SkillBase currentSkill;
+    [SerializeField] private int skillNum;
     [SerializeField] private PlayerUI playerUI;
     [SerializeField] private BoxCollider2D hitBox;
     [SerializeField] private GameObject particle;
@@ -214,8 +213,20 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private void UseSkill()
     {
-        if(Input.GetKeyDown(KeyCode.C))
+        skillNum = (Input.inputString.ToUpper()) switch
         {
+            ("C") => 1,
+            ("V") => 2,
+            ("B") => 3,
+            _ => 0
+        };
+        
+        if(skillNum != 0 && !currentSkill.OnCoolDown)
+        {
+            Debug.Log("스킬 사용!");
+            currentState = State.Attacking;
+            attacking = true;
+            anim.SetTrigger("Skill_" + skillNum.ToString());
             currentSkill.UseSkill();
         }
     }
@@ -227,7 +238,6 @@ public class PlayerController : MonoBehaviour, IDamagable
 
         if(attackType == "Physical")
         {
-            Debug.Log("우헤헤");
             totalDmg = dmg - defense;
             txtcolor = Color.white;
         }
