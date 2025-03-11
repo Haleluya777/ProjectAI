@@ -10,6 +10,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IDamagable
 {
     private enum State { Idle, Moving, Dash, Attacking }
+    [SerializeField] private List<StatusEffect> activeEffect = new List<StatusEffect>();
 
     [SerializeField] private State currentState;
     [SerializeField] private SkillBase currentSkill;
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     [SerializeField] private int jumpPower;
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
+    [SerializeField] public bool canAction;
     //-------------Property-------------//
     public int Att => att;
     //----------------------------------//
@@ -69,6 +71,11 @@ public class PlayerController : MonoBehaviour, IDamagable
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
         curStm = Mathf.Clamp(curStm, 0, maxStm);
+
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            ApplyEffect(new Stun(.3f, gameObject.GetComponent<PlayerController>()));
+        }
     }
 
     private void PlayerUIUpdate()
@@ -95,6 +102,8 @@ public class PlayerController : MonoBehaviour, IDamagable
         attTime = 0f;
         defense = 0;
         magicalDefense = 0;
+
+        canAction = true;
 
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent <Animator>();
@@ -286,6 +295,21 @@ public class PlayerController : MonoBehaviour, IDamagable
         {
             other.GetComponent<IDamagable>().Damaged(att, "Physical");
         }
+    }
+
+
+    private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
+    {
+        effect.ApplyEffect();
+        activeEffect.Add(effect);
+        StartCoroutine(RemoveEffectAfterDuration(effect));
+    }
+
+    IEnumerator RemoveEffectAfterDuration(StatusEffect effect) //상태 이상 제거.
+    {
+        yield return new WaitForSeconds(effect.duration);
+        effect.RemoveEffect();
+        activeEffect.Remove(effect);
     }
 
     IEnumerator SpeedReturn()
