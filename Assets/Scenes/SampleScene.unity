@@ -209,6 +209,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 194589124}
+  - component: {fileID: 194589125}
   m_Layer: 0
   m_Name: Attack
   m_TagString: Untagged
@@ -231,6 +232,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1918281723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &194589125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 194589123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 292a03c3cc291b34daf34fde26274b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  status: {fileID: 383941133}
 --- !u!1 &361850880
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,6 +320,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 361850880}
   m_CullTransparentMesh: 1
+--- !u!1 &383941132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 383941134}
+  - component: {fileID: 383941133}
+  m_Layer: 0
+  m_Name: Status
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &383941133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383941132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fe8e222624126844bf90576e57a5087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 0
+  curHp: 0
+  moveSpeed: 0
+  attack: 0
+  physicalDefense: 0
+  magicalDefense: 0
+  enemyAttackType: 0
+--- !u!4 &383941134
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383941132}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1918281723}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &392419008
 GameObject:
   m_ObjectHideFlags: 0
@@ -6224,6 +6289,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1412461815}
+  - component: {fileID: 1412461816}
   m_Layer: 0
   m_Name: Behavior Manager
   m_TagString: Untagged
@@ -6246,6 +6312,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1918281723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1412461816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1412461814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae1058f49fa82544e86e78576b84eb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1455181645
 GameObject:
   m_ObjectHideFlags: 0
@@ -6588,6 +6666,7 @@ MonoBehaviour:
   defense: 0
   magicalDefense: 0
   attacking: 0
+  canAction: 0
   attCool: 0
   attTime: 0
 --- !u!212 &1915231746
@@ -6765,6 +6844,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1412461815}
+  - {fileID: 383941134}
   - {fileID: 1959487984}
   - {fileID: 194589124}
   m_Father: {fileID: 0}
@@ -6778,6 +6858,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1959487984}
+  - component: {fileID: 1959487985}
   m_Layer: 0
   m_Name: Movement
   m_TagString: Untagged
@@ -6800,6 +6881,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1918281723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1959487985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1959487983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79476df2f4a631048813840dfdba974b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  status: {fileID: 383941133}
 --- !u!114 &1995260444 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4604086388036554015, guid: b85b41c327158b9458efd5663b66ba70, type: 3}

@@ -36,12 +36,14 @@ public class PlayerController : MonoBehaviour, IDamagable
     private float regenSpeed;
     private string inputKey;
     private bool canRegen;
+    private bool canDash;
     [SerializeField] private float attCool, attTime;
 
     private Rigidbody2D rigid;
     private Animator anim;
     private SpriteRenderer sprite;
     private WaitForSeconds dashTime = new WaitForSeconds(.3f);
+    private WaitForSeconds dashCoolDown = new WaitForSeconds(2f);
 
     private const int WALK_SPEED = 5;
     private const int RUN_SPEED = 7;
@@ -104,6 +106,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         magicalDefense = 0;
 
         canAction = true;
+        canDash = true;
 
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent <Animator>();
@@ -147,7 +150,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         transform.localScale = new Vector3(dir.x, 1, 1);
 
         transform.position += dir * curMoveSpeed * Time.deltaTime;
-        if(Input.GetKeyDown(KeyCode.X))
+        if(Input.GetKeyDown(KeyCode.X) && canDash)
         {
             Dash();
         }
@@ -186,11 +189,12 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private void Dash()
     {
-        Debug.Log("Dash!");
+        canDash = false;
         particle.SetActive(true);
         curMoveSpeed = DASH_SPEED;
         curStm -= 20f;
         StartCoroutine("SpeedReturn");
+        StartCoroutine("DashCoolDown");
     }
 
     private void Jump()
@@ -317,5 +321,11 @@ public class PlayerController : MonoBehaviour, IDamagable
         yield return dashTime;
         particle.SetActive(false);
         curMoveSpeed = WALK_SPEED;
+    }
+
+    IEnumerator DashCoolDown()
+    {
+        yield return dashCoolDown;
+        canDash = true;
     }
 }
