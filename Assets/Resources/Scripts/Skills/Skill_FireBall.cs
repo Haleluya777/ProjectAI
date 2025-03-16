@@ -1,10 +1,10 @@
-using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Skill/Skill")]
-public class SkillTest : SkillBase
+
+[CreateAssetMenu(menuName = "Skill/FireBall")]
+public class Skill_FireBall : SkillBase
 {
     public GameObject fireBallObj;
 

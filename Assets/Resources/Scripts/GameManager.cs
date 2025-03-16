@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,7 +9,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] public GameObject playerObj;
 
-    public ObjectPoolingManager objectPoolManger;
+    [SerializeField] public ObjectPoolingManager objectPoolManger;
+    [SerializeField] public ObjectPoolingManager1 objectPoolManger1;
 
     private void Awake()
     {

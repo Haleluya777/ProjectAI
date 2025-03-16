@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4bdc3ce1a600744fbac221065511173, type: 3}
-  m_Name: FireBall
+  m_Script: {fileID: 11500000, guid: 1fff5e433c3612d4fbc09624a23f58fe, type: 3}
+  m_Name: New Skill_Test Skill
   m_EditorClassIdentifier: 
-  damageCalculator: {fileID: 11400000, guid: 6e5294f56672bcf49b061baa5c8db531, type: 2}
-  attackType: 1
+  damageCalculator: {fileID: 11400000, guid: 272833b7278b435448e7617b1eff4620, type: 2}
+  attackType: 0
   player: {fileID: 0}
-  coolDown: 3
-  fireBallObj: {fileID: 953012935713848762, guid: 864e77b12a281f54b81e4f1ac1fce509, type: 3}
+  coolDown: 5

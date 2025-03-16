@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour, IMovable
 {
-    [SerializeField] private Status status;
+    //[SerializeField] private Status status;
+    public int moveSpeed;
+
+    public void StatusInit(Status status)
+    {
+        moveSpeed = status.MoveSpeed;
+    }
 
     public void Move(int moveSpeed, GameObject target) //실제로 이동하는 메서드
     {
@@ -13,7 +19,7 @@ public class Movement : MonoBehaviour, IMovable
 
     public INode NodeInitialize()
     {
-        return new SequenceNode(new List<INode> { new ActionNode(PerformMoving) });
+        return new SequenceNode(new List<INode> { new ActionNode(CheckingDistance), new ActionNode(PerformMoving) });
     }
 
     private INode.NodeState CheckingDistance()

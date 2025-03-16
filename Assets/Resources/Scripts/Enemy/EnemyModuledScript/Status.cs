@@ -8,12 +8,19 @@ public class Status : MonoBehaviour, IDamagable
     public enum EnemyAttackType { Physical, Magical }
 
     [SerializeField] private int maxHp, curHp;
-    [SerializeField] private int moveSpeed;
-    [SerializeField] private int attack;
-    [SerializeField] private int physicalDefense, magicalDefense;
-    [SerializeField] private EnemyAttackType enemyAttackType;
+    [SerializeField] private int moveSpeed; //이동 스크립트에서 참조해야 함.
+    [SerializeField] private int attack; //공격 스크립트에서 참조해야 함.
+    [SerializeField] private float meleeDistance; //공격 스크립트에서 참조해야 함.
+    [SerializeField] private float rangeDistance; //이하동문
 
-    public void Initialize() //스테이터스 초기화화
+    [SerializeField] private int physicalDefense, magicalDefense;
+    [SerializeField] private EnemyAttackType enemyAttackType; //공격 스크립트에서 참조해야 함
+
+    public int Attack => attack;
+    public int MoveSpeed => moveSpeed;
+    public EnemyAttackType AttackType => enemyAttackType;
+
+    public void Initialize(Movement _movement, Attack _attack) //스테이터스 초기화화
     {
         maxHp = 100;
         curHp = maxHp;
@@ -21,6 +28,9 @@ public class Status : MonoBehaviour, IDamagable
         moveSpeed = 4;
 
         attack = 20;
+        meleeDistance = 3f;
+        rangeDistance = 6f;
+
         physicalDefense = 10;
         magicalDefense = 5;
     }

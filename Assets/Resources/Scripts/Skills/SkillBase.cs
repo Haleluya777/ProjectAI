@@ -15,6 +15,7 @@ public abstract class SkillBase : ScriptableObject
     private float remainingCoolDown;
 
     public bool OnCoolDown => remainingCoolDown > 0;
+    public float RemainingCoolDown => remainingCoolDown;
 
     public virtual bool UseSkill()
     {

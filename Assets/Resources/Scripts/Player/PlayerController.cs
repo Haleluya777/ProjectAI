@@ -1,29 +1,28 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Resources;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamagable
 {
     private enum State { Idle, Moving, Dash, Attacking }
-    [SerializeField] private List<StatusEffect> activeEffect = new List<StatusEffect>();
 
+    [SerializeField] private List<StatusEffect> activeEffect = new List<StatusEffect>();
+    [SerializeField] private List<GameObject> statusEffectUIList = new List<GameObject>();
+    [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private SkillBase currentSkill;
+    //[SerializeField] private List<SkillBase> currentSkill = new List<SkillBase>();
     [SerializeField] private int skillNum;
     [SerializeField] private PlayerUI playerUI;
     [SerializeField] private BoxCollider2D hitBox;
     [SerializeField] private GameObject particle;
 
-    [SerializeField] private int level; //Player Level
+    private int level; //Player Level
 
-    [SerializeField] private float maxHp, curHp, maxStm, curStm;
-    [SerializeField] private int curMoveSpeed; //Current Move Speed
-    [SerializeField] private int jumpPower;
+    private float maxHp, curHp, maxStm, curStm;
+    private int curMoveSpeed; //Current Move Speed
+    private int jumpPower;
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
     [SerializeField] public bool canAction;
@@ -34,6 +33,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     private Vector3 dir;
     private float moveX;
     private float regenSpeed;
+    private float remainingCoolDown;
     private string inputKey;
     private bool canRegen;
     private bool canDash;
@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     private const int WALK_SPEED = 5;
     private const int RUN_SPEED = 7;
     private const int DASH_SPEED = 10;
+    private const float DASH_COOLDOWN = 3f;
 
     public Vector3 Dir => dir;
 
@@ -59,16 +60,27 @@ public class PlayerController : MonoBehaviour, IDamagable
     // Update is called once per frame
     void Update()
     {
+        //매 프레임당 확인할 요소들
+        //사실 매 프레임당 메서드를 실행시키는 건 메모리 저하를 일으킬 가능성이 높음.
+        //그러나 2D 인디 게임 특성상 사용하는 메모리가 그리 많지 않기 때문에 Update문에 몰아서 사용.
+        //보통은 키보드 입력을 제외한 나머지 요소들은 Fixed업데이트에 넣거나 필요할 때만 호출하도록 함.
+
         moveX = Input.GetAxisRaw("Horizontal");
-        currentState = StateUpdate();
         canRegen = currentState == State.Idle ? true : false;
 
-        StateAction(currentState);
+        if(canAction)
+        {
+            currentState = StateUpdate();
+            StateAction(currentState);
+        }
+        
         BasicAttackTime();
         StmRegen();
         RunningStm();
         PlayerUIUpdate();
         UseSkill();
+        DashCoolDown();
+
         currentSkill.UpdateCoolDown(Time.deltaTime);
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
@@ -76,7 +88,8 @@ public class PlayerController : MonoBehaviour, IDamagable
 
         if(Input.GetKeyDown(KeyCode.Q))
         {
-            ApplyEffect(new Stun(.3f, gameObject.GetComponent<PlayerController>()));
+            //상태이상을 제공하는 제공자가 사용할 메서드.
+            ApplyEffect(new Stun(2f, gameObject.GetComponent<PlayerController>()));
         }
     }
 
@@ -84,7 +97,9 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         playerUI.HpBarUpdate(maxHp, curHp);
         playerUI.StmBarUpdate(maxStm, curStm);
-        playerUI.TextUpdate(currentState.ToString());
+        playerUI.CheckDashCoolDown(remainingCoolDown, DASH_COOLDOWN);
+        playerUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
+        //playerUI.TextUpdate(currentState.ToString());
     }
 
     private void StatusInit() //Status Initialize
@@ -104,6 +119,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         attTime = 0f;
         defense = 0;
         magicalDefense = 0;
+        remainingCoolDown = 0f;
 
         canAction = true;
         canDash = true;
@@ -191,10 +207,10 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         canDash = false;
         particle.SetActive(true);
+        remainingCoolDown = DASH_COOLDOWN;
         curMoveSpeed = DASH_SPEED;
         curStm -= 20f;
         StartCoroutine("SpeedReturn");
-        StartCoroutine("DashCoolDown");
     }
 
     private void Jump()
@@ -282,6 +298,17 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
+    private void DashCoolDown()
+    {
+        remainingCoolDown = Mathf.Clamp(remainingCoolDown, 0, DASH_COOLDOWN);
+        remainingCoolDown -= Time.deltaTime;
+
+        if(remainingCoolDown <= 0)
+        {
+            canDash = true;
+        }
+    }
+
     public void HitBoxOn()
     {
         hitBox.enabled = true;
@@ -301,12 +328,28 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
+    //상태이상의 남은 시간을 알려주는 Slider를 Prefab으로 만든 후 ObjectPool에서 가져오는 방식으로 구현.
+    //작동은 완벽하나, 생성된 Prefab의 위치를 조정하지 못하고 있는 중.
+    private void CreateStatusEffectUI(StatusEffect effect)
+    {
+        var obj = GameManager.instance.objectPoolManger1.Pool.Get();
+        obj.transform.SetParent(statusEffectUI.transform);
+
+        obj.GetComponent<StatusEffectUI>().SetVariable(effect.duration, effect.duration);
+        obj.GetComponent<RectTransform>().position = new Vector3(0,0,0);
+
+        statusEffectUIList.Add(obj);
+    }
 
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
     {
-        effect.ApplyEffect();
-        activeEffect.Add(effect);
-        StartCoroutine(RemoveEffectAfterDuration(effect));
+        if(!activeEffect.Contains(effect))
+        {
+            activeEffect.Add(effect);
+            effect.ApplyEffect();
+            CreateStatusEffectUI(effect);
+            StartCoroutine(RemoveEffectAfterDuration(effect));
+        }
     }
 
     IEnumerator RemoveEffectAfterDuration(StatusEffect effect) //상태 이상 제거.
@@ -321,11 +364,5 @@ public class PlayerController : MonoBehaviour, IDamagable
         yield return dashTime;
         particle.SetActive(false);
         curMoveSpeed = WALK_SPEED;
-    }
-
-    IEnumerator DashCoolDown()
-    {
-        yield return dashCoolDown;
-        canDash = true;
     }
 }
