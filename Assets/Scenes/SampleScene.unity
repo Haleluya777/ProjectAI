@@ -244,7 +244,7 @@ GameObject:
   - component: {fileID: 194589124}
   - component: {fileID: 194589125}
   m_Layer: 0
-  m_Name: Attack
+  m_Name: Combat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -277,6 +277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 292a03c3cc291b34daf34fde26274b5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status: {fileID: 0}
   canUsePatternNum: 
   selectedPatternNum: 0
 --- !u!1 &361850880
@@ -6233,9 +6234,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae1058f49fa82544e86e78576b84eb70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {fileID: 0}
-  attack: {fileID: 0}
-  status: {fileID: 0}
+  movement: {fileID: 1959487985}
+  combat: {fileID: 194589125}
+  status: {fileID: 383941133}
 --- !u!1 &1455181645
 GameObject:
   m_ObjectHideFlags: 0
@@ -7091,7 +7092,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01f6d62e1ac859c46a739209b3d55b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statusEffectUIList: []
   statusEffectUI: {fileID: 566516037}
   currentState: 0
   currentSkill: {fileID: 11400000, guid: 9e9b2b4564af8684e83895d48615fbd6, type: 2}
@@ -7330,6 +7330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79476df2f4a631048813840dfdba974b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  status: {fileID: 0}
   moveSpeed: 0
 --- !u!114 &1995260444 stripped
 MonoBehaviour:

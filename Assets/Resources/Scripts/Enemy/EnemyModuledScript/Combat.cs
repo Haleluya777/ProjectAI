@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Attack : MonoBehaviour
+public class Combat : MonoBehaviour
 {
-    //[SerializeField] private Status status;
+    [SerializeField] private Status status;
 
     private int attack;
     [SerializeField] private List<int> canUsePatternNum = new List<int>(); //사용 가능한 패턴들의 모음.
@@ -35,6 +35,7 @@ public class Attack : MonoBehaviour
         //Attack 스크립트에서는 '어떤 공격 패턴'을 할지 고른다.
         //즉 사용 가능한 패턴 중, 어느 것을 사용할지 선택하는 노드.
         //그냥 랜덤 돌리면 편하다.
+        //하지만 멋없쥬?
 
         return INode.NodeState.Success;
     }

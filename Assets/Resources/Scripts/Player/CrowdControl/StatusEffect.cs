@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class StatusEffect
 {
+    public string effectName;
     public float duration;
     public PlayerController target;
 

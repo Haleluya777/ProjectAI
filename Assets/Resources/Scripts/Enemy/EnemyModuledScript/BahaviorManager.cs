@@ -9,7 +9,7 @@ public class BahaviorManager : MonoBehaviour
     private BehaviorTreeRunner behaviorTree;
 
     [SerializeField] private Movement movement;
-    [SerializeField] private Attack attack;
+    [SerializeField] private Combat combat;
     [SerializeField] private Status status;
 
     private void Awake() 
@@ -27,9 +27,7 @@ public class BahaviorManager : MonoBehaviour
 
     private void ComponentInitialize()
     {
-        
-
         movement.NodeInitialize();
-        attack.NodeInitialize();
+        combat.NodeInitialize();
     }
 }

@@ -7,8 +7,9 @@ public class PlayerController : MonoBehaviour, IDamagable
 {
     private enum State { Idle, Moving, Dash, Attacking }
 
-    [SerializeField] private List<StatusEffect> activeEffect = new List<StatusEffect>();
-    [SerializeField] private List<GameObject> statusEffectUIList = new List<GameObject>();
+    //[SerializeField] private List<StatusEffect> activeEffect = new List<StatusEffect>();
+    [SerializeField] private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
+    //[SerializeField] private List<GameObject> statusEffectUIList = new List<GameObject>();
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private SkillBase currentSkill;
@@ -89,7 +90,17 @@ public class PlayerController : MonoBehaviour, IDamagable
         if(Input.GetKeyDown(KeyCode.Q))
         {
             //상태이상을 제공하는 제공자가 사용할 메서드.
-            ApplyEffect(new Stun(2f, gameObject.GetComponent<PlayerController>()));
+            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<PlayerController>()));
+        }
+
+        if(Input.GetKeyDown(KeyCode.W))
+        {
+            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<PlayerController>()));
+        }
+
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<PlayerController>()));
         }
     }
 
@@ -99,7 +110,6 @@ public class PlayerController : MonoBehaviour, IDamagable
         playerUI.StmBarUpdate(maxStm, curStm);
         playerUI.CheckDashCoolDown(remainingCoolDown, DASH_COOLDOWN);
         playerUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
-        //playerUI.TextUpdate(currentState.ToString());
     }
 
     private void StatusInit() //Status Initialize
@@ -252,7 +262,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         
         if(skillNum != 0 && !currentSkill.OnCoolDown)
         {
-            Debug.Log("스킬 사용!");
+            //Debug.Log("스킬 사용!");
             currentState = State.Attacking;
             attacking = true;
             anim.SetTrigger("Skill_" + skillNum.ToString());
@@ -329,23 +339,21 @@ public class PlayerController : MonoBehaviour, IDamagable
     }
 
     //상태이상의 남은 시간을 알려주는 Slider를 Prefab으로 만든 후 ObjectPool에서 가져오는 방식으로 구현.
-    //작동은 완벽하나, 생성된 Prefab의 위치를 조정하지 못하고 있는 중.
+    //작동은 완벽하나, 생성된 Prefab의 위치를 완벽하게 조정하지 못하고 있는 중.
     private void CreateStatusEffectUI(StatusEffect effect)
     {
-        var obj = GameManager.instance.objectPoolManger1.Pool.Get();
-        obj.transform.SetParent(statusEffectUI.transform);
+        var obj = GameManager.instance.objectPoolManger1.Pool.Get(); //오브젝트 풀에서 오브젝트를 빌려옴.
 
+        obj.transform.SetParent(statusEffectUI.transform); //부모 조정.  
         obj.GetComponent<StatusEffectUI>().SetVariable(effect.duration, effect.duration);
-        obj.GetComponent<RectTransform>().position = new Vector3(0,0,0);
-
-        statusEffectUIList.Add(obj);
+        obj.GetComponent<RectTransform>().anchoredPosition = new Vector2(50 + (150 * (activeEffect.Count - 1)) ,1);
     }
 
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
     {
-        if(!activeEffect.Contains(effect))
+        if(!activeEffect.ContainsKey(effect.effectName))
         {
-            activeEffect.Add(effect);
+            activeEffect.Add(effect.effectName, effect);
             effect.ApplyEffect();
             CreateStatusEffectUI(effect);
             StartCoroutine(RemoveEffectAfterDuration(effect));
@@ -356,7 +364,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         yield return new WaitForSeconds(effect.duration);
         effect.RemoveEffect();
-        activeEffect.Remove(effect);
+        activeEffect.Remove(effect.effectName);
     }
 
     IEnumerator SpeedReturn()

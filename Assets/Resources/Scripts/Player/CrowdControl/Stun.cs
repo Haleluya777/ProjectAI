@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Stun : StatusEffect
 {
-    public Stun(float duration, PlayerController target) : base(duration, target)
+    public Stun(float duration, string effectName, PlayerController target) : base(duration, target)
     {
-        
+        base.effectName = effectName;
     }
 
     public override void ApplyEffect()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour, IMovable
 {
-    //[SerializeField] private Status status;
+    [SerializeField] private Status status;
     public int moveSpeed;
 
     public void StatusInit(Status status)

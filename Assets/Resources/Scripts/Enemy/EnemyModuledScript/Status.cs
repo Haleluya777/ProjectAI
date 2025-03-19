@@ -20,7 +20,7 @@ public class Status : MonoBehaviour, IDamagable
     public int MoveSpeed => moveSpeed;
     public EnemyAttackType AttackType => enemyAttackType;
 
-    public void Initialize(Movement _movement, Attack _attack) //스테이터스 초기화화
+    public void Initialize() //스테이터스 초기화화
     {
         maxHp = 100;
         curHp = maxHp;

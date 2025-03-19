@@ -80,6 +80,7 @@ public class EnemyController : MonoBehaviour, IDamagable
         sprite = this.GetComponent <SpriteRenderer>();
     }
 
+    //현재 상태에 따른 행동 규정정
     private void StateAction(State curState)
     {
         switch(curState)
@@ -103,7 +104,7 @@ public class EnemyController : MonoBehaviour, IDamagable
         }
     }
 
-    //��ġ�� ���� ���°� ��ȭ
+    //거리에 따라 현재 상태 변경
     private State StateUpdate(float distance) => distance switch
     {
         _ when distance <= boundaryRange && distance > detectionRange => State.Guarding,
