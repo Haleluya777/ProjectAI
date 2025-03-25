@@ -19,4 +19,9 @@ public class Stun : StatusEffect
     {
         target.canAction = true;
     }
+
+    public override void ResetEffectDuration()
+    {
+        
+    }
 }

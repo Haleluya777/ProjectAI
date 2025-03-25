@@ -7,13 +7,13 @@ public class PlayerController : MonoBehaviour, IDamagable
 {
     private enum State { Idle, Moving, Dash, Attacking }
 
-    //[SerializeField] private List<StatusEffect> activeEffect = new List<StatusEffect>();
-    [SerializeField] private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
-    //[SerializeField] private List<GameObject> statusEffectUIList = new List<GameObject>();
+    private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
+    private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
+
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private SkillBase currentSkill;
-    //[SerializeField] private List<SkillBase> currentSkill = new List<SkillBase>();
+    //[SerializeField] private List<SkillBase> currentSkill = new List<SkillBase>(); //나중에 쓸 리스트트
     [SerializeField] private int skillNum;
     [SerializeField] private PlayerUI playerUI;
     [SerializeField] private BoxCollider2D hitBox;
@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     private SpriteRenderer sprite;
     private WaitForSeconds dashTime = new WaitForSeconds(.3f);
     private WaitForSeconds dashCoolDown = new WaitForSeconds(2f);
+    private Coroutine newCorutine;
 
     private const int WALK_SPEED = 5;
     private const int RUN_SPEED = 7;
@@ -138,7 +139,8 @@ public class PlayerController : MonoBehaviour, IDamagable
         anim = this.GetComponent <Animator>();
         sprite = this.GetComponent<SpriteRenderer>();
 
-        currentSkill.player = this.gameObject.GetComponent<PlayerController>();
+        if(currentSkill.player != null)
+            currentSkill.player = this.gameObject.GetComponent<PlayerController>();
     }
 
     private State StateUpdate()
@@ -220,7 +222,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         remainingCoolDown = DASH_COOLDOWN;
         curMoveSpeed = DASH_SPEED;
         curStm -= 20f;
-        StartCoroutine("SpeedReturn");
+        StartCoroutine(SpeedReturn());
     }
 
     private void Jump()
@@ -295,9 +297,14 @@ public class PlayerController : MonoBehaviour, IDamagable
         curHp -= totalDmg;
 
         var dmgText = GameManager.instance.objectPoolManger.Pool.Get();
-        dmgText.transform.parent = this.transform.GetChild(0);
+        dmgText.transform.SetParent(this.transform.GetChild(0));
         dmgText.transform.localPosition = new Vector2(0, 4.5f);
         dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);
+    }
+
+    public void StatusEffectProcess(float duration, string effectName)
+    {
+        ApplyEffect(new Stun(duration, effectName, GetComponent<PlayerController>()));
     }
 
     private void StmRegen()
@@ -338,33 +345,36 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
-    //상태이상의 남은 시간을 알려주는 Slider를 Prefab으로 만든 후 ObjectPool에서 가져오는 방식으로 구현.
-    //작동은 완벽하나, 생성된 Prefab의 위치를 완벽하게 조정하지 못하고 있는 중.
-    private void CreateStatusEffectUI(StatusEffect effect)
-    {
-        var obj = GameManager.instance.objectPoolManger1.Pool.Get(); //오브젝트 풀에서 오브젝트를 빌려옴.
-
-        obj.transform.SetParent(statusEffectUI.transform); //부모 조정.  
-        obj.GetComponent<StatusEffectUI>().SetVariable(effect.duration, effect.duration);
-        obj.GetComponent<RectTransform>().anchoredPosition = new Vector2(50 + (150 * (activeEffect.Count - 1)) ,1);
-    }
-
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
     {
-        if(!activeEffect.ContainsKey(effect.effectName))
+        if(!activeEffect.ContainsKey(effect.effectName)) //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있지 않을 경우.
         {
             activeEffect.Add(effect.effectName, effect);
             effect.ApplyEffect();
-            CreateStatusEffectUI(effect);
-            StartCoroutine(RemoveEffectAfterDuration(effect));
+            playerUI.CreateEffectUISlider(effect);
+            playerUI.UpdateEffectUI();
+            newCorutine = StartCoroutine(RemoveEffectAfterDuration(effect));
+            activeEffectCoroutines.Add(effect.effectName, newCorutine);
+        }
+
+        else //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있는 경우.
+        {
+            if (activeEffectCoroutines.TryGetValue(effect.effectName, out Coroutine runningCoroutine))
+            {
+                StopCoroutine(runningCoroutine);
+                activeEffectCoroutines[effect.effectName] = StartCoroutine(RemoveEffectAfterDuration(effect));
+                playerUI.RenewalEffectSlider(effect, effect.effectName);
+            }
         }
     }
 
     IEnumerator RemoveEffectAfterDuration(StatusEffect effect) //상태 이상 제거.
     {
         yield return new WaitForSeconds(effect.duration);
-        effect.RemoveEffect();
         activeEffect.Remove(effect.effectName);
+        effect.RemoveEffect();
+        playerUI.RemoveEffectUI(effect.effectName);
+        playerUI.UpdateEffectUI();
     }
 
     IEnumerator SpeedReturn()

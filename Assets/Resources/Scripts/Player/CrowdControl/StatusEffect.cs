@@ -16,4 +16,5 @@ public abstract class StatusEffect
 
     public abstract void RemoveEffect();
     public abstract void ApplyEffect();
+    public abstract void ResetEffectDuration();
 }

@@ -70,6 +70,11 @@ public class Status : MonoBehaviour, IDamagable
         }
     }
 
+    public void StatusEffectProcess(float duration, string effectName)
+    {
+        //ApplyEffect(new Stun(duration, effectName, GetComponent<PlayerController>()));
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(other.GetComponent<IDamagable>() != null)

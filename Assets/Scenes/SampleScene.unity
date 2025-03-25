@@ -6474,6 +6474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15fa1ab6b9dc2a24d9ab4268892d29d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  statusEffectUI: {fileID: 566516037}
   hpBar: {fileID: 1795839688}
   stmBar: {fileID: 460103999}
   dashCoolDown: {fileID: 1754781043}
@@ -7266,7 +7267,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1918281723
 Transform:
   m_ObjectHideFlags: 0

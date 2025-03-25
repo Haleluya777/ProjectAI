@@ -9,6 +9,8 @@ public class EnemyController : MonoBehaviour, IDamagable
     private enum State { Idle, Guarding, Tracking, Attack }
     public enum EnemyAttackType { Physical, Magical }
 
+     [SerializeField] private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
+
     [SerializeField] private EnemyUI enemyUI;
     [SerializeField] private BoxCollider2D hitBox;
 
@@ -176,6 +178,28 @@ public class EnemyController : MonoBehaviour, IDamagable
         dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);
     }
 
+    public void StatusEffectProcess(float duration, string effectName)
+    {
+        //ApplyEffect(new Stun(duration, effectName, GetComponent<EnemyController>()));
+    }
+
+    private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
+    {
+        if(!activeEffect.ContainsKey(effect.effectName)) //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있지 않을 경우.
+        {
+            activeEffect.Add(effect.effectName, effect);
+            effect.ApplyEffect();
+            //playerUI.CreateEffectUISlider(effect);
+            //playerUI.UpdateEffectUI();
+            StartCoroutine(RemoveEffectAfterDuration(effect));
+        }
+
+        else //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있는 경우.
+        {
+            //playerUI.RenewalEffectSlider(effect, effect.effectName);
+        }
+    }
+
     public void HitBoxOn()
     {
         hitBox.enabled = true;
@@ -190,8 +214,19 @@ public class EnemyController : MonoBehaviour, IDamagable
     {
         if(other.GetComponent<IDamagable>() != null)
         {
-            Debug.Log("우히히");
-            other.GetComponent<IDamagable>().Damaged(att, enemyAttackType.ToString());
+            //ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<PlayerController>()));
+            IDamagable damagable =  other.GetComponent<IDamagable>();
+            damagable.Damaged(att, enemyAttackType.ToString());
+            damagable.StatusEffectProcess(3f, "Stun");
         }
+    }
+
+    IEnumerator RemoveEffectAfterDuration(StatusEffect effect) //상태 이상 제거.
+    {
+        yield return new WaitForSeconds(effect.duration);
+        effect.RemoveEffect();
+        activeEffect.Remove(effect.effectName);
+        //playerUI.RemoveEffectUI(effect.effectName);
+        //playerUI.UpdateEffectUI();
     }
 }
