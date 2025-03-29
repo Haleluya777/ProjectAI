@@ -26,9 +26,9 @@ public class PlayerController : MonoBehaviour, IDamagable
     private int jumpPower;
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
-    [SerializeField] public bool canAction;
     //-------------Property-------------//
     public int Att => att;
+    public bool CanAction { get; set; }
     //----------------------------------//
 
     private Vector3 dir;
@@ -67,10 +67,12 @@ public class PlayerController : MonoBehaviour, IDamagable
         //그러나 2D 인디 게임 특성상 사용하는 메모리가 그리 많지 않기 때문에 Update문에 몰아서 사용.
         //보통은 키보드 입력을 제외한 나머지 요소들은 Fixed업데이트에 넣거나 필요할 때만 호출하도록 함.
 
+        Debug.Log($"현재 적용된 상태 이상 개수 : {activeEffect.Count}");
+
         moveX = Input.GetAxisRaw("Horizontal");
         canRegen = currentState == State.Idle ? true : false;
 
-        if(canAction)
+        if(CanAction)
         {
             currentState = StateUpdate();
             StateAction(currentState);
@@ -91,17 +93,17 @@ public class PlayerController : MonoBehaviour, IDamagable
         if(Input.GetKeyDown(KeyCode.Q))
         {
             //상태이상을 제공하는 제공자가 사용할 메서드.
-            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<PlayerController>()));
+            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamagable>()));
         }
 
         if(Input.GetKeyDown(KeyCode.W))
         {
-            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<PlayerController>()));
+            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamagable>()));
         }
 
         if(Input.GetKeyDown(KeyCode.E))
         {
-            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<PlayerController>()));
+            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamagable>()));
         }
     }
 
@@ -132,7 +134,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         magicalDefense = 0;
         remainingCoolDown = 0f;
 
-        canAction = true;
+        CanAction = true;
         canDash = true;
 
         rigid = this.GetComponent<Rigidbody2D>();
@@ -304,7 +306,7 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     public void StatusEffectProcess(float duration, string effectName)
     {
-        ApplyEffect(new Stun(duration, effectName, GetComponent<PlayerController>()));
+        ApplyEffect(new Stun(duration, effectName, GetComponent<IDamagable>()));
     }
 
     private void StmRegen()
@@ -341,7 +343,9 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         if (other.GetComponent<IDamagable>() != null)
         {
-            other.GetComponent<IDamagable>().Damaged(att, "Physical");
+            IDamagable damagable = other.GetComponent<IDamagable>();
+            damagable.Damaged(att, "Physical");
+            damagable.StatusEffectProcess(3f, "Stun");
         }
     }
 
@@ -372,6 +376,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         yield return new WaitForSeconds(effect.duration);
         activeEffect.Remove(effect.effectName);
+        activeEffectCoroutines.Remove(effect.effectName);
         effect.RemoveEffect();
         playerUI.RemoveEffectUI(effect.effectName);
         playerUI.UpdateEffectUI();

@@ -18,7 +18,7 @@ public class PlayerUI : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(effectList.Count);
+        //Debug.Log(effectList.Count);
     }
 
     //상태이상의 남은 시간을 알려주는 Slider를 Prefab으로 만든 후 ObjectPool에서 가져오는 방식으로 구현.

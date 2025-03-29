@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Status : MonoBehaviour, IDamagable
+public class Status : MonoBehaviour//, IDamagable
 {
     public enum EnemyAttackType { Physical, Magical }
 

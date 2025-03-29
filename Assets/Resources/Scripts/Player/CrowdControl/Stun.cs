@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class Stun : StatusEffect
 {
-    public Stun(float duration, string effectName, PlayerController target) : base(duration, target)
+    public Stun(float duration, string effectName, IDamagable target) : base(duration, target)
     {
         base.effectName = effectName;
     }
 
     public override void ApplyEffect()
     {
-        this.target.canAction = false;
+        this.target.CanAction = false;
         Debug.Log("스턴!");
     }
 
     public override void RemoveEffect()
     {
-        target.canAction = true;
+        target.CanAction = true;
     }
 
     public override void ResetEffectDuration()

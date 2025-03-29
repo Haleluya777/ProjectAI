@@ -9,7 +9,8 @@ public class EnemyController : MonoBehaviour, IDamagable
     private enum State { Idle, Guarding, Tracking, Attack }
     public enum EnemyAttackType { Physical, Magical }
 
-     [SerializeField] private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
+    private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
+    private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
 
     [SerializeField] private EnemyUI enemyUI;
     [SerializeField] private BoxCollider2D hitBox;
@@ -29,12 +30,18 @@ public class EnemyController : MonoBehaviour, IDamagable
     private SpriteRenderer sprite;
     private Vector2 moveDir;
     public EnemyAttackType enemyAttackType;
+    private Coroutine newCorutine;
 
     private int dir;
     private float distance;
     private float attTime, attCool;
     private bool canAttack;
     private bool targeting;
+
+    //-------------Property-------------//
+    public bool CanAction { get; set; }
+    //----------------------------------//
+
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +55,8 @@ public class EnemyController : MonoBehaviour, IDamagable
     // Update is called once per frame
     void Update()
     {
+        Debug.Log($"Enemy 적용중인 상태 이상 : {activeEffect.Count}");
+
         attTime += Time.deltaTime;
         distance = Mathf.Abs(this.transform.position.x - target.transform.position.x);
         targeting = currentState != State.Idle ? true : false;
@@ -180,7 +189,7 @@ public class EnemyController : MonoBehaviour, IDamagable
 
     public void StatusEffectProcess(float duration, string effectName)
     {
-        //ApplyEffect(new Stun(duration, effectName, GetComponent<EnemyController>()));
+        ApplyEffect(new Stun(duration, effectName, GetComponent<EnemyController>()));
     }
 
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
@@ -189,14 +198,17 @@ public class EnemyController : MonoBehaviour, IDamagable
         {
             activeEffect.Add(effect.effectName, effect);
             effect.ApplyEffect();
-            //playerUI.CreateEffectUISlider(effect);
-            //playerUI.UpdateEffectUI();
-            StartCoroutine(RemoveEffectAfterDuration(effect));
+            newCorutine = StartCoroutine(RemoveEffectAfterDuration(effect));
+            activeEffectCoroutines.Add(effect.effectName, newCorutine);
         }
 
         else //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있는 경우.
         {
-            //playerUI.RenewalEffectSlider(effect, effect.effectName);
+            if (activeEffectCoroutines.TryGetValue(effect.effectName, out Coroutine runningCoroutine))
+            {
+                StopCoroutine(runningCoroutine);
+                activeEffectCoroutines[effect.effectName] = StartCoroutine(RemoveEffectAfterDuration(effect));
+            }
         }
     }
 
@@ -214,7 +226,6 @@ public class EnemyController : MonoBehaviour, IDamagable
     {
         if(other.GetComponent<IDamagable>() != null)
         {
-            //ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<PlayerController>()));
             IDamagable damagable =  other.GetComponent<IDamagable>();
             damagable.Damaged(att, enemyAttackType.ToString());
             damagable.StatusEffectProcess(3f, "Stun");
@@ -226,7 +237,6 @@ public class EnemyController : MonoBehaviour, IDamagable
         yield return new WaitForSeconds(effect.duration);
         effect.RemoveEffect();
         activeEffect.Remove(effect.effectName);
-        //playerUI.RemoveEffectUI(effect.effectName);
-        //playerUI.UpdateEffectUI();
+        activeEffectCoroutines.Remove(effect.effectName);
     }
 }

@@ -6,9 +6,9 @@ public abstract class StatusEffect
 {
     public string effectName;
     public float duration;
-    public PlayerController target;
+    public IDamagable target;
 
-    public StatusEffect(float duration, PlayerController target)
+    public StatusEffect(float duration, IDamagable target)
     {
         this.duration = duration;
         this.target = target;
