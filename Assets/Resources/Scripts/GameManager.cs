@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] public ObjectPoolingManager objectPoolManger;
     [SerializeField] public ObjectPoolingManager1 objectPoolManger1;
 
+    [SerializeField] private bool inBattle = false;
+
     private void Awake()
     {
         if(null == instance)
