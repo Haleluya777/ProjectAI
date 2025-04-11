@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour, IDamagable
 {
+    //PlayerController랑 별 차이도 없음.
+    //EnemyModuleScript폴더 내 스크립트들은 아직 미완.
+    
     private enum State { Idle, Guarding, Tracking, Attack }
     public enum EnemyAttackType { Physical, Magical }
 
@@ -181,7 +184,7 @@ public class EnemyController : MonoBehaviour, IDamagable
     {
         curHp -= totalDmg;
 
-        var dmgText = GameManager.instance.objectPoolManger.Pool.Get();
+        var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
         dmgText.transform.parent = this.transform.GetChild(0);
         dmgText.transform.localPosition = new Vector2(0, 5.5f);
         dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);
@@ -228,7 +231,8 @@ public class EnemyController : MonoBehaviour, IDamagable
         {
             IDamagable damagable =  other.GetComponent<IDamagable>();
             damagable.Damaged(att, enemyAttackType.ToString());
-            damagable.StatusEffectProcess(3f, "Stun");
+            damagable.StatusEffectProcess(.5f, "Stun");
+            GameManager.instance.InBattleState();
         }
     }
 

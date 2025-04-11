@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class FireBall : SkillObjectBase
 {
+    //그냥 투사체.
+    
     public int dmg;
     private Vector3 dir;
     private const int OBJECT_SPEED = 5;
@@ -36,6 +38,10 @@ public class FireBall : SkillObjectBase
     private void OnTriggerEnter2D(Collider2D other) 
     {
         if(other.gameObject.name != "Player" && other.GetComponent<IDamagable>() != null)
-            other.GetComponent<IDamagable>().Damaged(dmg, this.gameObject.tag);   
+        {
+            var damagable = other.GetComponent<IDamagable>();
+            damagable.Damaged(dmg, this.gameObject.tag);
+            damagable.StatusEffectProcess(3f, "Stun");
+        }
     }
 }

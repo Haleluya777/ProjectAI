@@ -28,11 +28,12 @@ public class MenuScroller : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Z))
         {
+            //선택한 메뉴 활성화 시키는건데 아직 미완성.
             //currentMenu.ActivateMenu();
         }
     }
 
-    private void MoveToPrevious()
+    private void MoveToPrevious() //그냥 메뉴 스크롤 하는거.
     {
         if (menuObjList.Count == 0) return;
 
@@ -44,7 +45,7 @@ public class MenuScroller : MonoBehaviour
         UpdateMenuPosition();
     }
 
-    private void MoveToNext()
+    private void MoveToNext() //이것도 똑같음.
     {
         if (menuObjList.Count == 0) return;
 
@@ -56,7 +57,7 @@ public class MenuScroller : MonoBehaviour
         UpdateMenuPosition();
     }
 
-    private void UpdateMenuPosition()
+    private void UpdateMenuPosition() //메뉴 위치 바꾸는거.
     {
         for(int i = 0; i < menuObjList.Count; i++)
         {

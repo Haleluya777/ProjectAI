@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Stun : StatusEffect
 {
+    //이거 클래스 이름 바꿔야하는데
+    
     public Stun(float duration, string effectName, IDamagable target) : base(duration, target)
     {
         base.effectName = effectName;

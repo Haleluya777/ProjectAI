@@ -59,7 +59,7 @@ public class Status : MonoBehaviour//, IDamagable
     {
         curHp -= totalDmg;
 
-        var dmgText = GameManager.instance.objectPoolManger.Pool.Get();
+        var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
         dmgText.transform.parent = this.transform.GetChild(0);
         dmgText.transform.localPosition = new Vector2(0, 5.5f);
         dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);

@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class PlayerUIManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public PlayerCombatUI combatUI;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public GameObject combatUIPanel;
+    public GameObject menuUIPanel;
 }

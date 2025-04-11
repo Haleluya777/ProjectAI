@@ -6,6 +6,8 @@ using UnityEngine;
 public class BahaviorManager : MonoBehaviour
 {
     //Enemy 의 행동을 관장하는 스크립트.
+    //아직 미완.
+    
     private BehaviorTreeRunner behaviorTree;
 
     [SerializeField] private Movement movement;

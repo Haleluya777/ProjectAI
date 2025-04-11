@@ -24,7 +24,7 @@ public class PlayerUI : MonoBehaviour
     //PlayerUi의 딕셔너리에 모든 종류의 상태 이상 정보를 넣어둔 후, 상태 이상에 걸릴 때마다 딕셔너리에서 필요한 값을 빼온 후 ui에 적용시키는 방식.
     public void CreateEffectUISlider(StatusEffect effect)
     {
-        var obj = GameManager.instance.objectPoolManger1.Pool.Get(); //오브젝트 풀에서 오브젝트를 빌려옴.
+        var obj = GameManager.instance.objectPoolManger_EffectTime.Pool.Get(); //오브젝트 풀에서 오브젝트를 빌려옴.
 
         obj.transform.SetParent(statusEffectUI.transform); //부모 조정.  
         obj.GetComponent<StatusEffectUI>().SetVariable(effect.duration, effect.duration);

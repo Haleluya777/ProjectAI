@@ -6,6 +6,8 @@ using UnityEngine.Pool;
 
 public class DmgText : MonoBehaviour
 {
+    //Enemy가 데미지 받을 때 나오는 텍스트
+
     public IObjectPool<GameObject> Pool { get; set; }
     public TextMeshProUGUI txt;
     

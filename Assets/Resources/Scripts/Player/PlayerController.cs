@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamagable
 {
-    private enum State { Idle, Moving, Dash, Attacking }
+    private enum State { Idle, Moving, Dash, Attacking } //현재 플레이어 상태.
 
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour, IDamagable
     [SerializeField] private SkillBase currentSkill;
     //[SerializeField] private List<SkillBase> currentSkill = new List<SkillBase>(); //나중에 쓸 리스트트
     [SerializeField] private int skillNum;
-    [SerializeField] private PlayerUI playerUI;
     [SerializeField] private BoxCollider2D hitBox;
     [SerializeField] private GameObject particle;
 
@@ -93,6 +92,8 @@ public class PlayerController : MonoBehaviour, IDamagable
         if(Input.GetKeyDown(KeyCode.Q))
         {
             //상태이상을 제공하는 제공자가 사용할 메서드.
+            //현재는 ApplyEffect를 이용해서 상태이상을 제공하지 않음.
+            //StatusEffectProces 사용할 것.
             ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamagable>()));
         }
 
@@ -105,14 +106,19 @@ public class PlayerController : MonoBehaviour, IDamagable
         {
             ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamagable>()));
         }
+
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            GameManager.instance.InBattleState();
+        }
     }
 
-    private void PlayerUIUpdate()
+    private void PlayerUIUpdate() //플레이어 UI상태를 업데이트하는 메서드드
     {
-        playerUI.HpBarUpdate(maxHp, curHp);
-        playerUI.StmBarUpdate(maxStm, curStm);
-        playerUI.CheckDashCoolDown(remainingCoolDown, DASH_COOLDOWN);
-        playerUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
+        GameManager.instance.uIManager.combatUI.HpBarUpdate(maxHp, curHp);
+        GameManager.instance.uIManager.combatUI.StmBarUpdate(maxStm, curStm);
+        GameManager.instance.uIManager.combatUI.CheckDashCoolDown(remainingCoolDown, DASH_COOLDOWN);
+        GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
     }
 
     private void StatusInit() //Status Initialize
@@ -145,12 +151,12 @@ public class PlayerController : MonoBehaviour, IDamagable
             currentSkill.player = this.gameObject.GetComponent<PlayerController>();
     }
 
-    private State StateUpdate()
+    private State StateUpdate() //플레이어의 상태를 반환함.
     {
         float horizontal = moveX;
         bool checkAttack = attacking;
 
-        return (horizontal, checkAttack) switch
+        return (horizontal, checkAttack) switch //이거 스위치문.
         {
             (not 0, false) => State.Moving,
             (0, false) => State.Idle,
@@ -172,7 +178,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
-    private void Movement() 
+    private void Movement() //이동 메서드. 입력값을 받아서 작동하는 건 아님.
     {
         dir = new Vector3(moveX, 0).normalized;
 
@@ -204,7 +210,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
-    private void FastRun()
+    private void FastRun() //요거 안씀.
     {
         if(currentState == State.Moving && Input.GetKeyDown(KeyCode.LeftShift))
         {
@@ -236,7 +242,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
-    private void BasicAttackTime()
+    private void BasicAttackTime() //기본 공격 쿨타임.
     {
         attTime += Time.deltaTime;
         if (attTime >= attCool && Input.GetKeyDown(KeyCode.Z))
@@ -254,9 +260,9 @@ public class PlayerController : MonoBehaviour, IDamagable
         curStm -= 10;
     }
 
-    private void UseSkill()
+    private void UseSkill() //스킬 사용메서드드
     {
-        skillNum = (Input.inputString.ToUpper()) switch
+        skillNum = (Input.inputString.ToUpper()) switch //이것도 스위치문.
         {
             ("C") => 1,
             ("V") => 2,
@@ -274,7 +280,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
-    public void Damaged(int dmg, string attackType)
+    public void Damaged(int dmg, string attackType) //데미지를 받을 때 실행시킬 메서드. Damagable인터페이스를 상속했기 때문에 무조건 이 메서드는 정의되어야 함.
     {
         Color txtcolor = new Color();
         int totalDmg = new int();
@@ -294,11 +300,11 @@ public class PlayerController : MonoBehaviour, IDamagable
         DamagedProcess(totalDmg, txtcolor);
     }
 
-    private void DamagedProcess(int totalDmg, Color txtColor)
+    private void DamagedProcess(int totalDmg, Color txtColor) //데미지 받는 과정.
     {
         curHp -= totalDmg;
 
-        var dmgText = GameManager.instance.objectPoolManger.Pool.Get();
+        var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
         dmgText.transform.SetParent(this.transform.GetChild(0));
         dmgText.transform.localPosition = new Vector2(0, 4.5f);
         dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);
@@ -341,11 +347,12 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<IDamagable>() != null)
+        if (other.GetComponent<IDamagable>() != null) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
         {
             IDamagable damagable = other.GetComponent<IDamagable>();
             damagable.Damaged(att, "Physical");
             damagable.StatusEffectProcess(3f, "Stun");
+            GameManager.instance.InBattleState();
         }
     }
 
@@ -355,8 +362,8 @@ public class PlayerController : MonoBehaviour, IDamagable
         {
             activeEffect.Add(effect.effectName, effect);
             effect.ApplyEffect();
-            playerUI.CreateEffectUISlider(effect);
-            playerUI.UpdateEffectUI();
+            GameManager.instance.uIManager.combatUI.CreateEffectUISlider(effect);
+            GameManager.instance.uIManager.combatUI.UpdateEffectUI();
             newCorutine = StartCoroutine(RemoveEffectAfterDuration(effect));
             activeEffectCoroutines.Add(effect.effectName, newCorutine);
         }
@@ -367,7 +374,7 @@ public class PlayerController : MonoBehaviour, IDamagable
             {
                 StopCoroutine(runningCoroutine);
                 activeEffectCoroutines[effect.effectName] = StartCoroutine(RemoveEffectAfterDuration(effect));
-                playerUI.RenewalEffectSlider(effect, effect.effectName);
+                GameManager.instance.uIManager.combatUI.RenewalEffectSlider(effect, effect.effectName);
             }
         }
     }
@@ -378,8 +385,8 @@ public class PlayerController : MonoBehaviour, IDamagable
         activeEffect.Remove(effect.effectName);
         activeEffectCoroutines.Remove(effect.effectName);
         effect.RemoveEffect();
-        playerUI.RemoveEffectUI(effect.effectName);
-        playerUI.UpdateEffectUI();
+        GameManager.instance.uIManager.combatUI.RemoveEffectUI(effect.effectName);
+        GameManager.instance.uIManager.combatUI.UpdateEffectUI();
     }
 
     IEnumerator SpeedReturn()
