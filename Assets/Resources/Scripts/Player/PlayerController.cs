@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour, IDamagable
+public class PlayerController : MonoBehaviour, IDamageable
 {
-    private enum State { Idle, Moving, Dash, Attacking } //현재 플레이어 상태.
+    private enum State { Idle, Moving, Dash, Attacking, Jumping } //현재 플레이어 상태.
 
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
@@ -20,18 +20,24 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private int level; //Player Level
 
-    private float maxHp, curHp, maxStm, curStm;
+    private int maxHp, curHp;
+    private float maxStm, curStm;
     private int curMoveSpeed; //Current Move Speed
     private int jumpPower;
+    private bool isdead;
+
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
     //-------------Property-------------//
+    public int CurrentHp => curHp;
     public int Att => att;
+    public bool IsDead => isdead;
     public bool CanAction { get; set; }
     //----------------------------------//
 
     private Vector3 dir;
     private float moveX;
+    private float moveY;
     private float regenSpeed;
     private float remainingCoolDown;
     private string inputKey;
@@ -46,9 +52,9 @@ public class PlayerController : MonoBehaviour, IDamagable
     private WaitForSeconds dashCoolDown = new WaitForSeconds(2f);
     private Coroutine newCorutine;
 
-    private const int WALK_SPEED = 5;
-    private const int RUN_SPEED = 7;
-    private const int DASH_SPEED = 10;
+    private const int WALK_SPEED = 10;
+    private const int RUN_SPEED = 14;
+    private const int DASH_SPEED = 28;
     private const float DASH_COOLDOWN = 3f;
 
     public Vector3 Dir => dir;
@@ -69,9 +75,12 @@ public class PlayerController : MonoBehaviour, IDamagable
         Debug.Log($"현재 적용된 상태 이상 개수 : {activeEffect.Count}");
 
         moveX = Input.GetAxisRaw("Horizontal");
-        canRegen = currentState == State.Idle ? true : false;
+        if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
+        
+        Jump();
+        //rigid.velocity.y
 
-        if(CanAction)
+        if (CanAction)
         {
             currentState = StateUpdate();
             StateAction(currentState);
@@ -94,17 +103,17 @@ public class PlayerController : MonoBehaviour, IDamagable
             //상태이상을 제공하는 제공자가 사용할 메서드.
             //현재는 ApplyEffect를 이용해서 상태이상을 제공하지 않음.
             //StatusEffectProces 사용할 것.
-            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamagable>()));
+            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamageable>()));
         }
 
         if(Input.GetKeyDown(KeyCode.W))
         {
-            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamagable>()));
+            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamageable>()));
         }
 
         if(Input.GetKeyDown(KeyCode.E))
         {
-            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamagable>()));
+            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamageable>()));
         }
 
         if(Input.GetKeyDown(KeyCode.T))
@@ -132,7 +141,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         regenSpeed = 10f;
 
         curMoveSpeed = WALK_SPEED;
-        jumpPower = 10;
+        jumpPower = 20;
         att = 10;
         attCool = 2f;
         attTime = 0f;
@@ -155,6 +164,8 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         float horizontal = moveX;
         bool checkAttack = attacking;
+        if (rigid.velocity.y > 0) { return State.Jumping; }
+        else if (rigid.velocity.y < 0) { return State.Jumping; }
 
         return (horizontal, checkAttack) switch //이거 스위치문.
         {
@@ -170,9 +181,17 @@ public class PlayerController : MonoBehaviour, IDamagable
         {
             case State.Idle:
                 anim.SetBool("isMoving", false);
+                anim.SetBool("IsJumping", false);
                 break;
 
             case State.Moving:
+                anim.SetBool("isMoving", true);
+                anim.SetBool("IsJumping", false);
+                Movement();
+                break;
+
+            case State.Jumping:
+                anim.SetBool("IsJumping", true);
                 Movement();
                 break;
         }
@@ -181,10 +200,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     private void Movement() //이동 메서드. 입력값을 받아서 작동하는 건 아님.
     {
         dir = new Vector3(moveX, 0).normalized;
-
-        anim.SetBool("isMoving", true);
-        transform.localScale = new Vector3(dir.x, 1, 1);
-
+        if (moveX == 0) { } else { transform.localScale = new Vector3(dir.x, 1, 1); }
         transform.position += dir * curMoveSpeed * Time.deltaTime;
         if(Input.GetKeyDown(KeyCode.X) && canDash)
         {
@@ -235,10 +251,10 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private void Jump()
     {
-        if(Input.GetKeyDown(KeyCode.Space) && rigid.velocity.y == 0 && curStm > 10)
+
+        if(Input.GetKeyDown(KeyCode.Space) && rigid.velocity.y == 0)
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-            curStm -= 10;
         }
     }
 
@@ -280,18 +296,23 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
+    public void Dead()
+    {
+        
+    }
+
     public void Damaged(int dmg, string attackType) //데미지를 받을 때 실행시킬 메서드. Damagable인터페이스를 상속했기 때문에 무조건 이 메서드는 정의되어야 함.
     {
         Color txtcolor = new Color();
         int totalDmg = new int();
 
-        if(attackType == "Physical")
+        if (attackType == "Physical")
         {
             totalDmg = dmg - defense;
             txtcolor = Color.white;
         }
 
-        else if(attackType == "Magical")
+        else if (attackType == "Magical")
         {
             totalDmg = dmg - magicalDefense;
             txtcolor = Color.blue;
@@ -312,7 +333,7 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     public void StatusEffectProcess(float duration, string effectName)
     {
-        ApplyEffect(new Stun(duration, effectName, GetComponent<IDamagable>()));
+        ApplyEffect(new Stun(duration, effectName, GetComponent<IDamageable>()));
     }
 
     private void StmRegen()
@@ -347,9 +368,9 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<IDamagable>() != null) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
+        if (other.GetComponent<IDamageable>() != null) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
         {
-            IDamagable damagable = other.GetComponent<IDamagable>();
+            IDamageable damagable = other.GetComponent<IDamageable>();
             damagable.Damaged(att, "Physical");
             damagable.StatusEffectProcess(3f, "Stun");
             GameManager.instance.InBattleState();

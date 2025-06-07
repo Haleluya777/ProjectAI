@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEditor.Build.Content;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour, IDamagable
+public class EnemyController : MonoBehaviour, IDamageable
 {
     //PlayerController랑 별 차이도 없음.
     //EnemyModuleScript폴더 내 스크립트들은 아직 미완.
@@ -27,6 +27,8 @@ public class EnemyController : MonoBehaviour, IDamagable
     private float detectionRange;
     private float boundaryRange;
     private float moveSpeed;
+    private bool isdead;
+
 
     private GameObject target;
     private Animator anim;
@@ -43,6 +45,8 @@ public class EnemyController : MonoBehaviour, IDamagable
 
     //-------------Property-------------//
     public bool CanAction { get; set; }
+    public int CurrentHp => curHp;
+    public bool IsDead => isdead;
     //----------------------------------//
 
 
@@ -160,18 +164,23 @@ public class EnemyController : MonoBehaviour, IDamagable
         attTime = 0f;
     }
 
+    public void Dead()
+    {
+
+    }
+
     public void Damaged(int dmg, string attackType)
     {
         Color txtcolor = new Color();
         int totalDmg = new int();
 
-        if(attackType == "Physical")
+        if (attackType == "Physical")
         {
             totalDmg = dmg - defense;
             txtcolor = Color.white;
         }
 
-        else if(attackType == "Magical")
+        else if (attackType == "Magical")
         {
             totalDmg = dmg - magicalDefense;
             txtcolor = Color.blue;
@@ -227,9 +236,9 @@ public class EnemyController : MonoBehaviour, IDamagable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.GetComponent<IDamagable>() != null)
+        if(other.GetComponent<IDamageable>() != null)
         {
-            IDamagable damagable =  other.GetComponent<IDamagable>();
+            IDamageable damagable =  other.GetComponent<IDamageable>();
             damagable.Damaged(att, enemyAttackType.ToString());
             damagable.StatusEffectProcess(.5f, "Stun");
             GameManager.instance.InBattleState();

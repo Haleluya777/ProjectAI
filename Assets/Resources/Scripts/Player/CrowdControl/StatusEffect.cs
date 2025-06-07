@@ -7,9 +7,9 @@ public abstract class StatusEffect
     //모든 상태이상의 기초가 되는 베이스 클래스.
     public string effectName;
     public float duration;
-    public IDamagable target;
+    public IDamageable target;
 
-    public StatusEffect(float duration, IDamagable target)
+    public StatusEffect(float duration, IDamageable target)
     {
         this.duration = duration;
         this.target = target;
