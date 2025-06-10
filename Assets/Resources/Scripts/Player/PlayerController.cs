@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour, IDamagable
+public class PlayerController : MonoBehaviour, IDamageable
 {
     private enum State { Idle, Moving, Dash, Attacking, Jumping } //현재 플레이어 상태.
 
@@ -20,13 +20,18 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private int level; //Player Level
 
-    private float maxHp, curHp, maxStm, curStm;
+    private int maxHp, curHp;
+    private float maxStm, curStm;
     private int curMoveSpeed; //Current Move Speed
     private int jumpPower;
+    private bool isdead;
+
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
     //-------------Property-------------//
+    public int CurrentHp => curHp;
     public int Att => att;
+    public bool IsDead => isdead;
     public bool CanAction { get; set; }
     //----------------------------------//
 
@@ -98,17 +103,17 @@ public class PlayerController : MonoBehaviour, IDamagable
             //상태이상을 제공하는 제공자가 사용할 메서드.
             //현재는 ApplyEffect를 이용해서 상태이상을 제공하지 않음.
             //StatusEffectProces 사용할 것.
-            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamagable>()));
+            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamageable>()));
         }
 
         if(Input.GetKeyDown(KeyCode.W))
         {
-            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamagable>()));
+            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamageable>()));
         }
 
         if(Input.GetKeyDown(KeyCode.E))
         {
-            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamagable>()));
+            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamageable>()));
         }
 
         if(Input.GetKeyDown(KeyCode.T))
@@ -291,18 +296,23 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
     }
 
+    public void Dead()
+    {
+        
+    }
+
     public void Damaged(int dmg, string attackType) //데미지를 받을 때 실행시킬 메서드. Damagable인터페이스를 상속했기 때문에 무조건 이 메서드는 정의되어야 함.
     {
         Color txtcolor = new Color();
         int totalDmg = new int();
 
-        if(attackType == "Physical")
+        if (attackType == "Physical")
         {
             totalDmg = dmg - defense;
             txtcolor = Color.white;
         }
 
-        else if(attackType == "Magical")
+        else if (attackType == "Magical")
         {
             totalDmg = dmg - magicalDefense;
             txtcolor = Color.blue;
@@ -323,7 +333,7 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     public void StatusEffectProcess(float duration, string effectName)
     {
-        ApplyEffect(new Stun(duration, effectName, GetComponent<IDamagable>()));
+        ApplyEffect(new Stun(duration, effectName, GetComponent<IDamageable>()));
     }
 
     private void StmRegen()
@@ -358,9 +368,9 @@ public class PlayerController : MonoBehaviour, IDamagable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<IDamagable>() != null) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
+        if (other.GetComponent<IDamageable>() != null) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
         {
-            IDamagable damagable = other.GetComponent<IDamagable>();
+            IDamageable damagable = other.GetComponent<IDamageable>();
             damagable.Damaged(att, "Physical");
             damagable.StatusEffectProcess(3f, "Stun");
             GameManager.instance.InBattleState();
