@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     //다른 매니저 클래스(이벤트 매니저, ui매니저 등)또한 변수로 접근하게 함으로써 싱글톤 패턴 더 안만들어도 됨.
     public static GameManager instance;
 
+    public GameObject enemyObj;
     public GameObject playerObj;
 
     public ObjectPoolingManager objectPoolManger_DmgTxt;
@@ -21,9 +22,10 @@ public class GameManager : MonoBehaviour
     private WaitForSeconds battleTime = new WaitForSeconds(5f);
     public bool inBattle = false;
     private Coroutine inBattleCoroutine;
+    public BlackBoard globalBlackBoard; //공용 블랙보드.
     private void Awake()
     {
-        if(null == instance)
+        if (null == instance)
         {
             instance = this;
             DontDestroyOnLoad(this.gameObject);
@@ -44,9 +46,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void UpdateDataPerFrame() //매 프레임당 업데이트 해야 할 공용 블랙보드 데이터터
+    {
+        globalBlackBoard.Set<Transform>("PlayerTransform", playerObj.transform);
+        globalBlackBoard.Set("DistanceToPlayer", Vector2.Distance(playerObj.transform.position, enemyObj.transform.position));
+        Debug.Log(globalBlackBoard.Get<float>("DistanceToPlayer"));
+    }
+
     public void InBattleState()
     {
-        if(!inBattle)
+        if (!inBattle)
         {
             inBattle = true;
             uIManager.menuUIPanel.SetActive(false);

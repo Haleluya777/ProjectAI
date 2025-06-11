@@ -48,7 +48,7 @@ public class ConditionNode : INode
 
             case CompareMode.LessOrEqual:
                 return operatorValue <= operandValue ? INode.NodeState.Success : INode.NodeState.Failure;
-
+    
             case CompareMode.Greater:
                 return operatorValue > operandValue ? INode.NodeState.Success : INode.NodeState.Failure;
 

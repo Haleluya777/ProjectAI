@@ -33,7 +33,7 @@ public class Enemy_Movement : MonoBehaviour, IMoveable, IInitializable
     public void MoveToTarget(Transform target)
     {
         Debug.Log("이동중...");
-        parentTransform.Translate(Vector2.left * dir * moveSpeed);
+        parentTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
     }
 
     public void UpdateDirection(Transform targetPos)

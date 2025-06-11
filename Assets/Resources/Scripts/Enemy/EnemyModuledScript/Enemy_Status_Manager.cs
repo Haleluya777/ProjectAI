@@ -12,7 +12,6 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
     private Coroutine newCorutine;
-
     private int currentHp;
     private bool isdead;
     private int phase2Threshold;

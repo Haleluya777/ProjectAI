@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         //그러나 2D 인디 게임 특성상 사용하는 메모리가 그리 많지 않기 때문에 Update문에 몰아서 사용.
         //보통은 키보드 입력을 제외한 나머지 요소들은 Fixed업데이트에 넣거나 필요할 때만 호출하도록 함.
 
-        Debug.Log($"현재 적용된 상태 이상 개수 : {activeEffect.Count}");
+        //Debug.Log($"현재 적용된 상태 이상 개수 : {activeEffect.Count}");
 
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
