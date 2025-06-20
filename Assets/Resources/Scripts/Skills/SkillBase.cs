@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Skill/SkillBase")]
+//[CreateAssetMenu(menuName = "Skill/SkillBase")]
 public abstract class SkillBase : ScriptableObject //모든 스킬들이 공통으로 가져야할 부분만 모아서 만든 클래스. 스크립터블 오브젝트를 상속함.
 {
     //monobehavior를 상속하지 않아서 컴포넌트화를 할 수는 없다.

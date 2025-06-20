@@ -10,13 +10,12 @@ using UnityEngine.PlayerLoop;  // Count() 메서드를 사용하기 위해 필�
 public class Enemy_Manager : MonoBehaviour
 {
     [SerializeField] private EnemyStatusScriptableObject dataBase;
-    [SerializeField] private GameObject targetObj;
 
     [SerializeField] private Enemy_Status_Manager status;
     [SerializeField] private Enemy_Movement move;
     [SerializeField] private Enemy_Attack attack;
-
     [SerializeField] private BlackBoard localBlackboard = new BlackBoard();
+    [SerializeField] private EnemyUI enemyUI;
 
     public IDamageable istatus => status;
     public IMoveable imove => move;
@@ -50,6 +49,8 @@ public class Enemy_Manager : MonoBehaviour
 
     public void UpdateDataPerFrame(BlackBoard local)
     {
+        enemyUI.HpBarUpdate(status.MaxHp, status.CurrentHp);
+        //enemyUI.TextUpdate(currentState.ToString());
         foreach (var updatedData in GetComponentsInChildren<IInitializable>())
         {
             updatedData.UpdateDataPerFrame(local);

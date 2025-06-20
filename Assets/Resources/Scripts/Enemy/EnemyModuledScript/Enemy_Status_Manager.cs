@@ -12,10 +12,15 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
     private Coroutine newCorutine;
+
+    private int maxHp;
     private int currentHp;
+    private int defense;
+    private int magicalDefense;
     private bool isdead;
     private int phase2Threshold;
 
+    public int MaxHp => maxHp;
     public int CurrentHp => currentHp;
     public int Phase2Threshold => phase2Threshold;
     public bool IsDead => isdead;
@@ -24,20 +29,38 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
 
     public void DataInitialize(EnemyStatusInfo info, BlackBoard local)
     {
-        currentHp = info.Base_Status.HP;
-
-        local.Set("Damaged", this.GetComponent<IDamageable>());
-        local.Set("CurrentHp", currentHp);
+        CanAction = true;
+        maxHp = info.Base_Status.HP;
+        currentHp = maxHp;
+        defense = info.Base_Status.Defense;
+        magicalDefense = info.Base_Status.MagicalDefense;
     }
 
     public void UpdateDataPerFrame(BlackBoard local)
     {
-
+        local.Set("CanAction", CanAction);
     }
 
     public void Damaged(int dmg, string damageType)
     {
         Debug.Log("아프다!");
+
+        Color txtcolor = new Color();
+        int totalDmg = new int();
+
+        if (damageType == "Physical")
+        {
+            totalDmg = dmg - defense;
+            txtcolor = Color.white;
+        }
+
+        else if (damageType == "Magical")
+        {
+            totalDmg = dmg - magicalDefense;
+            txtcolor = Color.blue;
+        }
+
+        DamagedProcess(totalDmg, txtcolor);
     }
 
     private void DamagedProcess(int totalDmg, Color txtColor)
@@ -45,14 +68,14 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
         currentHp -= totalDmg;
 
         var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
-        dmgText.transform.parent = this.transform.GetChild(0);
+        dmgText.transform.parent = this.transform.parent.transform.GetChild(0);
         dmgText.transform.localPosition = new Vector2(0, 5.5f);
         dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);
     }
 
     public void StatusEffectProcess(float duration, string effectName)
     {
-        ApplyEffect(new Stun(duration, effectName, GetComponent<EnemyController>()));
+        ApplyEffect(new Stun(duration, effectName, GetComponent<Enemy_Status_Manager>()));
     }
 
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
@@ -83,6 +106,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
     IEnumerator RemoveEffectAfterDuration(StatusEffect effect) //상태 이상 제거.
     {
         yield return new WaitForSeconds(effect.duration);
+        Debug.Log("상태이상 사라짐!");
         effect.RemoveEffect();
         activeEffect.Remove(effect.effectName);
         activeEffectCoroutines.Remove(effect.effectName);

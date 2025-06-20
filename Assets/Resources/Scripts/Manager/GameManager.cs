@@ -39,9 +39,9 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape) && !inBattle)
+        UpdateDataPerFrame();
+        if (Input.GetKeyDown(KeyCode.Escape) && !inBattle)
         {
-            Debug.Log("할렐루야!");
             uIManager.menuUIPanel.SetActive(!uIManager.menuUIPanel.activeSelf ? true : false);
         }
     }
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     {
         globalBlackBoard.Set<Transform>("PlayerTransform", playerObj.transform);
         globalBlackBoard.Set("DistanceToPlayer", Vector2.Distance(playerObj.transform.position, enemyObj.transform.position));
-        Debug.Log(globalBlackBoard.Get<float>("DistanceToPlayer"));
+        //Debug.Log(globalBlackBoard.Get<float>("DistanceToPlayer"));
     }
 
     public void InBattleState()

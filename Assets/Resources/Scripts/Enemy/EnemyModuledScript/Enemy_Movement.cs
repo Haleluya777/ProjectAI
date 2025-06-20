@@ -32,12 +32,15 @@ public class Enemy_Movement : MonoBehaviour, IMoveable, IInitializable
 
     public void MoveToTarget(Transform target)
     {
-        Debug.Log("이동중...");
+        //Debug.Log("이동중...");
         parentTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
+        UpdateDirection(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform"));
     }
 
     public void UpdateDirection(Transform targetPos)
     {
         dir = parentTransform.position.x > targetPos.position.x ? 1 : -1;
+        transform.parent.localScale = new Vector3(1 * dir, 1, 1);
+        //transform.GetChild(0).localScale = new Vector3(-1 * dir, 1, 1);
     }
 }

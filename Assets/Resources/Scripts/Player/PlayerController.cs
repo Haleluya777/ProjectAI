@@ -368,11 +368,11 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<IDamageable>() != null) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
+        if (other.GetComponentInChildren<IDamageable>() != null) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
         {
-            IDamageable damagable = other.GetComponent<IDamageable>();
+            IDamageable damagable = other.GetComponentInChildren<IDamageable>();
             damagable.Damaged(att, "Physical");
-            damagable.StatusEffectProcess(3f, "Stun");
+            damagable.StatusEffectProcess(5f, "Stun");
             GameManager.instance.InBattleState();
         }
     }

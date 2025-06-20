@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,9 @@ public class EnemyAIController : MonoBehaviour
 
     void Update()
     {
-        rootNode?.Evaluate(localBlackboard, globalBlackboard);
+        if (localBlackboard.Get<Boolean>("CanAction") == true)
+        {
+            rootNode?.Evaluate(localBlackboard, globalBlackboard);
+        }
     }
 }

@@ -59,6 +59,6 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable
 
     public void PerformAttack()
     {
-        Debug.Log("할렐루야!");
+        //Debug.Log("할렐루야!");
     }
 }

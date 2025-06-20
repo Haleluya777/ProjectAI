@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Animations;
 using UnityEngine;
 
@@ -26,11 +27,15 @@ public class Enemy_Base_Status
     [SerializeField] private Sprite sprite;
     [SerializeField] private AnimatorController anim;
     [SerializeField] private int hp;
+    [SerializeField] private int defense;
+    [SerializeField] private int magicalDefense;
 
     public string Name => name;
     public Sprite Sprite => sprite;
     public AnimatorController Anim => anim;
     public int HP => hp;
+    public int Defense => defense;
+    public int MagicalDefense => magicalDefense;
 }
 
 [System.Serializable]
@@ -71,7 +76,7 @@ public class EnemyStatusScriptableObject : ScriptableObject
     {
         if (id < 0 || id > status.Length)
         {
-            Debug.Log($"Àû µ¥ÀÌÅÍ¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù! ID : {id}");
+            Debug.Log($"ìœ íš¨í•˜ì§€ ì•Šì€ idê°’. ID : {id}");
             return null;
         }
         return status[id];
