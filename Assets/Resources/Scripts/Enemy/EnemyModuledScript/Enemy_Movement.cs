@@ -15,7 +15,7 @@ public class Enemy_Movement : MonoBehaviour, IMoveable, IInitializable
     public bool ShouldMove => shouldMove;
     public Transform ParentTransform => parentTransform;
 
-    public void DataInitialize(EnemyStatusInfo info, BlackBoard local) //컴파일 될 때 최초 한번만 블랙 보드에 갱신될 정적 정보들.
+    public void DataInitialize(EnemyStatusInfo info, IBlackBoard local) //컴파일 될 때 최초 한번만 블랙 보드에 갱신될 정적 정보들.
     {
         parentTransform = this.transform.parent.transform;
         moveSpeed = info.Movement_Status.MoveSpeed;
@@ -25,14 +25,14 @@ public class Enemy_Movement : MonoBehaviour, IMoveable, IInitializable
         local.Set("MoveSpeed", moveSpeed);
     }
 
-    public void UpdateDataPerFrame(BlackBoard local) //매 프레임당 로컬 블랙 보드에 갱신될 정보들.
+    public void UpdateDataPerFrame(IBlackBoard local) //매 프레임당 로컬 블랙 보드에 갱신될 정보들.
     {
         local.Set("EnemyPosition", parentTransform.position);
     }
 
     public void MoveToTarget(Transform target)
     {
-        //Debug.Log("이동중...");
+        Debug.Log("이동중...");
         parentTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
         UpdateDirection(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform"));
     }
@@ -41,6 +41,5 @@ public class Enemy_Movement : MonoBehaviour, IMoveable, IInitializable
     {
         dir = parentTransform.position.x > targetPos.position.x ? 1 : -1;
         transform.parent.localScale = new Vector3(1 * dir, 1, 1);
-        //transform.GetChild(0).localScale = new Vector3(-1 * dir, 1, 1);
     }
 }

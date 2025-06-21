@@ -8,15 +8,15 @@ public sealed class ActionNode : INode
     public string Name { get; private set; }
     public INode.NodeState LastState { get; private set; }
 
-    private Func<BlackBoard, BlackBoard, INode.NodeState> _onUpdate;
+    private Func<IBlackBoard, IBlackBoard, INode.NodeState> _onUpdate;
 
-    public ActionNode(string name, Func<BlackBoard, BlackBoard, INode.NodeState> onUpdate)
+    public ActionNode(string name, Func<IBlackBoard, IBlackBoard, INode.NodeState> onUpdate)
     {
         Name = name;
         _onUpdate = onUpdate;
     }
 
-    public INode.NodeState Evaluate(BlackBoard local, BlackBoard global)
+    public INode.NodeState Evaluate(IBlackBoard local, IBlackBoard global)
     {
         LastState = _onUpdate?.Invoke(local, global) ?? INode.NodeState.Failure;
         return LastState;

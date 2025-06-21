@@ -15,7 +15,7 @@ public sealed class SequenceNode : INode
         _childs = childs;
     }
 
-    public INode.NodeState Evaluate(BlackBoard local, BlackBoard global)
+    public INode.NodeState Evaluate(IBlackBoard local, IBlackBoard global)
     {
         foreach (var child in _childs)
         {

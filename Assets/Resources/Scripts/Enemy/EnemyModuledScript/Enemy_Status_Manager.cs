@@ -27,7 +27,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
 
     public bool CanAction { get; set; }
 
-    public void DataInitialize(EnemyStatusInfo info, BlackBoard local)
+    public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
     {
         CanAction = true;
         maxHp = info.Base_Status.HP;
@@ -36,7 +36,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
         magicalDefense = info.Base_Status.MagicalDefense;
     }
 
-    public void UpdateDataPerFrame(BlackBoard local)
+    public void UpdateDataPerFrame(IBlackBoard local)
     {
         local.Set("CanAction", CanAction);
     }

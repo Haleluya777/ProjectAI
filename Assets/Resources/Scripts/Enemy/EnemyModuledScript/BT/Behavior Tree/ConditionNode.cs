@@ -27,10 +27,10 @@ public class ConditionNode : INode
         _mode = mode;
     }
 
-    public INode.NodeState Evaluate(BlackBoard local, BlackBoard global)
+    public INode.NodeState Evaluate(IBlackBoard local, IBlackBoard global)
     {
-        BlackBoard OperatorBlackBoard = _operatorBoard == Board.local ? local : global;
-        BlackBoard OperandBlackBoard = _operandBoard == Board.local ? local : global;
+        IBlackBoard OperatorBlackBoard = _operatorBoard == Board.local ? local : global;
+        IBlackBoard OperandBlackBoard = _operandBoard == Board.local ? local : global;
 
         float operatorValue = OperatorBlackBoard.Get<float>(_operatorKey);
         float operandValue = OperandBlackBoard.Get<float>(_operandKey);

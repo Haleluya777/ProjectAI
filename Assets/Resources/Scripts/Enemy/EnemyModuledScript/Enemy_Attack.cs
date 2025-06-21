@@ -3,9 +3,11 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
+using UnityEngine.SocialPlatforms;
 
 public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable
 {
+    IBlackBoard blackBoard;
     private List<float> meleeCools;
     private List<float> rangedCools;
 
@@ -22,8 +24,10 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable
     public float RangedAttackRange => rangedRange;
     public int MeleeAttackCount => meleeCount;
 
-    public void DataInitialize(EnemyStatusInfo info, BlackBoard local)
+    public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
     {
+        blackBoard = local;
+
         att = info.Combat_Status.Atk;
 
         mainAttCool = info.Combat_Status.MainAttCool;
@@ -33,23 +37,24 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable
         meleeRange = info.Combat_Status.ShortAttackRange;
         rangedRange = info.Combat_Status.LongAttackRange;
 
-        local.Set("Attack", GetComponent<IAttackable>());
-        local.Set("AttDamage", att);
-        local.Set("MainCool", mainAttCool);
-        local.Set("MeleeCools", meleeCools);
-        local.Set("RangedCools", rangedCools);
-        local.Set("MeleeRange", meleeRange);
-        local.Set("RangedRange", rangedRange);
+        blackBoard.Set("Attack", GetComponent<IAttackable>());
+        blackBoard.Set("AttDamage", att);
+        blackBoard.Set("MainCool", mainAttCool);
+        blackBoard.Set("MeleeCools", meleeCools);
+        blackBoard.Set("RangedCools", rangedCools);
+        blackBoard.Set("MeleeRange", meleeRange);
+        blackBoard.Set("RangedRange", rangedRange);
     }
 
-    public void UpdateDataPerFrame(BlackBoard local)
+    public void UpdateDataPerFrame(IBlackBoard local)
     {
-        
+        //Debug.Log(blackBoard.Get<float>("MainCoolRegain"));
+        blackBoard.Set("MainCoolRegain", blackBoard.Get<float>("MainCoolRegain") + Time.deltaTime);
     }
 
     public void GetAvailableAttacks(List<float> cooldowns, List<float> nextTimes, List<int> availableAttacks)
     {
-
+        
     }
 
     public bool CheckingCanAttack()
@@ -59,6 +64,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable
 
     public void PerformAttack()
     {
-        //Debug.Log("할렐루야!");
+        Debug.Log("할렐루야!");
+        blackBoard.Set("MainCoolRegain", 0f);   
     }
 }

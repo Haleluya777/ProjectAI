@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -22,7 +23,7 @@ public class GameManager : MonoBehaviour
     private WaitForSeconds battleTime = new WaitForSeconds(5f);
     public bool inBattle = false;
     private Coroutine inBattleCoroutine;
-    public BlackBoard globalBlackBoard; //공용 블랙보드.
+    public IBlackBoard globalBlackBoard = new BlackBoard(); //공용 블랙보드.
     private void Awake()
     {
         if (null == instance)

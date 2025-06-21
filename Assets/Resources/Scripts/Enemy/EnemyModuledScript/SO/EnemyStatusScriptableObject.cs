@@ -13,26 +13,34 @@ public class EnemyStatusInfo
     [SerializeField] private Enemy_Base_Status baseStatus;
     [SerializeField] private Enemy_Combat_Status combatStatus;
     [SerializeField] private Enemy_Movement_Status movementStatus;
+    [SerializeField] private Enemy_Visualize visual;
 
     public int Id => id;
     public Enemy_Base_Status Base_Status => baseStatus;
     public Enemy_Combat_Status Combat_Status => combatStatus;
     public Enemy_Movement_Status Movement_Status => movementStatus;
+    public Enemy_Visualize Visual => visual;
+}
+
+[System.Serializable]
+public class Enemy_Visualize
+{
+    [SerializeField] private Sprite sprite;
+    [SerializeField] private AnimatorController anim;
+
+    public Sprite Sprite => sprite;
+    public AnimatorController Anim => anim;
 }
 
 [System.Serializable]
 public class Enemy_Base_Status
 {
     [SerializeField] private string name;
-    [SerializeField] private Sprite sprite;
-    [SerializeField] private AnimatorController anim;
     [SerializeField] private int hp;
     [SerializeField] private int defense;
     [SerializeField] private int magicalDefense;
 
     public string Name => name;
-    public Sprite Sprite => sprite;
-    public AnimatorController Anim => anim;
     public int HP => hp;
     public int Defense => defense;
     public int MagicalDefense => magicalDefense;

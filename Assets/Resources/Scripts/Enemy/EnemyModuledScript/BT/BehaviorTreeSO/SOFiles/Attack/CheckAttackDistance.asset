@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d169cca6629f144981903bcfd63ae94, type: 3}
-  m_Name: CheckAttack
+  m_Name: CheckAttackDistance
   m_EditorClassIdentifier: 
-  nodeName: CheckAttack
+  nodeName: CheckAttackDis
   operatorBoard: 1
   operandBoard: 0
   operatorKey: DistanceToPlayer

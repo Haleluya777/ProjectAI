@@ -15,7 +15,7 @@ public sealed class SelectorNode : INode
         _children = children;
     }
 
-    public INode.NodeState Evaluate(BlackBoard local, BlackBoard global)
+    public INode.NodeState Evaluate(IBlackBoard local, IBlackBoard global)
     {
         foreach (var child in _children)
         {

@@ -30,7 +30,7 @@ public static class TreeCompiler
                         object[] parameters = null;
                         if (action.hasParameter)
                         {
-                            BlackBoard source = action.parameterSource == ActionNodeSO.ParameterSource.Global ? global : local;
+                            IBlackBoard source = action.parameterSource == ActionNodeSO.ParameterSource.Global ? global : local;
                             switch (action.parameterType)
                             {
                                 case ActionNodeSO.ParameterType.Transform:

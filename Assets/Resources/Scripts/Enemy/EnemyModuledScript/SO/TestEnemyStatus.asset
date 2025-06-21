@@ -16,9 +16,9 @@ MonoBehaviour:
   - id: 0
     baseStatus:
       name: Test
-      sprite: {fileID: 21300000, guid: 53f23e1638bb9694c8368cca2d22ce10, type: 3}
-      anim: {fileID: 9100000, guid: 0a0da702db45dd44aa40bc75a4dd4dbf, type: 2}
       hp: 100
+      defense: 10
+      magicalDefense: 5
     combatStatus:
       atk: 10
       shortAttackRange: 3
@@ -30,3 +30,6 @@ MonoBehaviour:
       - 3
     movementStatus:
       moveSpeed: 3
+    visual:
+      sprite: {fileID: 21300000, guid: d6337446ecadade40a8346255c6da2cc, type: 3}
+      anim: {fileID: 9100000, guid: 0a0da702db45dd44aa40bc75a4dd4dbf, type: 2}

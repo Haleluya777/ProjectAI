@@ -14,12 +14,15 @@ public class Enemy_Manager : MonoBehaviour
     [SerializeField] private Enemy_Status_Manager status;
     [SerializeField] private Enemy_Movement move;
     [SerializeField] private Enemy_Attack attack;
-    [SerializeField] private BlackBoard localBlackboard = new BlackBoard();
+    [SerializeField] private EnemyAIController ai;
+
+    [SerializeField] private IBlackBoard localBlackboard = new BlackBoard();
     [SerializeField] private EnemyUI enemyUI;
 
     public IDamageable istatus => status;
     public IMoveable imove => move;
     public IAttackable iattack => attack;
+    public IAiManager iai => ai;
 
     [SerializeField] private int id;
 
@@ -29,6 +32,7 @@ public class Enemy_Manager : MonoBehaviour
     private void Awake()
     {
         DataInitialize(statusInfo, localBlackboard);
+        iai.BlackBoardInit(localBlackboard, GameManager.instance.globalBlackBoard);
     }
 
     private void Update()
@@ -37,7 +41,7 @@ public class Enemy_Manager : MonoBehaviour
         UpdateDataPerFrame(localBlackboard);
     }
 
-    public void DataInitialize(EnemyStatusInfo info, BlackBoard local)
+    public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
     {
         info = dataBase.GetEnemyData(id);
 
@@ -47,7 +51,7 @@ public class Enemy_Manager : MonoBehaviour
         }
     }
 
-    public void UpdateDataPerFrame(BlackBoard local)
+    public void UpdateDataPerFrame(IBlackBoard local)
     {
         enemyUI.HpBarUpdate(status.MaxHp, status.CurrentHp);
         //enemyUI.TextUpdate(currentState.ToString());

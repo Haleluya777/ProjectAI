@@ -5,6 +5,6 @@ using UnityEngine;
 
 public interface IInitializable
 {
-    void DataInitialize(EnemyStatusInfo info, BlackBoard local);
-    void UpdateDataPerFrame(BlackBoard local);
+    void DataInitialize(EnemyStatusInfo info, IBlackBoard local);
+    void UpdateDataPerFrame(IBlackBoard local);
 }

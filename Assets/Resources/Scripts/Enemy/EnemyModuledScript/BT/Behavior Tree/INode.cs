@@ -9,5 +9,5 @@ public interface INode
     string Name { get; }
     NodeState LastState { get; }
 
-    public NodeState Evaluate(BlackBoard local, BlackBoard global);
+    public NodeState Evaluate(IBlackBoard local, IBlackBoard global);
 }

@@ -775,7 +775,6 @@ GameObject:
   m_Component:
   - component: {fileID: 383941134}
   - component: {fileID: 383941135}
-  - component: {fileID: 383941136}
   m_Layer: 0
   m_Name: Status
   m_TagString: Untagged
@@ -808,18 +807,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4fc46f7e39917b0408fc49555af599cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &383941136
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 383941132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb2d41c9006cb0f4f952adbbb5f712f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &410957977
@@ -6554,7 +6541,6 @@ GameObject:
   m_Component:
   - component: {fileID: 684673127}
   - component: {fileID: 684673126}
-  - component: {fileID: 684673128}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -6581,7 +6567,6 @@ MonoBehaviour:
   eventManager: {fileID: 708288581}
   uIManager: {fileID: 1545260877}
   inBattle: 0
-  globalBlackBoard: {fileID: 684673128}
 --- !u!4 &684673127
 Transform:
   m_ObjectHideFlags: 0
@@ -6599,18 +6584,6 @@ Transform:
   - {fileID: 1272612229}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &684673128
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 684673125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb2d41c9006cb0f4f952adbbb5f712f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &707254276
 GameObject:
   m_ObjectHideFlags: 0
@@ -8761,8 +8734,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   behaviorTreeAsset: {fileID: 11400000, guid: 303b85f963905424ab5342b6fd99f56b, type: 2}
-  globalBlackboard: {fileID: 684673128}
-  localBlackboard: {fileID: 383941136}
 --- !u!1 &1455181645
 GameObject:
   m_ObjectHideFlags: 0
@@ -11075,6 +11046,7 @@ GameObject:
   - component: {fileID: 1918281726}
   - component: {fileID: 1918281725}
   - component: {fileID: 1918281724}
+  - component: {fileID: 1918281728}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -11242,9 +11214,30 @@ MonoBehaviour:
   status: {fileID: 383941135}
   move: {fileID: 1959487985}
   attack: {fileID: 194589125}
-  localBlackboard: {fileID: 383941136}
+  ai: {fileID: 1412461816}
   enemyUI: {fileID: 1713142663}
   id: 0
+--- !u!95 &1918281728
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1918281722}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1959487983
 GameObject:
   m_ObjectHideFlags: 0
