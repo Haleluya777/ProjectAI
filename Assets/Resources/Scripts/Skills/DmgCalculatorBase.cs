@@ -5,5 +5,5 @@ using UnityEngine;
 [System.Serializable]
 public abstract class DmgCalculatorBase : ScriptableObject
 {
-    public abstract int CalculateDmg(PlayerController attacker);
+    public abstract int CalculateDmg(ISkillCaster caster);
 }

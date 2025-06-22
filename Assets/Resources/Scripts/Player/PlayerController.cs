@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour, IDamageable
+public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 {
     private enum State { Idle, Moving, Dash, Attacking, Jumping } //현재 플레이어 상태.
 
@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     private string inputKey;
     private bool canRegen;
     private bool canDash;
+    private bool inAir; //공중에 있는지 판단.
     [SerializeField] private float attCool, attTime;
 
     private Rigidbody2D rigid;
@@ -62,6 +63,10 @@ public class PlayerController : MonoBehaviour, IDamageable
     void Start()
     {
         StatusInit();
+        if (currentSkill.caster == null)
+        {
+            currentSkill.SetCaster(this);   
+        }
     }
 
     // Update is called once per frame
@@ -151,14 +156,39 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         CanAction = true;
         canDash = true;
+        inAir = false;
 
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent <Animator>();
         sprite = this.GetComponent<SpriteRenderer>();
-
-        if(currentSkill.player != null)
-            currentSkill.player = this.gameObject.GetComponent<PlayerController>();
     }
+
+    //ISkillCaster 메서드 재정의
+    public Vector3 GetPosition()
+    {
+        return transform.position;
+    }
+
+    public Quaternion GetRotation()
+    {
+        return transform.rotation;
+    }
+
+    public int GetAttackPower()
+    {
+        return Att;
+    }
+
+    public IDamageable GetDamageableComponent()
+    {
+        return this; // PlayerController가 IDamageable을 구현하므로 자신을 반환
+    }
+
+    public GameObject GetGameObject()
+    {
+        return gameObject;
+    }
+    // 여기까지 ISkillCaster재정의
 
     private State StateUpdate() //플레이어의 상태를 반환함.
     {
@@ -368,7 +398,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponentInChildren<IDamageable>() != null) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
+        if (other.GetComponentInChildren<IDamageable>() != null && attacking) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
         {
             IDamageable damagable = other.GetComponentInChildren<IDamageable>();
             damagable.Damaged(att, "Physical");

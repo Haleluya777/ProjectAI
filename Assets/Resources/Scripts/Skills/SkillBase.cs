@@ -10,7 +10,9 @@ public abstract class SkillBase : ScriptableObject //모든 스킬들이 공통�
 
     public DmgCalculatorBase damageCalculator;
     public AttackType attackType;
-    public PlayerController player; //이 부분이 null인 버그 있음. 나중에 고쳐야 함.
+
+    [System.NonSerialized]
+    public ISkillCaster caster; //이 부분이 null인 버그 있음. 나중에 고쳐야 함.
     public float coolDown;
     private float remainingCoolDown;
 
@@ -26,10 +28,12 @@ public abstract class SkillBase : ScriptableObject //모든 스킬들이 공통�
         return true;
     }
 
-    public void SetPlayerController(PlayerController _player)
+    public void SetCaster(ISkillCaster _caster)
     {
-        player = _player;
+        caster = _caster;
     }
+
+    protected ISkillCaster Caster => caster;
 
     public void UpdateCoolDown(float deltaTime)
     {

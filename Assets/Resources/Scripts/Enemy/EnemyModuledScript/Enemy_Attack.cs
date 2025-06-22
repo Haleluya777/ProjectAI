@@ -71,7 +71,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     public void PerformAttack()
     {
         Debug.Log("할렐루야!");
-        anim.CrossFadeInFixedTime("Enemy_Attack", 0f);
+        anim.CrossFade("Enemy_Attack", 0f);
         blackBoard.Set("MainCoolRegain", 0f);   
     }
 }

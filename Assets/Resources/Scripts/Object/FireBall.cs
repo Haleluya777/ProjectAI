@@ -37,9 +37,9 @@ public class FireBall : SkillObjectBase
 
     private void OnTriggerEnter2D(Collider2D other) 
     {
-        if(other.gameObject.name != "Player" && other.GetComponent<IDamageable>() != null)
+        if(other.gameObject.name != "Player" && other.GetComponentInChildren<IDamageable>() != null)
         {
-            var damagable = other.GetComponent<IDamageable>();
+            var damagable = other.GetComponentInChildren<IDamageable>();
             damagable.Damaged(dmg, this.gameObject.tag);
             damagable.StatusEffectProcess(3f, "Stun");
         }

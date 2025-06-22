@@ -21,7 +21,7 @@ MonoBehaviour:
       magicalDefense: 5
     combatStatus:
       atk: 10
-      shortAttackRange: 3
+      shortAttackRange: 5
       longAttackRange: 10
       mainAttCool: 3
       shortDisAttCool:

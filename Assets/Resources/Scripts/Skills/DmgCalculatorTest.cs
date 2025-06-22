@@ -9,8 +9,8 @@ public class DmgCalculatorTest : DmgCalculatorBase
     public int baseDmg;
     public float dmgWeight;
 
-    public override int CalculateDmg(PlayerController attacker)
+    public override int CalculateDmg(ISkillCaster attacker)
     {
-        return baseDmg + (int)(attacker.Att * dmgWeight);
+        return baseDmg + (int)(attacker.GetAttackPower() * dmgWeight);
     }
 }
