@@ -7,12 +7,12 @@ using UnityEngine.PlayerLoop;
 
 // Enemy의 상태와 능력치를 관리하는 클래스
 // ScriptableObject에서 데이터를 로드하고 관리
-public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
+public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, IRequiredAnimator
 {
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
     private Coroutine newCorutine;
-
+    private Animator anim;
     private int maxHp;
     private int currentHp;
     private int defense;
@@ -41,10 +41,13 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable
         local.Set("CanAction", CanAction);
     }
 
+    public void InjectAnimator(Animator _anim)
+    {
+        anim = _anim;
+    }
+
     public void Damaged(int dmg, string damageType)
     {
-        Debug.Log("아프다!");
-
         Color txtcolor = new Color();
         int totalDmg = new int();
 

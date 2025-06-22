@@ -142,7 +142,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
         curMoveSpeed = WALK_SPEED;
         jumpPower = 20;
-        att = 10;
+        att = 20;
         attCool = 2f;
         attTime = 0f;
         defense = 0;

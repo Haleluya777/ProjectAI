@@ -19,6 +19,8 @@ public class Enemy_Manager : MonoBehaviour
     [SerializeField] private IBlackBoard localBlackboard = new BlackBoard();
     [SerializeField] private EnemyUI enemyUI;
 
+    [SerializeField] private Animator anim;
+
     public IDamageable istatus => status;
     public IMoveable imove => move;
     public IAttackable iattack => attack;
@@ -26,7 +28,6 @@ public class Enemy_Manager : MonoBehaviour
 
     [SerializeField] private int id;
 
-    private BehaviorTreeRunner behaviorTree;
     private EnemyStatusInfo statusInfo;
 
     private void Awake()
@@ -44,10 +45,15 @@ public class Enemy_Manager : MonoBehaviour
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
     {
         info = dataBase.GetEnemyData(id);
-
+        anim.runtimeAnimatorController = info.Visual.Anim;
         foreach (var init in GetComponentsInChildren<IInitializable>())
         {
             init.DataInitialize(info, local);
+        }
+
+        foreach (var init in GetComponentsInChildren<IRequiredAnimator>())
+        {
+            init.InjectAnimator(anim);
         }
     }
 

@@ -23,7 +23,7 @@ MonoBehaviour:
       atk: 10
       shortAttackRange: 3
       longAttackRange: 10
-      mainAttCool: 1
+      mainAttCool: 3
       shortDisAttCool:
       - 2
       longDisAttCool:

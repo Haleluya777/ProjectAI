@@ -11064,7 +11064,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.9, y: -3.9, z: -0.50200653}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 633384077}
@@ -11216,6 +11216,7 @@ MonoBehaviour:
   attack: {fileID: 194589125}
   ai: {fileID: 1412461816}
   enemyUI: {fileID: 1713142663}
+  anim: {fileID: 1918281728}
   id: 0
 --- !u!95 &1918281728
 Animator:
@@ -11227,7 +11228,7 @@ Animator:
   m_GameObject: {fileID: 1918281722}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0a0da702db45dd44aa40bc75a4dd4dbf, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

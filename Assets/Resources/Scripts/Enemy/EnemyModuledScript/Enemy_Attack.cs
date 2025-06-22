@@ -5,9 +5,10 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.SocialPlatforms;
 
-public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable
+public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequiredAnimator
 {
-    IBlackBoard blackBoard;
+    private Animator anim;
+    private IBlackBoard blackBoard;
     private List<float> meleeCools;
     private List<float> rangedCools;
 
@@ -52,9 +53,14 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable
         blackBoard.Set("MainCoolRegain", blackBoard.Get<float>("MainCoolRegain") + Time.deltaTime);
     }
 
+    public void InjectAnimator(Animator _anim)
+    {
+        anim = _anim;
+    }
+
     public void GetAvailableAttacks(List<float> cooldowns, List<float> nextTimes, List<int> availableAttacks)
     {
-        
+
     }
 
     public bool CheckingCanAttack()
@@ -65,6 +71,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable
     public void PerformAttack()
     {
         Debug.Log("할렐루야!");
+        anim.CrossFadeInFixedTime("Enemy_Attack", 0f);
         blackBoard.Set("MainCoolRegain", 0f);   
     }
 }
