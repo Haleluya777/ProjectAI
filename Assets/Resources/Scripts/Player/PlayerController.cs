@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     void Start()
     {
         StatusInit();
-        if (currentSkill.caster == null)
+        if (currentSkill.Caster == null)
         {
             currentSkill.SetCaster(this);   
         }

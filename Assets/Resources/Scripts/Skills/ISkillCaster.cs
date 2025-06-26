@@ -14,8 +14,4 @@ public interface ISkillCaster
     IDamageable GetDamageableComponent();
     // GameObject 자체를 넘겨야 하는 경우 (Instantiate 시 부모 설정 등)
     GameObject GetGameObject();
-
-    Coroutine RequestCoroutineStart(IEnumerator cor);
-    void RequestCoroutineStop(Coroutine coroutine);
-    void SetCanAct(bool canActive);
 }

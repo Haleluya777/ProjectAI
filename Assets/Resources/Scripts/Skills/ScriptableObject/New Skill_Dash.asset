@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageCalculator: {fileID: 0}
   attackType: 0
-  coolDown: 2
-  dashDistance: 5
-  dashSpeed: 4
+  coolDown: 1
+  dashDistance: 20
+  duration: 0.1

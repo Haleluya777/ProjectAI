@@ -12,16 +12,17 @@ public abstract class SkillBase : ScriptableObject //모든 스킬들이 공통�
     public AttackType attackType;
 
     [System.NonSerialized]
-    public ISkillCaster caster; //이 부분이 null인 버그 있음. 나중에 고쳐야 함.
+    private ISkillCaster caster; //이 부분이 null인 버그 있음. 나중에 고쳐야 함. //수정 완.
     public float coolDown;
     private float remainingCoolDown;
 
     public bool OnCoolDown => remainingCoolDown > 0;
     public float RemainingCoolDown => remainingCoolDown;
-
+    public ISkillCaster Caster => caster;
+    
     public virtual bool UseSkill()
     {
-        if(OnCoolDown) return false;
+        if (OnCoolDown) return false;
 
         Debug.Log("스킬 사용");
         remainingCoolDown = coolDown;
@@ -32,8 +33,6 @@ public abstract class SkillBase : ScriptableObject //모든 스킬들이 공통�
     {
         caster = _caster;
     }
-
-    protected ISkillCaster Caster => caster;
 
     public void UpdateCoolDown(float deltaTime)
     {
