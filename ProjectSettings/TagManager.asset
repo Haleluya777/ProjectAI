@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Physical
   - Magical
+  - Platform
   layers:
   - Default
   - TransparentFX
@@ -13,7 +14,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - FlatForm
   - 
   - 
   - 

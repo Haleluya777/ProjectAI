@@ -16,7 +16,7 @@ public class Enemy_Manager : MonoBehaviour
     [SerializeField] private Enemy_Attack attack;
     [SerializeField] private EnemyAIController ai;
 
-    [SerializeField] private IBlackBoard localBlackboard = new BlackBoard();
+    [SerializeField] private IBlackBoard localBlackBoard = new BlackBoard();
     [SerializeField] private EnemyUI enemyUI;
 
     [SerializeField] private Animator anim;
@@ -30,16 +30,15 @@ public class Enemy_Manager : MonoBehaviour
 
     private EnemyStatusInfo statusInfo;
 
-    private void Awake()
+    private void Start()
     {
-        DataInitialize(statusInfo, localBlackboard);
-        iai.BlackBoardInit(localBlackboard, GameManager.instance.globalBlackBoard);
+        DataInitialize(statusInfo, localBlackBoard);
+        iai.BlackBoardInit(localBlackBoard, GameManager.instance.globalBlackBoard);
     }
 
     private void Update()
     {
-        //move.UpdateDirection(targetObj.transform);
-        UpdateDataPerFrame(localBlackboard);
+        UpdateDataPerFrame(localBlackBoard);
     }
 
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)

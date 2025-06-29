@@ -16,4 +16,4 @@ MonoBehaviour:
   attackType: 0
   coolDown: 1
   dashDistance: 20
-  duration: 0.1
+  duration: 0.2

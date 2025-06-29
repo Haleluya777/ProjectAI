@@ -24,7 +24,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private float maxStm, curStm;
     private int curMoveSpeed; //Current Move Speed
     private int jumpPower;
+    private int holdJumpPower;
     private bool isdead;
+    private bool canJump;
+    private float curjumpHoldTime;
+    private float maxjumpHoldTime;
+    private int layerMask;
 
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
@@ -42,21 +47,17 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private float remainingCoolDown;
     private string inputKey;
     private bool canRegen;
-    private bool canDash;
-    private bool inAir; //공중에 있는지 판단.
+    [SerializeField] private float coyoteTime;
+    [SerializeField] private float curcoyoteTime;
+    [SerializeField] private float checkingDis;
     [SerializeField] private float attCool, attTime;
 
     private Rigidbody2D rigid;
     private Animator anim;
     private SpriteRenderer sprite;
-    private WaitForSeconds dashTime = new WaitForSeconds(.3f);
-    private WaitForSeconds dashCoolDown = new WaitForSeconds(2f);
     private Coroutine newCorutine;
 
     private const int WALK_SPEED = 10;
-    private const int RUN_SPEED = 14;
-    private const int DASH_SPEED = 28;
-    private const float DASH_COOLDOWN = 3f;
 
     public Vector3 Dir => dir;
 
@@ -65,8 +66,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         StatusInit();
         if (currentSkill.Caster == null)
         {
-            currentSkill.SetCaster(this);   
+            currentSkill.SetCaster(this);
         }
+        layerMask = 1 << LayerMask.NameToLayer("FlatForm");
     }
 
     // Update is called once per frame
@@ -83,7 +85,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
         
         Jump();
-        //rigid.velocity.y
 
         if (CanAction)
         {
@@ -93,17 +94,17 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         
         BasicAttackTime();
         StmRegen();
-        RunningStm();
         PlayerUIUpdate();
         UseSkill();
-        DashCoolDown();
 
         currentSkill.UpdateCoolDown(Time.deltaTime);
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
         curStm = Mathf.Clamp(curStm, 0, maxStm);
 
-        if(Input.GetKeyDown(KeyCode.Q))
+
+        //상태이상이 잘 들어가나 확인용 테스트 코드.
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             //상태이상을 제공하는 제공자가 사용할 메서드.
             //현재는 ApplyEffect를 이용해서 상태이상을 제공하지 않음.
@@ -111,7 +112,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamageable>()));
         }
 
-        if(Input.GetKeyDown(KeyCode.W))
+        //이하 테스트용
+        if (Input.GetKeyDown(KeyCode.W))
         {
             ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamageable>()));
         }
@@ -127,11 +129,15 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
+    private void FixedUpdate()
+    {
+        //CheckingPlatForm();
+    }
+
     private void PlayerUIUpdate() //플레이어 UI상태를 업데이트하는 메서드드
     {
         GameManager.instance.uIManager.combatUI.HpBarUpdate(maxHp, curHp);
         GameManager.instance.uIManager.combatUI.StmBarUpdate(maxStm, curStm);
-        GameManager.instance.uIManager.combatUI.CheckDashCoolDown(remainingCoolDown, DASH_COOLDOWN);
         GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
     }
 
@@ -146,17 +152,20 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         regenSpeed = 10f;
 
         curMoveSpeed = WALK_SPEED;
-        jumpPower = 20;
+        jumpPower = 15;
+        holdJumpPower = 20;
         att = 20;
         attCool = 2f;
         attTime = 0f;
         defense = 0;
         magicalDefense = 0;
         remainingCoolDown = 0f;
+        curjumpHoldTime = 0f;
+        maxjumpHoldTime = 3f;
+        coyoteTime = 0.2f;
 
         CanAction = true;
-        canDash = true;
-        inAir = false;
+        canJump = true;
 
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent <Animator>();
@@ -195,7 +204,20 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         float horizontal = moveX;
         bool checkAttack = attacking;
         if (rigid.velocity.y > 0) { return State.Jumping; }
-        else if (rigid.velocity.y < 0) { return State.Jumping; }
+        else if (rigid.velocity.y < 0)
+        {
+            if (currentState == State.Jumping)
+            {
+                return State.Jumping;
+            }
+            else
+            {
+                if (curcoyoteTime >= coyoteTime)
+                {
+                    return State.Jumping;
+                }
+            } 
+        }
 
         return (horizontal, checkAttack) switch //이거 스위치문.
         {
@@ -232,60 +254,45 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         dir = new Vector3(moveX, 0).normalized;
         if (moveX == 0) { } else { transform.localScale = new Vector3(dir.x, 1, 1); }
         transform.position += dir * curMoveSpeed * Time.deltaTime;
-        if(Input.GetKeyDown(KeyCode.X) && canDash)
-        {
-            Dash();
-        }
-
-        else if(Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            curMoveSpeed = RUN_SPEED;
-        }
-
-        else if(Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            curMoveSpeed = WALK_SPEED;
-        }
-    }
-
-    private void RunningStm()
-    {
-        if(curMoveSpeed == RUN_SPEED)
-        {
-            curStm -= 2f * Time.deltaTime;
-        }
-    }
-
-    private void FastRun() //요거 안씀.
-    {
-        if(currentState == State.Moving && Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            curStm -= 2f * Time.deltaTime;
-            curMoveSpeed = RUN_SPEED;
-        }
-        else
-        {
-            curMoveSpeed = WALK_SPEED;
-        }
-    }
-
-    private void Dash()
-    {
-        canDash = false;
-        particle.SetActive(true);
-        remainingCoolDown = DASH_COOLDOWN;
-        curMoveSpeed = DASH_SPEED;
-        curStm -= 20f;
-        StartCoroutine(SpeedReturn());
     }
 
     private void Jump()
     {
-
-        if(Input.GetKeyDown(KeyCode.Space) && rigid.velocity.y == 0)
+        if (rigid.velocity.y < 0 && currentState != State.Jumping)
         {
-            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            curcoyoteTime += Time.deltaTime;
         }
+        else if(rigid.velocity.y == 0 || rigid.velocity.y > 0)
+        {
+            curcoyoteTime = 0;
+        }
+
+        if (curcoyoteTime <= coyoteTime)
+        {
+            if (Input.GetButtonDown("Jump") && currentState != State.Jumping)
+            {
+                rigid.velocity = new Vector2(rigid.velocity.x, 0);
+                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                curjumpHoldTime = 0;
+            }
+
+            if (Input.GetButton("Jump") && currentState == State.Jumping)
+            {
+                if (curjumpHoldTime < maxjumpHoldTime)
+                {
+                    rigid.velocity += new Vector2(0, holdJumpPower * Time.deltaTime);
+                    curjumpHoldTime += Time.deltaTime;
+                }
+            }
+        }
+    }
+
+    private void CheckingPlatForm()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, checkingDis, layerMask);
+        Debug.DrawRay(transform.position, Vector2.down * checkingDis, Color.red);
+        Debug.Log(hit.collider == null);
+        currentState = (hit.collider != null) ? State.Idle : State.Jumping;
     }
 
     private void BasicAttackTime() //기본 공격 쿨타임.
@@ -374,17 +381,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
-    private void DashCoolDown()
-    {
-        remainingCoolDown = Mathf.Clamp(remainingCoolDown, 0, DASH_COOLDOWN);
-        remainingCoolDown -= Time.deltaTime;
-
-        if(remainingCoolDown <= 0)
-        {
-            canDash = true;
-        }
-    }
-
     public void HitBoxOn()
     {
         hitBox.enabled = true;
@@ -404,6 +400,13 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             damagable.Damaged(att, "Physical");
             damagable.StatusEffectProcess(5f, "Stun");
             GameManager.instance.InBattleState();
+        }
+
+        if (other.gameObject.layer == 6)
+        {
+            Debug.Log("땅에 닿음");
+            currentState = State.Idle;
+            attacking = false;
         }
     }
 
@@ -438,12 +441,5 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         effect.RemoveEffect();
         GameManager.instance.uIManager.combatUI.RemoveEffectUI(effect.effectName);
         GameManager.instance.uIManager.combatUI.UpdateEffectUI();
-    }
-
-    IEnumerator SpeedReturn()
-    {
-        yield return dashTime;
-        particle.SetActive(false);
-        curMoveSpeed = WALK_SPEED;
     }
 }
