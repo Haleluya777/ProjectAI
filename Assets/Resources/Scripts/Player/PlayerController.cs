@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 {
     private enum State { Idle, Moving, Dash, Attacking, Jumping } //현재 플레이어 상태.
+    public Vector3 respawn;
 
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
@@ -13,7 +14,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private SkillBase currentSkill;
-    //[SerializeField] private List<SkillBase> currentSkill = new List<SkillBase>(); //나중에 쓸 리스트트
+    //[SerializeField] private List<SkillBase> currentSkill = new List<SkillBase>(); //나중에 쓸 리스트
     [SerializeField] private int skillNum;
     [SerializeField] private BoxCollider2D hitBox;
     [SerializeField] private GameObject particle;
@@ -134,7 +135,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         //CheckingPlatForm();
     }
 
-    private void PlayerUIUpdate() //플레이어 UI상태를 업데이트하는 메서드드
+    private void PlayerUIUpdate() //플레이어 UI상태를 업데이트하는 메서드
     {
         GameManager.instance.uIManager.combatUI.HpBarUpdate(maxHp, curHp);
         GameManager.instance.uIManager.combatUI.StmBarUpdate(maxStm, curStm);
@@ -313,7 +314,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         curStm -= 10;
     }
 
-    private void UseSkill() //스킬 사용메서드드
+    private void UseSkill() //스킬 사용메서드
     {
         skillNum = (Input.inputString.ToUpper()) switch //이것도 스위치문.
         {
@@ -441,5 +442,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         effect.RemoveEffect();
         GameManager.instance.uIManager.combatUI.RemoveEffectUI(effect.effectName);
         GameManager.instance.uIManager.combatUI.UpdateEffectUI();
+    }
+
+    public void RespawnInteract()
+    {
+        Debug.Log("리스폰 지점 저장");
+        respawn = transform.position;
     }
 }
