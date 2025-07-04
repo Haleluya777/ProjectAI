@@ -48,6 +48,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private float remainingCoolDown;
     private string inputKey;
     private bool canRegen;
+    private bool canUseSkill;
+    [SerializeField] private bool delayed;
     [SerializeField] private float coyoteTime;
     [SerializeField] private float curcoyoteTime;
     [SerializeField] private float checkingDis;
@@ -233,18 +235,16 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         switch(curState)
         {
             case State.Idle:
-                anim.SetBool("isMoving", false);
-                anim.SetBool("IsJumping", false);
+                anim.CrossFade("Idle", 0f);
                 break;
 
             case State.Moving:
-                anim.SetBool("isMoving", true);
-                anim.SetBool("IsJumping", false);
+                anim.CrossFade("Run", 0f);
                 Movement();
                 break;
 
             case State.Jumping:
-                anim.SetBool("IsJumping", true);
+                anim.CrossFade("Jump", 0f);
                 Movement();
                 break;
         }
@@ -308,7 +308,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private void Attack()
     {
         currentState = State.Attacking;
-        anim.SetTrigger("isAttack");
+        //anim.SetTrigger("isAttack");
+        anim.CrossFade("Attack_01", 0f);
         attacking = true;
         attTime = 0f;
         curStm -= 10;
@@ -323,14 +324,37 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             ("B") => 3,
             _ => 0
         };
-        
-        if(skillNum != 0 && !currentSkill.OnCoolDown)
+
+        if (skillNum == 0 || currentSkill == null) return;
+        if (currentSkill.OnCoolDown) return;
+
+        canUseSkill = false;
+
+        if (!attacking)
         {
-            //Debug.Log("스킬 사용!");
+            canUseSkill = true;
+        }
+
+        else if (attacking && currentSkill.cancleDelay)
+        {
+            canUseSkill = true;
+        }
+
+        if (canUseSkill)
+        {
+            if (currentSkill.UseSkill())
+            {
+                if (attacking && currentSkill.cancleDelay)
+                {
+                    attacking = false;
+                    hitBox.enabled = false;
+                }
+            }
             currentState = State.Attacking;
-            attacking = true;
-            anim.SetTrigger("Skill_" + skillNum.ToString());
+            anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
             currentSkill.UseSkill();
+            attacking = currentSkill.attackable;
+            delayed = false;
         }
     }
 
@@ -390,7 +414,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public void HitBoxOff()
     {
         hitBox.enabled = false;
+        //attacking = false;
+        delayed = true;
+    }
+
+    public void DelayEnd()
+    {
         attacking = false;
+        delayed = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -442,6 +473,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         effect.RemoveEffect();
         GameManager.instance.uIManager.combatUI.RemoveEffectUI(effect.effectName);
         GameManager.instance.uIManager.combatUI.UpdateEffectUI();
+    }
+
+    IEnumerator AttackDelay()
+    {
+        yield return new WaitForSeconds(0.6f);
     }
 
     public void RespawnInteract()

@@ -15,6 +15,8 @@ public abstract class SkillBase : ScriptableObject //모든 스킬들이 공통�
     private ISkillCaster caster; //이 부분이 null인 버그 있음. 나중에 고쳐야 함. //수정 완.
     public float coolDown;
     private float remainingCoolDown;
+    public bool attackable; //공격 판정이 존재하는지 여부를 체크함. True = 공격 판정을 동반한 스킬. False = 공격 판정을 동반하지 않는 스킬.
+    public bool cancleDelay; //후딜 캔슬이 가능한지 여부 체크.
 
     public bool OnCoolDown => remainingCoolDown > 0;
     public float RemainingCoolDown => remainingCoolDown;

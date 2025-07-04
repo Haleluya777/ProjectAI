@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageCalculator: {fileID: 11400000, guid: 6e5294f56672bcf49b061baa5c8db531, type: 2}
   attackType: 1
-  player: {fileID: 0}
   coolDown: 3
+  attackable: 1
+  cancleDelay: 0
   fireBallObj: {fileID: 953012935713848762, guid: 864e77b12a281f54b81e4f1ac1fce509, type: 3}

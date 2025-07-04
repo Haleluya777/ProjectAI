@@ -5,12 +5,12 @@ using UnityEngine;
 public class IInteractable : MonoBehaviour
 {
     GameObject interactsign;
-    GameObject player;
+    [SerializeField] private GameObject player;
     PlayerController controller;
     bool isInteractable;
     void Start()
     {
-        player = GameObject.FindWithTag("Player");
+        //player = GameObject.FindWithTag("Player");
         interactsign = player.transform.GetChild(3).gameObject;
         controller = GetComponent<PlayerController>();
     }
@@ -24,14 +24,16 @@ public class IInteractable : MonoBehaviour
             isInteractable = true;
         }
     }
+    
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject == player)
         {
             interactsign.SetActive(false);
-            isInteractable= false;
+            isInteractable = false;
         }
     }
+    
     private void Update()
     {
         if (isInteractable && Input.GetKeyDown(KeyCode.I))

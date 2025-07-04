@@ -15,5 +15,7 @@ MonoBehaviour:
   damageCalculator: {fileID: 0}
   attackType: 0
   coolDown: 1
+  attackable: 0
+  cancleDelay: 1
   dashDistance: 20
   duration: 0.2
