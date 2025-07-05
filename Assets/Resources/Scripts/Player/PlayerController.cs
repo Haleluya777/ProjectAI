@@ -30,10 +30,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private bool canJump;
     private float curjumpHoldTime;
     private float maxjumpHoldTime;
-    private int layerMask;
 
-    [SerializeField] private int att, defense, magicalDefense;
-    [SerializeField] private bool attacking;
+    [SerializeField] private int att, defense, magicalDefense; //공격력, 방어력, 마법 방어력 변수
+    [SerializeField] private bool attacking; //현재 공격 판정이 존재하는 행동을 진행 중인지의 여부 체크
+    [SerializeField] private bool castingSkill; //스킬 모션이 재생되고 있는지의 여부 체크
     //-------------Property-------------//
     public int CurrentHp => curHp;
     public int Att => att;
@@ -47,8 +47,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private float regenSpeed;
     private float remainingCoolDown;
     private string inputKey;
-    private bool canRegen;
-    private bool canUseSkill;
+    private bool canRegen; //스태미너가 회복 가능한 상태인지 확인
     [SerializeField] private bool delayed;
     [SerializeField] private float coyoteTime;
     [SerializeField] private float curcoyoteTime;
@@ -71,7 +70,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             currentSkill.SetCaster(this);
         }
-        layerMask = 1 << LayerMask.NameToLayer("FlatForm");
     }
 
     // Update is called once per frame
@@ -270,7 +268,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         if (curcoyoteTime <= coyoteTime)
         {
-            if (Input.GetButtonDown("Jump") && currentState != State.Jumping)
+            if (Input.GetButtonDown("Jump") && currentState != State.Jumping && !delayed && !attacking)
             {
                 rigid.velocity = new Vector2(rigid.velocity.x, 0);
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
@@ -286,14 +284,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 }
             }
         }
-    }
-
-    private void CheckingPlatForm()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, checkingDis, layerMask);
-        Debug.DrawRay(transform.position, Vector2.down * checkingDis, Color.red);
-        Debug.Log(hit.collider == null);
-        currentState = (hit.collider != null) ? State.Idle : State.Jumping;
     }
 
     private void BasicAttackTime() //기본 공격 쿨타임.
@@ -328,14 +318,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (skillNum == 0 || currentSkill == null) return;
         if (currentSkill.OnCoolDown) return;
 
-        canUseSkill = false;
+        bool canUseSkill = false;
 
-        if (!attacking)
+        if (!attacking && !delayed)
         {
             canUseSkill = true;
         }
 
-        else if (attacking && currentSkill.cancleDelay)
+        else if (delayed && currentSkill.cancleDelay)
         {
             canUseSkill = true;
         }
@@ -347,14 +337,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 if (attacking && currentSkill.cancleDelay)
                 {
                     attacking = false;
+                    delayed = false;
                     hitBox.enabled = false;
                 }
+                currentState = State.Attacking;
+                anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
+                currentSkill.UseSkill();
+                attacking = currentSkill.attackable;
             }
-            currentState = State.Attacking;
-            anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
-            currentSkill.UseSkill();
-            attacking = currentSkill.attackable;
-            delayed = false;
         }
     }
 
