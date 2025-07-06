@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private int curMoveSpeed; //Current Move Speed
     private int jumpPower;
     private int holdJumpPower;
+    [SerializeField] private int combo;
     private bool isdead;
     private bool canJump;
     private float curjumpHoldTime;
@@ -58,7 +59,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private Animator anim;
     private SpriteRenderer sprite;
     private Coroutine newCorutine;
-
+    private Coroutine comboCoroutine;
     private const int WALK_SPEED = 10;
 
     public Vector3 Dir => dir;
@@ -93,7 +94,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             StateAction(currentState);
         }
         
-        BasicAttackTime();
+        InputAttack();
         StmRegen();
         PlayerUIUpdate();
         UseSkill();
@@ -156,6 +157,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         jumpPower = 15;
         holdJumpPower = 20;
         att = 20;
+        combo = 1;
         attCool = 2f;
         attTime = 0f;
         defense = 0;
@@ -204,6 +206,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     {
         float horizontal = moveX;
         bool checkAttack = attacking;
+        bool _delayed = delayed;
         if (rigid.velocity.y > 0) { return State.Jumping; }
         else if (rigid.velocity.y < 0)
         {
@@ -217,14 +220,15 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 {
                     return State.Jumping;
                 }
-            } 
+            }
         }
 
-        return (horizontal, checkAttack) switch //이거 스위치문.
+        return (horizontal, checkAttack, _delayed) switch //이거 스위치문.
         {
-            (not 0, false) => State.Moving,
-            (0, false) => State.Idle,
-            (_, true) => State.Attacking
+            (not 0, false, false) => State.Moving,
+            (0, false, false) => State.Idle,
+            (_, true, _) => State.Attacking,
+            (_, _, true) => State.Attacking
         };
     }
 
@@ -286,23 +290,25 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
-    private void BasicAttackTime() //기본 공격 쿨타임.
+    private void InputAttack() //기본 공격 쿨타임.
     {
-        attTime += Time.deltaTime;
-        if (attTime >= attCool && Input.GetKeyDown(KeyCode.Z))
+        //attTime += Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.Z) && !attacking)
         {
-            Attack();
+            PerformAttack();
         }
     }
 
-    private void Attack()
+    private void PerformAttack()
     {
         currentState = State.Attacking;
-        //anim.SetTrigger("isAttack");
-        anim.CrossFade("Attack_01", 0f);
+        anim.CrossFade("Attack_0" + combo, 0f);
         attacking = true;
-        attTime = 0f;
+        delayed = false;
+        if (combo == 1) combo++;
+        else if (combo == 2) combo--;
         curStm -= 10;
+        if (comboCoroutine != null) StopCoroutine(comboCoroutine);
     }
 
     private void UseSkill() //스킬 사용메서드
@@ -399,19 +405,22 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public void HitBoxOn()
     {
         hitBox.enabled = true;
+        //attacking = true;
     }
 
     public void HitBoxOff()
     {
         hitBox.enabled = false;
-        //attacking = false;
+        attacking = false;
         delayed = true;
+        comboCoroutine = StartCoroutine(ComboReset());
     }
 
     public void DelayEnd()
     {
-        attacking = false;
+        //attacking = false;
         delayed = false;
+        
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -468,6 +477,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     IEnumerator AttackDelay()
     {
         yield return new WaitForSeconds(0.6f);
+    }
+
+    IEnumerator ComboReset()
+    {
+        yield return new WaitForSeconds(1f);
+        combo = 1;
     }
 
     public void RespawnInteract()

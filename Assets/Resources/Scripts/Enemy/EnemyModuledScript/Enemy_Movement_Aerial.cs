@@ -1,17 +1,14 @@
+using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-/// <summary>
-/// Enemy의 이동과 방향 전환을 처리하는 클래스
-/// </summary>
-public class Enemy_Movement : MonoBehaviour, IMoveable, IInitializable, IRequiredAnimator
+public class Enemy_Movement_Aerial : MonoBehaviour, IMoveable, IInitializable, IRequiredAnimator
 {
     private Transform parentTransform;
     private Animator anim;
     private float moveSpeed;
     private bool shouldMove;
-    private int dir = 1;
+    private int angle = 1;
 
     private const int OBJ_SCALE = 2;
 
@@ -41,13 +38,10 @@ public class Enemy_Movement : MonoBehaviour, IMoveable, IInitializable, IRequire
     public void MoveToTarget(Transform target)
     {
         anim.CrossFade("Enemy_Moving", 0f);
-        parentTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
-        UpdateDirection(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform"));
     }
 
     public void UpdateDirection(Transform targetPos)
     {
-        dir = parentTransform.position.x > targetPos.position.x ? 1 : -1;
-        transform.parent.localScale = new Vector3(OBJ_SCALE * dir, OBJ_SCALE, OBJ_SCALE);
+        
     }
 }
