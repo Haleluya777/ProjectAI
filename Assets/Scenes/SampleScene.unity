@@ -9697,6 +9697,7 @@ MonoBehaviour:
   skillNum: 0
   hitBox: {fileID: 1200567237}
   particle: {fileID: 561683600}
+  combo: 0
   att: 0
   defense: 0
   magicalDefense: 0
@@ -9754,7 +9755,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.56, y: 1.28}
+  m_Size: {x: 16, y: 16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -9797,7 +9798,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 16, y: 16}
-    newSize: {x: 2.56, y: 1.28}
+    newSize: {x: 16, y: 16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -10665,6 +10666,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit_Base
       objectReference: {fileID: 0}
+    - target: {fileID: 4286279113192876102, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4897081054617709871, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.9
@@ -10707,7 +10712,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6379926822134601857, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

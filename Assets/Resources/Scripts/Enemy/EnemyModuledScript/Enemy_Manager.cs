@@ -11,24 +11,25 @@ public class Enemy_Manager : MonoBehaviour
 {
     [SerializeField] private EnemyStatusScriptableObject dataBase;
 
-    [SerializeField] private Enemy_Status_Manager status;
-    [SerializeField] private Enemy_Movement move;
-    [SerializeField] private Enemy_Attack attack;
-    [SerializeField] private EnemyAIController ai;
-
     [SerializeField] private IBlackBoard localBlackBoard = new BlackBoard();
     [SerializeField] private EnemyUI enemyUI;
 
     [SerializeField] private Animator anim;
 
-    public IDamageable istatus => status;
-    public IMoveable imove => move;
-    public IAttackable iattack => attack;
-    public IAiManager iai => ai;
+    public IDamageable istatus;
+    public IMoveable imove;
+    public IAttackable iattack;
+    public IAiManager iai;
 
     [SerializeField] private int id;
 
     private EnemyStatusInfo statusInfo;
+
+    private void Awake()
+    {
+        InterfaceInjection();
+        Debug.Log(istatus == null);
+    }
 
     private void Start()
     {
@@ -39,6 +40,14 @@ public class Enemy_Manager : MonoBehaviour
     private void Update()
     {
         UpdateDataPerFrame(localBlackBoard);
+    }
+
+    private void InterfaceInjection()
+    {
+        istatus = GetComponentInChildren<IDamageable>();
+        iattack = GetComponentInChildren<IAttackable>();
+        imove = GetComponentInChildren<IMoveable>();
+        iai = GetComponentInChildren<IAiManager>();
     }
 
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
@@ -58,7 +67,7 @@ public class Enemy_Manager : MonoBehaviour
 
     public void UpdateDataPerFrame(IBlackBoard local)
     {
-        enemyUI.HpBarUpdate(status.MaxHp, status.CurrentHp);
+        //enemyUI.HpBarUpdate(status.MaxHp, status.CurrentHp);
         //enemyUI.TextUpdate(currentState.ToString());
         foreach (var updatedData in GetComponentsInChildren<IInitializable>())
         {

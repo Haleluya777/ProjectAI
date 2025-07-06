@@ -69,7 +69,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     private void DamagedProcess(int totalDmg, Color txtColor)
     {
         currentHp -= totalDmg;
-
+        if (currentHp <= 0) Dead();
         var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
         dmgText.transform.parent = this.transform.parent.transform.GetChild(0);
         dmgText.transform.localPosition = new Vector2(0, 5.5f);
@@ -93,7 +93,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
 
         else //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있는 경우.
         {
-            if (activeEffectCoroutines.TryGetValue(effect.effectName, out Coroutine runningCoroutine))
+            if (activeEffectCoroutines.TryGetValue(effect.effectName, out Coroutine runningCoroutine) && transform.parent.gameObject.activeSelf)
             {
                 StopCoroutine(runningCoroutine);
                 activeEffectCoroutines[effect.effectName] = StartCoroutine(RemoveEffectAfterDuration(effect));
@@ -104,6 +104,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     public void Dead()
     {
         Debug.Log("죽었다!");
+        this.gameObject.transform.parent.gameObject.SetActive(false);
     }
     
     IEnumerator RemoveEffectAfterDuration(StatusEffect effect) //상태 이상 제거.

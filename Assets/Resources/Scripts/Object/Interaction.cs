@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IInteractable : MonoBehaviour
+public class Interaction : MonoBehaviour
 {
     GameObject interactsign;
     [SerializeField] private GameObject player;
@@ -15,7 +15,7 @@ public class IInteractable : MonoBehaviour
         controller = GetComponent<PlayerController>();
     }
 
-    // °¢°¢ ¹üÀ§¿¡ ÀÖÀ» °æ¿ì¿Í ¾Æ´Ò °æ¿ì
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½
     void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject == player)
@@ -38,8 +38,10 @@ public class IInteractable : MonoBehaviour
     {
         if (isInteractable && Input.GetKeyDown(KeyCode.I))
         {
-            //»óÈ£ÀÛ¿ë ¸Þ¼­µå
-            Debug.Log("»óÈ£ÀÛ¿ë");
+            //ï¿½ï¿½È£ï¿½Û¿ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½
+            Debug.Log("ï¿½ï¿½È£ï¿½Û¿ï¿½");
+
+            //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
             controller.RespawnInteract();
         }
     }

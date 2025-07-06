@@ -340,7 +340,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             if (currentSkill.UseSkill())
             {
-                if (attacking && currentSkill.cancleDelay)
+                if (delayed && currentSkill.cancleDelay)
                 {
                     attacking = false;
                     delayed = false;
