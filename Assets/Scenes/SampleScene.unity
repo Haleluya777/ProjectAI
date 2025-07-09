@@ -9709,6 +9709,8 @@ MonoBehaviour:
   checkingDis: 0.5
   attCool: 0
   attTime: 0
+  movingspeed: 0
+  overground: 0
 --- !u!212 &1915231746
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -9832,7 +9834,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 5
+  m_Constraints: 4
 --- !u!95 &1915231749
 Animator:
   serializedVersion: 5

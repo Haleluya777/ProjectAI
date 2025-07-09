@@ -63,6 +63,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private const int WALK_SPEED = 10;
 
     public Vector3 Dir => dir;
+    public float movingspeed;
+    public bool overground;
 
     void Start()
     {
@@ -207,8 +209,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         float horizontal = moveX;
         bool checkAttack = attacking;
         bool _delayed = delayed;
-        if (rigid.velocity.y > 0) { return State.Jumping; }
-        else if (rigid.velocity.y < 0)
+        if (rigid.velocity.y > 0 && overground) { return State.Jumping; }
+        else if (rigid.velocity.y < 0 && overground)
         {
             if (currentState == State.Jumping)
             {
@@ -237,6 +239,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         switch(curState)
         {
             case State.Idle:
+                rigid.velocity = new Vector2(0, rigid.velocity.y);
                 anim.CrossFade("Idle", 0f);
                 break;
 
@@ -255,17 +258,18 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private void Movement() //이동 메서드. 입력값을 받아서 작동하는 건 아님.
     {
         dir = new Vector3(moveX, 0).normalized;
-        if (moveX == 0) { } else { transform.localScale = new Vector3(dir.x, 1, 1); }
-        transform.position += dir * curMoveSpeed * Time.deltaTime;
+        if (moveX == 0) {rigid.velocity = new Vector2 (0, rigid.velocity.y); } 
+        else { transform.localScale = new Vector3(dir.x, 1, 1);
+        rigid.velocity = new Vector2 (moveX * curMoveSpeed, rigid.velocity.y); } movingspeed = rigid.velocity.y;
     }
 
     private void Jump()
     {
-        if (rigid.velocity.y < 0 && currentState != State.Jumping)
+        if (overground && rigid.velocity.y < 0 && currentState != State.Jumping)
         {
             curcoyoteTime += Time.deltaTime;
         }
-        else if(rigid.velocity.y == 0 || rigid.velocity.y > 0)
+        else if(!overground && rigid.velocity.y >= 0)
         {
             curcoyoteTime = 0;
         }
@@ -436,8 +440,26 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (other.gameObject.layer == 6)
         {
             Debug.Log("땅에 닿음");
+            overground = false;
             currentState = State.Idle;
             attacking = false;
+        }
+    }
+
+    private void ontriggerStay2D(Collider2D ground)
+    {
+        if (ground.gameObject.layer == 6)
+        {
+            overground = false;
+            curcoyoteTime = 0f; //땅에 닿았을 때 코요테 타임 초기화
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D ground)
+    {
+        if (ground.gameObject.layer == 6)
+        {
+            overground = true;
         }
     }
 
