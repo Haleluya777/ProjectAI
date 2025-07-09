@@ -1,23 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-
-[CreateAssetMenu(menuName = "Skill/FireBall")]
+[CreateAssetMenu(menuName = "Skill/Action/FireBall")] // 메뉴 경로를 Action으로 명확화
 public class Skill_FireBall : SkillBase
 {
-    public GameObject fireBallObj;
+    public GameObject fireBallPrefab;
 
-    public override bool UseSkill()
+    public override bool UseSkill(ISkillCaster caster)
     {
-        if (!base.UseSkill()) return false;
+        if (fireBallPrefab == null)
+        {
+            Debug.LogError("투사체 오브젝트가 할당되어 있지 않음.");
+            return false;
+        }
 
-        //Debug.Log(player == null);
-        //스킬의 고유한 기믹 ex) 투사체를 날림, 자가 버프 부여 등.
+        // Caster의 위치와 방향에 프리팹 생성
+        GameObject fireballInstance = Instantiate(fireBallPrefab, caster.GetPosition(), caster.GetRotation());
         
-        GameObject fireball = Instantiate(fireBallObj, Caster.GetPosition(), Caster.GetRotation());
-        //투사체의 방향을 결정할 변수
-        fireball.GetComponent<FireBall>().ObjInit(Caster.GetGameObject().transform, base.damageCalculator.CalculateDmg(Caster), attackType.ToString());
+        // FireBall 스크립트에 데미지와 사용자 정보 전달
+        FireBall fireballComponent = fireballInstance.GetComponent<FireBall>();
+        if (fireballComponent != null)
+        {
+            // damageCalculator를 사용하여 데미지 계산
+            int calculatedDamage = 0;
+            if (damageCalculator != null)
+            {
+                calculatedDamage = damageCalculator.CalculateDmg(caster);
+            }
+            else
+            {
+                Debug.LogWarning("Damage Calculator가 할당되지 않아 기본 데미지 0으로 설정됩니다.");
+            }
+            fireballComponent.ObjInit(caster.GetGameObject().transform, calculatedDamage, damagType.ToString());
+        }
+        else
+        {
+            Debug.LogError("FireBall Prefab에 FireBall 컴포넌트가 없음.");
+        }
+
+        Debug.Log($"{caster.GetGameObject().name}이(가) 파이어볼 발사!");
         return true;
     }
 }

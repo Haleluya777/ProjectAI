@@ -6576,7 +6576,7 @@ RectTransform:
   m_Father: {fileID: 1336094437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6735,7 +6735,7 @@ RectTransform:
   m_Father: {fileID: 1754781044}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7484,7 +7484,7 @@ RectTransform:
   m_Father: {fileID: 1802597785}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7860,7 +7860,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1545260873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8472,7 +8472,7 @@ RectTransform:
   m_Father: {fileID: 1649451160}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -9693,8 +9693,6 @@ MonoBehaviour:
   respawn: {x: 0, y: 0, z: 0}
   statusEffectUI: {fileID: 566516037}
   currentState: 0
-  currentSkill: {fileID: 11400000, guid: 41eb99799c69ade408cb27f8a6cf5b41, type: 2}
-  skillNum: 0
   hitBox: {fileID: 1200567237}
   particle: {fileID: 561683600}
   combo: 0
@@ -9709,6 +9707,7 @@ MonoBehaviour:
   checkingDis: 0.5
   attCool: 0
   attTime: 0
+  skillModule: {fileID: 11400000, guid: 2126e559884e746498c27b314de0b06d, type: 2}
 --- !u!212 &1915231746
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -10668,7 +10667,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4286279113192876102, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4897081054617709871, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10712,7 +10711,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6379926822134601857, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

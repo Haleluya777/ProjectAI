@@ -1,25 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using DG.Tweening;
-[CreateAssetMenu(menuName = "Skill/Dash")]
+using DG.Tweening; // DOTween 라이브러리 사용
+
+[CreateAssetMenu(menuName = "Skill/Action/Dash")] // 메뉴 경로를 Action으로 명확화
 public class Skill_Dash : SkillBase
 {
-    //스킬이 가지는 고유값.
-    [SerializeField] private int dashDistance; //대쉬 거리
-    [SerializeField] private float duration; //목표 도달까지 걸리는 시간
-    private int dir;
-    
-    public override bool UseSkill()
-    {
-        if (!base.UseSkill()) return false;
+    [SerializeField] private float dashDistance = 5f; // 대쉬 거리
+    [SerializeField] private float duration = 0.2f;   // 대쉬 시간
 
-        Debug.Log("대쉬 스킬!");
-        //대쉬 주요 기믹
-        dir = Caster.GetGameObject().transform.localScale.x == 1 ? 1 : -1;
-        Caster.GetGameObject().transform.DOMoveX(Caster.GetPosition().x + (dir * dashDistance), duration);
-        //
+    public override bool UseSkill(ISkillCaster caster)
+    {
+        Transform casterTransform = caster.GetGameObject().transform;
+
+        // 캐릭터가 바라보는 방향으로 대쉬
+        float direction = Mathf.Sign(casterTransform.localScale.x);
+        float targetX = casterTransform.position.x + (direction * dashDistance);
+
+        // DOTween을 사용하여 부드러운 이동 구현
+        casterTransform.DOMoveX(targetX, duration).SetEase(Ease.OutQuad);
+
+        Debug.Log($"{caster.GetGameObject().name}이(가) 대쉬 사용!");
         return true;
     }
 }

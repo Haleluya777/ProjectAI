@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fff5e433c3612d4fbc09624a23f58fe, type: 3}
-  m_Name: New Skill_Test Skill
+  m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
+  m_Name: TestModule
   m_EditorClassIdentifier: 
-  damageCalculator: {fileID: 11400000, guid: 272833b7278b435448e7617b1eff4620, type: 2}
-  attackType: 0
-  player: {fileID: 0}
-  coolDown: 5
+  coolDown: 2
+  skills:
+  - {fileID: 11400000, guid: 9e9b2b4564af8684e83895d48615fbd6, type: 2}
+  - {fileID: 11400000, guid: 41eb99799c69ade408cb27f8a6cf5b41, type: 2}
