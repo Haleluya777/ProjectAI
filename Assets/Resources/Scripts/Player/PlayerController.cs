@@ -5,25 +5,19 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 {
-    private enum State { Idle, Moving, Dash, Attacking, Jumping } //현재 플레이어 상태.
+    // --- 상태 및 기본 변수들 (변경 없음) ---
+    private enum State { Idle, Moving, Dash, Attacking, Jumping }
     public Vector3 respawn;
-
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
-
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
-    [SerializeField] private SkillBase currentSkill;
-    //[SerializeField] private List<SkillBase> currentSkill = new List<SkillBase>(); //나중에 쓸 리스트
-    [SerializeField] private int skillNum;
     [SerializeField] private BoxCollider2D hitBox;
     [SerializeField] private GameObject particle;
-
-    private int level; //Player Level
-
+    private int level;
     private int maxHp, curHp;
     private float maxStm, curStm;
-    private int curMoveSpeed; //Current Move Speed
+    private int curMoveSpeed;
     private int jumpPower;
     private int holdJumpPower;
     [SerializeField] private int combo;
@@ -31,60 +25,44 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private bool canJump;
     private float curjumpHoldTime;
     private float maxjumpHoldTime;
-
-    [SerializeField] private int att, defense, magicalDefense; //공격력, 방어력, 마법 방어력 변수
-    [SerializeField] private bool attacking; //현재 공격 판정이 존재하는 행동을 진행 중인지의 여부 체크
-    [SerializeField] private bool castingSkill; //스킬 모션이 재생되고 있는지의 여부 체크
-    //-------------Property-------------//
+    [SerializeField] private int att, defense, magicalDefense;
+    [SerializeField] private bool attacking;
+    [SerializeField] private bool castingSkill;
     public int CurrentHp => curHp;
     public int Att => att;
     public bool IsDead => isdead;
     public bool CanAction { get; set; }
-    //----------------------------------//
-
     private Vector3 dir;
     private float moveX;
     private float moveY;
     private float regenSpeed;
-    private float remainingCoolDown;
-    private string inputKey;
-    private bool canRegen; //스태미너가 회복 가능한 상태인지 확인
+    private bool canRegen;
     [SerializeField] private bool delayed;
     [SerializeField] private float coyoteTime;
     [SerializeField] private float curcoyoteTime;
     [SerializeField] private float checkingDis;
     [SerializeField] private float attCool, attTime;
-
     private Rigidbody2D rigid;
     private Animator anim;
     private SpriteRenderer sprite;
     private Coroutine newCorutine;
     private Coroutine comboCoroutine;
     private const int WALK_SPEED = 10;
-
     public Vector3 Dir => dir;
     public float movingspeed;
     public bool overground;
 
+    // --- 스킬 관련 변수 (새로운 설계) ---
+    [SerializeField] private Skill_Module skillModule; // SkillBase 대신 Skill_Module을 직접 사용
+
     void Start()
     {
         StatusInit();
-        if (currentSkill.Caster == null)
-        {
-            currentSkill.SetCaster(this);
-        }
+        // SetCaster 호출은 이제 필요 없음
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //매 프레임당 확인할 요소들
-        //사실 매 프레임당 메서드를 실행시키는 건 메모리 저하를 일으킬 가능성이 높음.
-        //그러나 2D 인디 게임 특성상 사용하는 메모리가 그리 많지 않기 때문에 Update문에 몰아서 사용.
-        //보통은 키보드 입력을 제외한 나머지 요소들은 Fixed업데이트에 넣거나 필요할 때만 호출하도록 함.
-
-        //Debug.Log($"현재 적용된 상태 이상 개수 : {activeEffect.Count}");
-
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
         
@@ -97,64 +75,81 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
         
         InputAttack();
+        HandleSkillInput(); // UseSkill() 대신 새로운 이름의 메서드 호출
         StmRegen();
         PlayerUIUpdate();
-        UseSkill();
 
-        currentSkill.UpdateCoolDown(Time.deltaTime);
+        // 스킬 모듈의 쿨다운을 매 프레임 업데이트
+        if (skillModule != null)
+        {
+            skillModule.UpdateCoolDown(Time.deltaTime);
+        }
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
         curStm = Mathf.Clamp(curStm, 0, maxStm);
 
-
-        //상태이상이 잘 들어가나 확인용 테스트 코드.
+        // --- 테스트용 코드 (변경 없음) ---
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            //상태이상을 제공하는 제공자가 사용할 메서드.
-            //현재는 ApplyEffect를 이용해서 상태이상을 제공하지 않음.
-            //StatusEffectProces 사용할 것.
             ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamageable>()));
         }
-
-        //이하 테스트용
         if (Input.GetKeyDown(KeyCode.W))
         {
             ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamageable>()));
         }
-
         if(Input.GetKeyDown(KeyCode.E))
         {
             ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamageable>()));
         }
-
         if(Input.GetKeyDown(KeyCode.T))
         {
             GameManager.instance.InBattleState();
         }
     }
 
-    private void FixedUpdate()
-    {
-        //CheckingPlatForm();
-    }
-
-    private void PlayerUIUpdate() //플레이어 UI상태를 업데이트하는 메서드
+    private void PlayerUIUpdate() // UI 업데이트 메서드 수정
     {
         GameManager.instance.uIManager.combatUI.HpBarUpdate(maxHp, curHp);
         GameManager.instance.uIManager.combatUI.StmBarUpdate(maxStm, curStm);
-        GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
+        // Skill_Module의 쿨다운 정보를 UI에 전달
+        if (skillModule != null)
+        {
+            GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(skillModule.RemainingCoolDown, skillModule.coolDown);
+        }
     }
 
-    private void StatusInit() //Status Initialize
+    // --- 새로운 스킬 처리 메서드 ---
+    private void HandleSkillInput()
+    {
+        // 'C' 키를 눌렀을 때 스킬 사용 시도
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if (skillModule != null && !attacking && !delayed) // 공격 중이 아닐 때만 사용 가능 (필요에 따라 조건 변경)
+            {
+                if (skillModule.TryUseSkill(this)) // this는 ISkillCaster를 구현한 PlayerController 자신을 의미
+                {
+                    // 스킬 사용 성공 시 애니메이션 등 후처리
+                    Debug.Log("스킬 사용 성공!");
+                    currentState = State.Attacking; // 예시: 스킬 사용 시 공격 상태로 변경
+                    anim.CrossFade("Skill_1", 0f); // 예시: 스킬 애니메이션 재생
+                }
+                else
+                {
+                    Debug.Log("스킬이 쿨다운 중입니다.");
+                }
+            }
+        }
+    }
+
+    // --- 기존 메서드들 (대부분 변경 없음) ---
+    private void StatusInit()
     {
         level = 1;
-
         maxHp = 100;
         maxStm = 100;
         curHp = maxHp;
         curStm = maxStm;
         regenSpeed = 10f;
-
         curMoveSpeed = WALK_SPEED;
         jumpPower = 15;
         holdJumpPower = 20;
@@ -164,47 +159,38 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         attTime = 0f;
         defense = 0;
         magicalDefense = 0;
-        remainingCoolDown = 0f;
         curjumpHoldTime = 0f;
         maxjumpHoldTime = 3f;
         coyoteTime = 0.2f;
-
         CanAction = true;
         canJump = true;
-
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent <Animator>();
         sprite = this.GetComponent<SpriteRenderer>();
     }
 
-    //ISkillCaster 메서드 재정의
     public Vector3 GetPosition()
     {
         return transform.position;
     }
-
     public Quaternion GetRotation()
     {
         return transform.rotation;
     }
-
     public int GetAttackPower()
     {
         return Att;
     }
-
     public IDamageable GetDamageableComponent()
     {
-        return this; // PlayerController가 IDamageable을 구현하므로 자신을 반환
+        return this;
     }
-
     public GameObject GetGameObject()
     {
         return gameObject;
     }
-    // 여기까지 ISkillCaster재정의
 
-    private State StateUpdate() //플레이어의 상태를 반환함.
+    private State StateUpdate()
     {
         float horizontal = moveX;
         bool checkAttack = attacking;
@@ -212,20 +198,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (rigid.velocity.y > 0 && overground) { return State.Jumping; }
         else if (rigid.velocity.y < 0 && overground)
         {
-            if (currentState == State.Jumping)
-            {
-                return State.Jumping;
-            }
-            else
-            {
-                if (curcoyoteTime >= coyoteTime)
-                {
-                    return State.Jumping;
-                }
-            }
+            if (currentState == State.Jumping) { return State.Jumping; }
+            else { if (curcoyoteTime >= coyoteTime) { return State.Jumping; } }
         }
-
-        return (horizontal, checkAttack, _delayed) switch //이거 스위치문.
+        return (horizontal, checkAttack, _delayed) switch
         {
             (not 0, false, false) => State.Moving,
             (0, false, false) => State.Idle,
@@ -255,7 +231,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
-    private void Movement() //이동 메서드. 입력값을 받아서 작동하는 건 아님.
+    private void Movement()
     {
         dir = new Vector3(moveX, 0).normalized;
         if (moveX == 0) {rigid.velocity = new Vector2 (0, rigid.velocity.y); } 
@@ -282,7 +258,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 curjumpHoldTime = 0;
             }
-
             if (Input.GetButton("Jump") && currentState == State.Jumping)
             {
                 if (curjumpHoldTime < maxjumpHoldTime)
@@ -294,9 +269,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
-    private void InputAttack() //기본 공격 쿨타임.
+    private void InputAttack()
     {
-        //attTime += Time.deltaTime;
         if (Input.GetKeyDown(KeyCode.Z) && !attacking)
         {
             PerformAttack();
@@ -315,78 +289,23 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (comboCoroutine != null) StopCoroutine(comboCoroutine);
     }
 
-    private void UseSkill() //스킬 사용메서드
-    {
-        skillNum = (Input.inputString.ToUpper()) switch //이것도 스위치문.
-        {
-            ("C") => 1,
-            ("V") => 2,
-            ("B") => 3,
-            _ => 0
-        };
-
-        if (skillNum == 0 || currentSkill == null) return;
-        if (currentSkill.OnCoolDown) return;
-
-        bool canUseSkill = false;
-
-        if (!attacking && !delayed)
-        {
-            canUseSkill = true;
-        }
-
-        else if (delayed && currentSkill.cancleDelay)
-        {
-            canUseSkill = true;
-        }
-
-        if (canUseSkill)
-        {
-            if (currentSkill.UseSkill())
-            {
-                if (delayed && currentSkill.cancleDelay)
-                {
-                    attacking = false;
-                    delayed = false;
-                    hitBox.enabled = false;
-                }
-                currentState = State.Attacking;
-                anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
-                currentSkill.UseSkill();
-                attacking = currentSkill.attackable;
-            }
-        }
-    }
-
     public void Dead()
     {
-        
+
     }
 
-    public void Damaged(int dmg, string attackType) //데미지를 받을 때 실행시킬 메서드. Damagable인터페이스를 상속했기 때문에 무조건 이 메서드는 정의되어야 함.
+    public void Damaged(int dmg, string attackType)
     {
         Color txtcolor = new Color();
-        int totalDmg = new int();
-
-        if (attackType == "Physical")
-        {
-            totalDmg = dmg - defense;
-            txtcolor = Color.white;
-        }
-
-        else if (attackType == "Magical")
-        {
-            totalDmg = dmg - magicalDefense;
-            txtcolor = Color.blue;
-        }
-
+        int totalDmg = 0;
+        if (attackType == "Physical") { totalDmg = dmg - defense; txtcolor = Color.white; }
+        else if (attackType == "Magical") { totalDmg = dmg - magicalDefense; txtcolor = Color.blue; }
         DamagedProcess(totalDmg, txtcolor);
     }
 
-    private void DamagedProcess(int totalDmg, Color txtColor) //데미지 받는 과정.
+    private void DamagedProcess(int totalDmg, Color txtColor)
     {
         curHp -= totalDmg;
-
         var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
         dmgText.transform.SetParent(this.transform.GetChild(0));
         dmgText.transform.localPosition = new Vector2(0, 4.5f);
@@ -409,7 +328,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public void HitBoxOn()
     {
         hitBox.enabled = true;
-        //attacking = true;
     }
 
     public void HitBoxOff()
@@ -422,14 +340,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     public void DelayEnd()
     {
-        //attacking = false;
         delayed = false;
-        
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponentInChildren<IDamageable>() != null && attacking) //충돌한 오브젝트가 IDamagable인터페이스를 상속하면 아래 명령어 실행.
+        if (other.GetComponentInChildren<IDamageable>() != null && attacking)
         {
             IDamageable damagable = other.GetComponentInChildren<IDamageable>();
             damagable.Damaged(att, "Physical");
@@ -465,7 +381,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
     {
-        if(!activeEffect.ContainsKey(effect.effectName)) //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있지 않을 경우.
+        if(!activeEffect.ContainsKey(effect.effectName))
         {
             activeEffect.Add(effect.effectName, effect);
             effect.ApplyEffect();
@@ -474,8 +390,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             newCorutine = StartCoroutine(RemoveEffectAfterDuration(effect));
             activeEffectCoroutines.Add(effect.effectName, newCorutine);
         }
-
-        else //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있는 경우.
+        else
         {
             if (activeEffectCoroutines.TryGetValue(effect.effectName, out Coroutine runningCoroutine))
             {
@@ -486,7 +401,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
-    IEnumerator RemoveEffectAfterDuration(StatusEffect effect) //상태 이상 제거.
+    IEnumerator RemoveEffectAfterDuration(StatusEffect effect)
     {
         yield return new WaitForSeconds(effect.duration);
         activeEffect.Remove(effect.effectName);
@@ -494,11 +409,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         effect.RemoveEffect();
         GameManager.instance.uIManager.combatUI.RemoveEffectUI(effect.effectName);
         GameManager.instance.uIManager.combatUI.UpdateEffectUI();
-    }
-
-    IEnumerator AttackDelay()
-    {
-        yield return new WaitForSeconds(0.6f);
     }
 
     IEnumerator ComboReset()

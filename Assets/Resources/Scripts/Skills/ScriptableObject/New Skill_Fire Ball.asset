@@ -12,9 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56601e3e32e7c694880eaefec2237a9a, type: 3}
   m_Name: New Skill_Fire Ball
   m_EditorClassIdentifier: 
+  damagType: 1
   damageCalculator: {fileID: 11400000, guid: 6e5294f56672bcf49b061baa5c8db531, type: 2}
-  attackType: 1
-  coolDown: 3
-  attackable: 1
-  cancleDelay: 0
-  fireBallObj: {fileID: 953012935713848762, guid: 864e77b12a281f54b81e4f1ac1fce509, type: 3}
+  fireBallPrefab: {fileID: 953012935713848762, guid: 864e77b12a281f54b81e4f1ac1fce509, type: 3}

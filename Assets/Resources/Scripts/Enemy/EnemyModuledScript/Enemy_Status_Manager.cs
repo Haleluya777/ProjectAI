@@ -68,12 +68,13 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
 
     private void DamagedProcess(int totalDmg, Color txtColor)
     {
+        Debug.Log(totalDmg + "만큼 데미지 받음");
         currentHp -= totalDmg;
         if (currentHp <= 0) Dead();
-        var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
-        dmgText.transform.parent = this.transform.parent.transform.GetChild(0);
-        dmgText.transform.localPosition = new Vector2(0, 5.5f);
-        dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);
+        //var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
+        //dmgText.transform.parent = this.transform.parent.transform.GetChild(0);
+        //dmgText.transform.localPosition = new Vector2(0, 5.5f);
+        //dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);
     }
 
     public void StatusEffectProcess(float duration, string effectName)
