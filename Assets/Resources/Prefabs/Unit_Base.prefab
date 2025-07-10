@@ -54,10 +54,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dataBase: {fileID: 11400000, guid: a6bb9d741fb962d42b9863862b6e482f, type: 2}
-  status: {fileID: 1543422414026605972}
-  move: {fileID: 1197701052895839943}
-  attack: {fileID: 1401941449028311829}
-  ai: {fileID: 485248839012369019}
   enemyUI: {fileID: 5612240298064162305}
   anim: {fileID: 3377061662412834048}
   id: 0
@@ -251,6 +247,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   behaviorTreeAsset: {fileID: 11400000, guid: 303b85f963905424ab5342b6fd99f56b, type: 2}
+--- !u!1 &1225014852276605420
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3486372668658756047}
+  m_Layer: 0
+  m_Name: RayCastPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3486372668658756047
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1225014852276605420}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.61, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6526197262420400438}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1528873311071710897
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,7 +307,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3486372668658756047}
   m_Father: {fileID: 4897081054617709871}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1197701052895839943
@@ -295,6 +323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 000c51c476132fd4eb72d377e2344c09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  raycastPos: {fileID: 0}
 --- !u!1 &6566219194504966061
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,11 +426,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3066286526847499167, guid: b85b41c327158b9458efd5663b66ba70, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5295180761993300824, guid: b85b41c327158b9458efd5663b66ba70, type: 3}
       propertyPath: m_Name
       value: UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 5295180761993300824, guid: b85b41c327158b9458efd5663b66ba70, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8532291555142901874, guid: b85b41c327158b9458efd5663b66ba70, type: 3}
       propertyPath: m_Pivot.x

@@ -15,7 +15,7 @@ MonoBehaviour:
   nodeName: PerformMovement
   targetKey: Movement
   methodName: MoveToTarget
-  hasParameter: 1
-  parameterKey: PlayerTransform
-  parameterType: 5
+  hasParameter: 0
+  parameterKey: 
+  parameterType: 0
   parameterSource: 0

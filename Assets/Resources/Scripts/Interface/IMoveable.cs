@@ -4,6 +4,6 @@ public interface IMoveable
 {
     bool ShouldMove { get; }
     Transform ParentTransform { get; }
-    void MoveToTarget(Transform target);
+    void MoveToTarget();
     void UpdateDirection(Transform targetPosition);
 }
