@@ -7,6 +7,8 @@ public class Skill_Module : ScriptableObject
 {
     public float coolDown;
     private float remainingCoolDown;
+    public bool cancleDelay;
+    public bool attackable;
 
     [SerializeField]
     private List<SkillBase> skills = new List<SkillBase>();
@@ -15,7 +17,7 @@ public class Skill_Module : ScriptableObject
     public float RemainingCoolDown => remainingCoolDown;
 
     // 스킬 사용을 시도하는 메서드
-    public bool TryUseSkill(ISkillCaster caster)
+    public bool UseSkill(ISkillCaster caster)
     {
         if (OnCoolDown) return false;
 
