@@ -28,7 +28,7 @@ public class Skill_FireBall : SkillBase
             }
             else
             {
-                Debug.LogWarning("Damage Calculator가 할당되지 않아 기본 데미지 0으로 설정됨.");
+                Debug.LogWarning("Damage Calculator가 할당되지 않아 기본 데미지 0으로 설정됩니다.");
             }
             fireballComponent.ObjInit(caster.GetGameObject().transform, calculatedDamage, damagType.ToString());
         }
@@ -37,7 +37,7 @@ public class Skill_FireBall : SkillBase
             Debug.LogError("FireBall Prefab에 FireBall 컴포넌트가 없음.");
         }
 
-        Debug.Log("투사체 발사");
+        Debug.Log($"{caster.GetGameObject().name}이(가) 파이어볼 발사!");
         return true;
     }
 }

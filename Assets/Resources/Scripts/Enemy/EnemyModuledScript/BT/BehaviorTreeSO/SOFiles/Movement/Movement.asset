@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeName: Movement
   children:
-  - {fileID: 11400000, guid: fd4dc1bba2aa0d848b344c40cdc317a9, type: 2}
+  - {fileID: 11400000, guid: 5719c35771992c746857f591deb057ef, type: 2}
+  - {fileID: 11400000, guid: 265414b1d5458084aaa3bd030333bddd, type: 2}
   - {fileID: 11400000, guid: 265414b1d5458084aaa3bd030333bddd, type: 2}

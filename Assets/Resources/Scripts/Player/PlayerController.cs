@@ -23,7 +23,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private int combo;
     private bool isdead;
     private bool canJump;
-    [SerializeField] private bool canUseSkill;
     private float curjumpHoldTime;
     private float maxjumpHoldTime;
     [SerializeField] private int att, defense, magicalDefense;
@@ -50,19 +49,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private Coroutine comboCoroutine;
     private const int WALK_SPEED = 10;
     public Vector3 Dir => dir;
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-    [SerializeField] private Skill_Module currentSkill;
-=======
->>>>>>> Stashed changes
     public float movingspeed;
     public bool overground;
 
     // --- 스킬 관련 변수 (새로운 설계) ---
     [SerializeField] private Skill_Module skillModule; // SkillBase 대신 Skill_Module을 직접 사용
 
->>>>>>> fc0a1f0203e4ba89ce98f8caa10b09030e86ea3d
     void Start()
     {
         StatusInit();
@@ -81,23 +73,22 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             currentState = StateUpdate();
             StateAction(currentState);
         }
-
-        CheckingCast();
-        UseSkill();
+        
         InputAttack();
+        HandleSkillInput(); // UseSkill() 대신 새로운 이름의 메서드 호출
         StmRegen();
         PlayerUIUpdate();
 
         // 스킬 모듈의 쿨다운을 매 프레임 업데이트
-        if (currentSkill != null)
+        if (skillModule != null)
         {
-            currentSkill.UpdateCoolDown(Time.deltaTime);
+            skillModule.UpdateCoolDown(Time.deltaTime);
         }
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
         curStm = Mathf.Clamp(curStm, 0, maxStm);
 
-        // --- 테스트용 ---
+        // --- 테스트용 코드 (변경 없음) ---
         if (Input.GetKeyDown(KeyCode.Q))
         {
             ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamageable>()));
@@ -121,12 +112,36 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         GameManager.instance.uIManager.combatUI.HpBarUpdate(maxHp, curHp);
         GameManager.instance.uIManager.combatUI.StmBarUpdate(maxStm, curStm);
         // Skill_Module의 쿨다운 정보를 UI에 전달
-        if (currentSkill != null)
+        if (skillModule != null)
         {
-            GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
+            GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(skillModule.RemainingCoolDown, skillModule.coolDown);
         }
     }
 
+    // --- 새로운 스킬 처리 메서드 ---
+    private void HandleSkillInput()
+    {
+        // 'C' 키를 눌렀을 때 스킬 사용 시도
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if (skillModule != null && !attacking && !delayed) // 공격 중이 아닐 때만 사용 가능 (필요에 따라 조건 변경)
+            {
+                if (skillModule.TryUseSkill(this)) // this는 ISkillCaster를 구현한 PlayerController 자신을 의미
+                {
+                    // 스킬 사용 성공 시 애니메이션 등 후처리
+                    Debug.Log("스킬 사용 성공!");
+                    currentState = State.Attacking; // 예시: 스킬 사용 시 공격 상태로 변경
+                    anim.CrossFade("Skill_1", 0f); // 예시: 스킬 애니메이션 재생
+                }
+                else
+                {
+                    Debug.Log("스킬이 쿨다운 중입니다.");
+                }
+            }
+        }
+    }
+
+    // --- 기존 메서드들 (대부분 변경 없음) ---
     private void StatusInit()
     {
         level = 1;
@@ -272,55 +287,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         else if (combo == 2) combo--;
         curStm -= 10;
         if (comboCoroutine != null) StopCoroutine(comboCoroutine);
-    }
-
-    private void CheckingCast()
-    {
-        if (!attacking && !delayed)
-        {
-            canUseSkill = true;
-        }
-
-        else if (delayed && currentSkill.cancleDelay)
-        {
-            canUseSkill = true;
-        }
-
-        else
-        {
-            canUseSkill = false;
-        }
-    }
-
-    private void UseSkill() //스킬 사용메서드
-    {
-        int skillNum = (Input.inputString.ToUpper()) switch //이것도 스위치문.
-        {
-            ("C") => 1,
-            ("V") => 2,
-            ("B") => 3,
-            _ => 0
-        };
-
-        if (skillNum == 0 || currentSkill == null) return;
-        if (currentSkill.OnCoolDown) return;
-
-        if (canUseSkill)
-        {
-            if (currentSkill.UseSkill(this))
-            {
-                if (delayed && currentSkill.cancleDelay)
-                {
-                    attacking = false;
-                    delayed = false;
-                    hitBox.enabled = false;
-                }
-                currentState = State.Attacking;
-                anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
-                currentSkill.UseSkill(this);
-                attacking = currentSkill.attackable;
-            }
-        }
     }
 
     public void Dead()
