@@ -6581,7 +6581,7 @@ RectTransform:
   m_Father: {fileID: 1336094437}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6740,7 +6740,7 @@ RectTransform:
   m_Father: {fileID: 1754781044}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7489,7 +7489,7 @@ RectTransform:
   m_Father: {fileID: 1802597785}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7865,7 +7865,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1545260873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8477,7 +8477,7 @@ RectTransform:
   m_Father: {fileID: 1649451160}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -9714,7 +9714,7 @@ MonoBehaviour:
   attTime: 0
   movingspeed: 0
   overground: 0
-  skillModule: {fileID: 0}
+  currentSkill: {fileID: 11400000, guid: 2126e559884e746498c27b314de0b06d, type: 2}
 --- !u!212 &1915231746
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -10682,11 +10682,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4897081054617709871, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 42.88
+      value: 42.8
       objectReference: {fileID: 0}
     - target: {fileID: 4897081054617709871, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.27
+      value: 6.3
       objectReference: {fileID: 0}
     - target: {fileID: 4897081054617709871, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_LocalPosition.z

@@ -52,8 +52,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public float movingspeed;
     public bool overground;
 
-    // --- 스킬 관련 변수 (새로운 설계) ---
-    [SerializeField] private Skill_Module skillModule; // SkillBase 대신 Skill_Module을 직접 사용
+    [SerializeField] private Skill_Module currentSkill;
 
     void Start()
     {
@@ -75,73 +74,29 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
         
         InputAttack();
-        HandleSkillInput(); // UseSkill() 대신 새로운 이름의 메서드 호출
+        UseSkill();
         StmRegen();
         PlayerUIUpdate();
 
         // 스킬 모듈의 쿨다운을 매 프레임 업데이트
-        if (skillModule != null)
+        if (currentSkill != null)
         {
-            skillModule.UpdateCoolDown(Time.deltaTime);
+            currentSkill.UpdateCoolDown(Time.deltaTime);
         }
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
         curStm = Mathf.Clamp(curStm, 0, maxStm);
-
-        // --- 테스트용 코드 (변경 없음) ---
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamageable>()));
-        }
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamageable>()));
-        }
-        if(Input.GetKeyDown(KeyCode.E))
-        {
-            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamageable>()));
-        }
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            GameManager.instance.InBattleState();
-        }
     }
 
-    private void PlayerUIUpdate() // UI 업데이트 메서드 수정
+    private void PlayerUIUpdate()
     {
         GameManager.instance.uIManager.combatUI.HpBarUpdate(maxHp, curHp);
         GameManager.instance.uIManager.combatUI.StmBarUpdate(maxStm, curStm);
-        // Skill_Module의 쿨다운 정보를 UI에 전달
-        if (skillModule != null)
+        if (currentSkill != null)
         {
-            GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(skillModule.RemainingCoolDown, skillModule.coolDown);
+            GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
         }
     }
-
-    // --- 새로운 스킬 처리 메서드 ---
-    private void HandleSkillInput()
-    {
-        // 'C' 키를 눌렀을 때 스킬 사용 시도
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (skillModule != null && !attacking && !delayed) // 공격 중이 아닐 때만 사용 가능 (필요에 따라 조건 변경)
-            {
-                if (skillModule.TryUseSkill(this)) // this는 ISkillCaster를 구현한 PlayerController 자신을 의미
-                {
-                    // 스킬 사용 성공 시 애니메이션 등 후처리
-                    Debug.Log("스킬 사용 성공!");
-                    currentState = State.Attacking; // 예시: 스킬 사용 시 공격 상태로 변경
-                    anim.CrossFade("Skill_1", 0f); // 예시: 스킬 애니메이션 재생
-                }
-                else
-                {
-                    Debug.Log("스킬이 쿨다운 중입니다.");
-                }
-            }
-        }
-    }
-
-    // --- 기존 메서드들 (대부분 변경 없음) ---
     private void StatusInit()
     {
         level = 1;
@@ -269,6 +224,49 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
+    private void UseSkill() //스킬 사용메서드
+    {
+        int skillNum = (Input.inputString.ToUpper()) switch //이것도 스위치문.
+        {
+            ("C") => 1,
+            ("V") => 2,
+            ("B") => 3,
+            _ => 0
+        };
+
+        if (skillNum == 0 || currentSkill == null) return;
+        if (currentSkill.OnCoolDown) return;
+
+        bool canUseSkill = false;
+
+        if (!attacking && !delayed)
+        {
+            canUseSkill = true;
+        }
+
+        else if (delayed && currentSkill.CancleDelay)
+        {
+            canUseSkill = true;
+        }
+
+        if (canUseSkill)
+        {
+            if (currentSkill.UseSkill(this))
+            {
+                if (delayed && currentSkill.CancleDelay)
+                {
+                    attacking = false;
+                    delayed = false;
+                    hitBox.enabled = false;
+                }
+                currentState = State.Attacking;
+                anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
+                currentSkill.UseSkill(this);
+                attacking = currentSkill.Attackable;
+            }
+        }
+    }
+
     private void InputAttack()
     {
         if (Input.GetKeyDown(KeyCode.Z) && !attacking)
@@ -362,7 +360,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
-    private void ontriggerStay2D(Collider2D ground)
+    private void OnTriggerStay2D(Collider2D ground)
     {
         if (ground.gameObject.layer == 6)
         {

@@ -1,20 +1,24 @@
 using System.Collections.Generic;
+using Unity.Mathematics;
 using Unity.Profiling;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, IRequiredAnimator
 {
+    private enum MovementMode {Horizontal, Vertical}
     [SerializeField] private Transform raycastPos; // 레이캐스트 시작 위치를 위한 Transform
     private Transform parentTransform;
     private Animator anim;
     private RaycastHit2D raycastHit; // 변수명 변경: raycast와 헷갈리지 않게 raycastHit으로
     private Rigidbody2D rigid;
     private Vector2 moveDirection; // 몬스터의 현재 이동 방향 (로컬)
+    private MovementMode mode;
     private float moveSpeed;
     private bool shouldMove;
     private bool patrolling;
     private bool isGround; // 지면 감지 여부
-    private int dir = 1; // 몬스터의 현재 방향 (좌/우 또는 상/하) - scale 및 이동 방향에 사용
+    private int dir = 1; // 몬스터의 현재 방향
     private int layerMask; // "FlatForm" 레이어 마스크
     private const int OBJ_SCALE = 2; // 오브젝트 스케일 상수
     [SerializeField] private const float groundRaycastDistance = 0.5f; // 지면 감지 레이캐스트 길이
@@ -48,19 +52,20 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
             rigid.velocity = Vector2.zero;
             //parentTransform.position = raycastHit.point;
             isGround = true; // isGround 상태 업데이트
+            //shouldMove = true;
         }
+
         else
         {
+            //parentTransform.rotation = Quaternion.Euler(0, 0, 0);
             rigid.gravityScale = 4; // 중력 활성화
             isGround = false; // isGround 상태 업데이트
+            //shouldMove = false;
         }
+
         if (patrolling && wasGround && !isGround)
         {
             dir *= -1; // 방향 반전
-            Debug.Log($"지면을 잃어 방향 전환: {dir}");
-            Debug.Log(patrolling);
-            Debug.Log(wasGround);
-            Debug.Log(isGround);
         }
     }
 
@@ -74,11 +79,19 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         anim = _anim;
     }
 
+    public void Chasing() //플레이어가 범위 내에 존재할 때 쫒아감.
+    {
+        patrolling = false;   
+    }
+
     public void MoveToTarget()
     {
+        if (shouldMove)
+        {
+
+        }
         anim.CrossFade("Enemy_Moving", 0f); // 애니메이션 크로스페이드
         parentTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
-
         UpdateDirection(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform"));
     }
 
