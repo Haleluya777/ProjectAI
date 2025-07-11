@@ -15,6 +15,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     private Vector2 moveDirection; // 몬스터의 현재 이동 방향 (로컬)
     private MovementMode mode;
     private float moveSpeed;
+    private float detectionRange;
     private bool shouldMove;
     private bool patrolling;
     private bool isGround; // 지면 감지 여부
@@ -33,12 +34,13 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
 
         parentTransform = this.transform.parent.transform;
         moveSpeed = info.Movement_Status.MoveSpeed;
+        detectionRange = info.Movement_Status.DetectionRange;
         patrolling = true; // 순찰 모드 활성화
 
         local.Set("Movement", this.GetComponent<IMoveable>());
+        local.Set("DetectionRange", detectionRange);
         local.Set("Transform", parentTransform);
         local.Set("MoveSpeed", moveSpeed);
-        local.Set("Patrolling", patrolling);
     }
 
     public void CheckingFlatForm()
@@ -81,7 +83,8 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
 
     public void Chasing() //플레이어가 범위 내에 존재할 때 쫒아감.
     {
-        patrolling = false;   
+        patrolling = false;
+        Debug.Log(patrolling);
     }
 
     public void MoveToTarget()

@@ -9,12 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d169cca6629f144981903bcfd63ae94, type: 3}
-  m_Name: CheckNeedMove
+  m_Script: {fileID: 11500000, guid: 94e82df21a0f3eb48832d584758fcd17, type: 3}
+  m_Name: ChasingOn
   m_EditorClassIdentifier: 
-  nodeName: CheckNeedMove
-  operatorBoard: 1
-  operandBoard: 0
-  operatorKey: DistanceToPlayer
-  operandKey: MeleeRange
-  mode: 4
+  nodeName: ChasingOn
+  targetKey: Movement
+  methodName: Chasing
+  hasParameter: 0
+  parameterKey: 
+  parameterType: 0
+  parameterSource: 0

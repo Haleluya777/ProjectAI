@@ -15,4 +15,6 @@ MonoBehaviour:
   nodeName: Movement
   children:
   - {fileID: 11400000, guid: c530ddd20964ec545a5f6a8a5c28927e, type: 2}
-  - {fileID: 11400000, guid: 265414b1d5458084aaa3bd030333bddd, type: 2}
+  - {fileID: 11400000, guid: 5719c35771992c746857f591deb057ef, type: 2}
+  - {fileID: 11400000, guid: 36c67a481b06558408bccb1e147b910b, type: 2}
+  - {fileID: 11400000, guid: 36c67a481b06558408bccb1e147b910b, type: 2}

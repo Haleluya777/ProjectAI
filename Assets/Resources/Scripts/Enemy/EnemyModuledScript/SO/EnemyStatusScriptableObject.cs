@@ -71,8 +71,10 @@ public class Enemy_Combat_Status
 public class Enemy_Movement_Status
 {
     [SerializeField] private int moveSpeed;
+    [SerializeField] private int detectionRange;
 
     public int MoveSpeed => moveSpeed;
+    public int DetectionRange => detectionRange;
 }
 
 [CreateAssetMenu(menuName = "EnemyStatus")]
