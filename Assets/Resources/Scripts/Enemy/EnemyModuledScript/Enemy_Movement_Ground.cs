@@ -81,10 +81,14 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         anim = _anim;
     }
 
-    public void Chasing() //플레이어가 범위 내에 존재할 때 쫒아감.
+    public void ChasingMode() //플레이어가 범위 내에 존재할 때 쫒아감.
     {
         patrolling = false;
-        Debug.Log(patrolling);
+    }
+
+    public void PatrollingMode()
+    {
+        patrolling = true;
     }
 
     public void MoveToTarget()
@@ -102,6 +106,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     {
         if (!patrolling) // 순찰 모드가 아닐 때
         {
+            Debug.Log("추적모드 전환");
             // 플레이어 위치에 따라 방향 설정
             dir = parentTransform.position.x > targetPos.position.x ? 1 : -1;
         }
