@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine.PlayerLoop;  // Count() 메서드를 사용하기 위해 필요
+using System;
 
 /// <summary>
 /// Enemy의 전반적인 동작을 관리하는 메인 매니저 클래스
@@ -12,7 +11,6 @@ public class Enemy_Manager : MonoBehaviour
     [SerializeField] private EnemyStatusScriptableObject dataBase;
 
     [SerializeField] private IBlackBoard localBlackBoard = new BlackBoard();
-    [SerializeField] private EnemyUI enemyUI;
 
     [SerializeField] private Animator anim;
 
@@ -28,7 +26,6 @@ public class Enemy_Manager : MonoBehaviour
     private void Awake()
     {
         InterfaceInjection();
-        Debug.Log(istatus == null);
     }
 
     private void Start()
@@ -67,8 +64,6 @@ public class Enemy_Manager : MonoBehaviour
 
     public void UpdateDataPerFrame(IBlackBoard local)
     {
-        //enemyUI.HpBarUpdate(status.MaxHp, status.CurrentHp);
-        //enemyUI.TextUpdate(currentState.ToString());
         foreach (var updatedData in GetComponentsInChildren<IInitializable>())
         {
             updatedData.UpdateDataPerFrame(local);

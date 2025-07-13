@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -38,6 +39,8 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         meleeRange = info.Combat_Status.ShortAttackRange;
         rangedRange = info.Combat_Status.LongAttackRange;
 
+        canAttack = false;
+
         blackBoard.Set("Attack", GetComponent<IAttackable>());
         blackBoard.Set("AttDamage", att);
         blackBoard.Set("MainCool", mainAttCool);
@@ -45,11 +48,11 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         blackBoard.Set("RangedCools", rangedCools);
         blackBoard.Set("MeleeRange", meleeRange);
         blackBoard.Set("RangedRange", rangedRange);
+        blackBoard.Set("CanAttack", canAttack);
     }
 
     public void UpdateDataPerFrame(IBlackBoard local)
     {
-        //Debug.Log(blackBoard.Get<float>("MainCoolRegain"));
         blackBoard.Set("MainCoolRegain", blackBoard.Get<float>("MainCoolRegain") + Time.deltaTime);
     }
 
@@ -68,10 +71,13 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         return true;
     }
 
+    public void Aelrting()
+    {
+        blackBoard.Set("CanAttack", true);
+    }
+
     public void PerformAttack()
     {
-        Debug.Log("할렐루야!");
         anim.CrossFade("Enemy_Attack", 0f);
-        blackBoard.Set("MainCoolRegain", 0f);   
     }
 }

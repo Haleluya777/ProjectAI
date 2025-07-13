@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.Profiling;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, IRequiredAnimator
 {
@@ -10,10 +8,11 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     [SerializeField] private Transform raycastPos; // 레이캐스트 시작 위치를 위한 Transform
     private Transform parentTransform;
     private Animator anim;
-    private RaycastHit2D raycastHit; // 변수명 변경: raycast와 헷갈리지 않게 raycastHit으로
+    private RaycastHit2D raycastHit;
     private Rigidbody2D rigid;
-    private Vector2 moveDirection; // 몬스터의 현재 이동 방향 (로컬)
+    private Vector2 moveDirection; // 몬스터의 현재 이동 방향
     private MovementMode mode;
+    private IBlackBoard blackBoard;
     private float moveSpeed;
     private float detectionRange;
     private bool shouldMove;
@@ -29,6 +28,8 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
 
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local) // 컴파일 될 때 최초 한번만 블랙 보드에 갱신될 정적 정보들.
     {
+        blackBoard = local;
+
         rigid = this.transform.parent.GetComponent<Rigidbody2D>();
         layerMask = 1 << LayerMask.NameToLayer("FlatForm");
 
@@ -37,36 +38,43 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         detectionRange = info.Movement_Status.DetectionRange;
         patrolling = true; // 순찰 모드 활성화
 
-        local.Set("Movement", this.GetComponent<IMoveable>());
-        local.Set("DetectionRange", detectionRange);
-        local.Set("Transform", parentTransform);
-        local.Set("MoveSpeed", moveSpeed);
-        local.Set("Patrolling", patrolling);
+        blackBoard.Set("Movement", this.GetComponent<IMoveable>());
+        blackBoard.Set("DetectionRange", detectionRange);
+        blackBoard.Set("Transform", parentTransform);
+        blackBoard.Set("MoveSpeed", moveSpeed);
+        blackBoard.Set("Patrolling", patrolling);
     }
 
     public void CheckingFlatForm()
     {
-        raycastHit = Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask);
-        bool wasGround = isGround;
+        raycastHit = Physics2D.Raycast(parentTransform.position, parentTransform.up * -1, groundRaycastDistance, layerMask);
+        isGround = Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask);
 
         if (raycastHit.collider != null)
         {
+            Vector2 currentPos = parentTransform.position;
             rigid.gravityScale = 0; // 중력 비활성화
             rigid.velocity = Vector2.zero;
-            //parentTransform.position = raycastHit.point;
-            isGround = true; // isGround 상태 업데이트
-            //shouldMove = true;
+            shouldMove = true;
+
+            if (parentTransform.rotation.z == 90)
+            {
+                parentTransform.position = new Vector2(currentPos.x, raycastHit.point.y);
+            }
+            else if (parentTransform.rotation.z == 0)
+            {
+                parentTransform.position = new Vector2(raycastHit.point.x ,currentPos.y);
+            }
         }
 
         else
         {
-            //parentTransform.rotation = Quaternion.Euler(0, 0, 0);
+            parentTransform.rotation = Quaternion.Euler(0, 0, 0);
             rigid.gravityScale = 4; // 중력 활성화
-            isGround = false; // isGround 상태 업데이트
-            //shouldMove = false;
+            shouldMove = false;
         }
 
-        if (patrolling && wasGround && !isGround)
+        if (patrolling && !isGround)// && wasGround && !isGround)
         {
             dir *= -1; // 방향 반전
         }
@@ -94,16 +102,19 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         patrolling = true;
     }
 
+    public void BeIdle()
+    {
+        anim.CrossFade("Enemy_Idle", 0f);
+    }
+
     public void MoveToTarget()
     {
         if (shouldMove)
         {
-
+            anim.CrossFade("Enemy_Moving", 0f); // 애니메이션 크로스페이드
+            parentTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
+            UpdateDirection(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform"));
         }
-        Debug.Log(patrolling);
-        anim.CrossFade("Enemy_Moving", 0f); // 애니메이션 크로스페이드
-        parentTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
-        UpdateDirection(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform"));
     }
 
     public void UpdateDirection(Transform targetPos)

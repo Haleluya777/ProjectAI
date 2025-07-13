@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "AI/Nodes/ConditionNode")]
 public class ConditionNodeSO : BaseNodeSO
 {
-    public enum CompareMode { Equal, NotEqual, GreaterOrEqual, LessOrEqual, Greater, Less }
+    public enum CompareMode { Equal, NotEqual, GreaterOrEqual, LessOrEqual, Greater, Less, True, False }
     public enum Board { local, global }
 
     public Board operatorBoard; //연산자 블랙보드

@@ -10,10 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9f6919a6ca68014ab79d69e0f44ad9b, type: 3}
-  m_Name: Attack
+  m_Name: Idle
   m_EditorClassIdentifier: 
-  nodeName: Attack
+  nodeName: Idle
   children:
-  - {fileID: 11400000, guid: 37f6b6d4fcc59a747b4a692dde4df167, type: 2}
-  - {fileID: 11400000, guid: 015e4d072328d5f45949cec89572960a, type: 2}
-  - {fileID: 11400000, guid: 38fe271e192698e42a71c7c2e65d5191, type: 2}
+  - {fileID: 11400000, guid: f93246e3ea99a4449a797187ae30d2d2, type: 2}
