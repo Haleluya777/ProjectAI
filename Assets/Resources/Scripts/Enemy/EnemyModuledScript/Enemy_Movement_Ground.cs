@@ -41,6 +41,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         local.Set("DetectionRange", detectionRange);
         local.Set("Transform", parentTransform);
         local.Set("MoveSpeed", moveSpeed);
+        local.Set("Patrolling", patrolling);
     }
 
     public void CheckingFlatForm()
@@ -81,10 +82,16 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         anim = _anim;
     }
 
-    public void Chasing() //플레이어가 범위 내에 존재할 때 쫒아감.
+    public void ChasingMode() //플레이어가 범위 내에 존재할 때 쫒아감.
     {
+        if (!patrolling) return;
         patrolling = false;
-        Debug.Log(patrolling);
+    }
+
+    public void PatrollingMode()
+    {
+        if (patrolling) return;
+        patrolling = true;
     }
 
     public void MoveToTarget()
@@ -93,6 +100,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         {
 
         }
+        Debug.Log(patrolling);
         anim.CrossFade("Enemy_Moving", 0f); // 애니메이션 크로스페이드
         parentTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
         UpdateDirection(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform"));

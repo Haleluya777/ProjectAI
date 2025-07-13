@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94e82df21a0f3eb48832d584758fcd17, type: 3}
-  m_Name: ChasingOn
+  m_Script: {fileID: 11500000, guid: 9d169cca6629f144981903bcfd63ae94, type: 3}
+  m_Name: CheckingPatrollingMode
   m_EditorClassIdentifier: 
-  nodeName: ChasingOn
-  targetKey: Movement
-  methodName: ChasingMode
-  hasParameter: 0
-  parameterKey: 
-  parameterType: 0
-  parameterSource: 0
+  nodeName: CheckingPatrollingMode
+  operatorBoard: 0
+  operandBoard: 0
+  operatorKey: Patrolling
+  operandKey: 
+  mode: 0

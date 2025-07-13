@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ConditionNode : INode
 {
-    public enum CompareMode { Equal, NotEqual, GreaterOrEqual, LessOrEqual, Greater, Less }
+    public enum CompareMode { Equal, NotEqual, GreaterOrEqual, LessOrEqual, Greater, Less, True, False }
     public enum Board { local, global }
 
     public Board _operatorBoard; //연산자 블랙보드
@@ -36,10 +36,29 @@ public class ConditionNode : INode
         var operatorValueObj = OperatorBlackBoard.Get<object>(_operatorKey);
         var operandValueObj = OperandBlackBoard.Get<object>(_operandKey);
 
-        if (operatorValueObj == null || operandValueObj == null)
+        if (operatorValueObj == null)
         {
             return INode.NodeState.Failure;
         }
+
+        else if (operandValueObj == null)
+        {
+            if (operatorValueObj is bool)
+            {
+                var operatorValue = Convert.ToBoolean(operatorValueObj);
+                switch (_mode)
+                {
+                    case CompareMode.True:
+                        return operatorValue == true ? INode.NodeState.Success : INode.NodeState.Failure;
+
+                    case CompareMode.False:
+                        return operatorValue == false ? INode.NodeState.Success : INode.NodeState.Failure;
+                }
+                return operatorValue ? INode.NodeState.Success : INode.NodeState.Failure;
+            }
+            return INode.NodeState.Failure;
+        }
+
         if (operatorValueObj is float || operandValueObj is float)
         {
             var operatorValue = Convert.ToSingle(operatorValueObj);

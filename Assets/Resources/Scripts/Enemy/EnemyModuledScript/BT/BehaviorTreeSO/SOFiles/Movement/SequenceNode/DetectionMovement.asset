@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9f6919a6ca68014ab79d69e0f44ad9b, type: 3}
-  m_Name: Movement
+  m_Name: DetectionMovement
   m_EditorClassIdentifier: 
-  nodeName: Movement
+  nodeName: DetectionMovement
   children:
-  - {fileID: 11400000, guid: c530ddd20964ec545a5f6a8a5c28927e, type: 2}
   - {fileID: 11400000, guid: 5719c35771992c746857f591deb057ef, type: 2}
+  - {fileID: 11400000, guid: fe7753b6696610c4ebdf89cbb9ad65c1, type: 2}
+  - {fileID: 11400000, guid: c530ddd20964ec545a5f6a8a5c28927e, type: 2}
   - {fileID: 11400000, guid: 36c67a481b06558408bccb1e147b910b, type: 2}
-  - {fileID: 11400000, guid: 36c67a481b06558408bccb1e147b910b, type: 2}
+  - {fileID: 11400000, guid: 265414b1d5458084aaa3bd030333bddd, type: 2}
