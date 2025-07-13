@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private Coroutine comboCoroutine;
     private const int WALK_SPEED = 10;
     public Vector3 Dir => dir;
-    public float movingspeed;
+    public Vector2 plusspeed;
     public bool overground;
 
     [SerializeField] private Skill_Module currentSkill;
@@ -119,6 +119,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         coyoteTime = 0.2f;
         CanAction = true;
         canJump = true;
+        dir = new Vector3(1, 0).normalized;
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent <Animator>();
         sprite = this.GetComponent<SpriteRenderer>();
@@ -172,6 +173,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             case State.Idle:
                 rigid.velocity = new Vector2(0, rigid.velocity.y);
                 anim.CrossFade("Idle", 0f);
+                Movement();
                 break;
 
             case State.Moving:
@@ -188,10 +190,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Movement()
     {
-        dir = new Vector3(moveX, 0).normalized;
-        if (moveX == 0) {rigid.velocity = new Vector2 (0, rigid.velocity.y); } 
-        else { transform.localScale = new Vector3(dir.x, 1, 1);
-        rigid.velocity = new Vector2 (moveX * curMoveSpeed, rigid.velocity.y); } movingspeed = rigid.velocity.y;
+        if (moveX != 0) 
+        { 
+            dir = new Vector3(moveX, 0).normalized;
+        } 
+        rigid.velocity = new Vector2 (moveX * curMoveSpeed + plusspeed.x, rigid.velocity.y); 
+        transform.localScale = new Vector3(dir.x, 1, 1);
     }
 
     private void Jump()
@@ -209,7 +213,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             if (Input.GetButtonDown("Jump") && currentState != State.Jumping && !delayed && !attacking)
             {
-                rigid.velocity = new Vector2(rigid.velocity.x, 0);
+                rigid.velocity = new Vector2(rigid.velocity.x, plusspeed.y);
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 curjumpHoldTime = 0;
             }
@@ -357,6 +361,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             overground = false;
             currentState = State.Idle;
             attacking = false;
+            plusspeed = Vector2.zero;
         }
     }
 
@@ -366,6 +371,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             overground = false;
             curcoyoteTime = 0f; //땅에 닿았을 때 코요테 타임 초기화
+            if (ground.GetComponent<Movingplatform>() != null)
+            {
+                Movingplatform platform = ground.GetComponent<Movingplatform>();
+                if (platform != null && platform.playerOnPlatform)
+                {
+                    plusspeed = new Vector2(platform.platformspd.x, platform.platformspd.y);
+                }
+            }
         }
     }
 
