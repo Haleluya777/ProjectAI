@@ -17,6 +17,7 @@ public sealed class SequenceNode : INode
 
     public INode.NodeState Evaluate(IBlackBoard local, IBlackBoard global)
     {
+        Debug.Log($"Running Sequence: {Name}");
         foreach (var child in _childs)
         {
             var state = child.Evaluate(local, global);

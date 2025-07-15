@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Animations;
 
@@ -42,14 +45,15 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         blackBoard.Set("DetectionRange", detectionRange);
         blackBoard.Set("Transform", parentTransform);
         blackBoard.Set("MoveSpeed", moveSpeed);
-        blackBoard.Set("Patrolling", patrolling);
+        blackBoard.Set("CanChangeMode", true);
+        blackBoard.Set("ModeChangeCoolDown", 7f);
     }
 
     public void CheckingFlatForm()
     {
         raycastHit = Physics2D.Raycast(parentTransform.position, parentTransform.up * -1, groundRaycastDistance, layerMask);
         isGround = Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask);
-
+        
         if (raycastHit.collider != null)
         {
             Vector2 currentPos = parentTransform.position;
@@ -63,19 +67,28 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
             }
             else if (parentTransform.rotation.z == 0)
             {
-                parentTransform.position = new Vector2(raycastHit.point.x ,currentPos.y);
+                parentTransform.position = new Vector2(raycastHit.point.x, currentPos.y);
             }
         }
 
-        else
+        else //땅, 혹은 벽을 딛고 있지 않을 때.
         {
             parentTransform.rotation = Quaternion.Euler(0, 0, 0);
             rigid.gravityScale = 4; // 중력 활성화
             shouldMove = false;
         }
 
-        if (patrolling && !isGround)// && wasGround && !isGround)
+        if (!isGround)// && wasGround && !isGround) 더 나아갈 수 없을 때.
         {
+            if (!patrolling) //추적 상태중이고
+            {
+                if (blackBoard.Get<Boolean>("CanChangeMode")) //
+                {
+                    blackBoard.Set("CanChangeMode", false);
+                    blackBoard.Set("ModeChangeCoolDown", 0f);
+                    patrolling = true;
+                }
+            }
             dir *= -1; // 방향 반전
         }
     }
@@ -83,6 +96,11 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     public void UpdateDataPerFrame(IBlackBoard local) // 매 프레임당 로컬 블랙 보드에 갱신될 정보들.
     {
         local.Set("EnemyPosition", parentTransform.position);
+        local.Set("ModeChangeCoolDown", local.Get<float>("ModeChangeCoolDown") + Time.deltaTime);
+        if (local.Get<float>("ModeChangeCoolDown") >= 7f)
+        {
+            local.Set("CanChangeMode", true);
+        }
     }
 
     public void InjectAnimator(Animator _anim)
@@ -93,10 +111,14 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     public void ChasingMode() //플레이어가 범위 내에 존재할 때 쫒아감.
     {
         if (!patrolling) return;
-        patrolling = false;
+        Debug.Log(blackBoard.Get<Boolean>("CanChangeMode"));
+        if (blackBoard.Get<Boolean>("CanChangeMode") == true)
+        {
+            patrolling = false;
+        }
     }
 
-    public void PatrollingMode()
+    public void PatrollingMode() //추적 모드 해제 및 일정 시간 동안 추적 불가.
     {
         if (patrolling) return;
         patrolling = true;
@@ -122,6 +144,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         if (!patrolling) // 순찰 모드가 아닐 때
         {
             // 플레이어 위치에 따라 방향 설정
+            Debug.Log("현재 추적중");
             dir = parentTransform.position.x > targetPos.position.x ? 1 : -1;
         }
         transform.parent.localScale = new Vector3(OBJ_SCALE * dir, OBJ_SCALE, OBJ_SCALE);
