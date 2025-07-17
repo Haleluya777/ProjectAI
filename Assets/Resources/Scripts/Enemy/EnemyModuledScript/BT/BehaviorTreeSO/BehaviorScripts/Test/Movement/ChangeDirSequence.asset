@@ -15,5 +15,4 @@ MonoBehaviour:
   nodeName: 
   children:
   - {fileID: 11400000, guid: 0c3267ed288b6fe48ab78bd9c17dc323, type: 2}
-  - {fileID: 11400000, guid: b316b570233c7f54c987001d58d1afcc, type: 2}
   - {fileID: 11400000, guid: f391bbb66c34ef243a80be8644c056f7, type: 2}
