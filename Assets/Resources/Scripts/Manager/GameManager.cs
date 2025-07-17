@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
     {
         globalBlackBoard.Set<Transform>("PlayerTransform", playerObj.transform);
         globalBlackBoard.Set("DistanceToPlayer", Vector2.Distance(playerObj.transform.position, enemyObj.transform.position));
-        //Debug.Log(globalBlackBoard.Get<float>("DistanceToPlayer"));
     }
 
     public void InBattleState()

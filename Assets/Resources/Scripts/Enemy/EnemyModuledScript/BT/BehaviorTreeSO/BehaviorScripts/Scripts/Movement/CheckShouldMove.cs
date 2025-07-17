@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CheckShouldMove", menuName = "BehviorTree/Conditions/CheckShouldMove")]
+[CreateAssetMenu(fileName = "CheckShouldMove", menuName = "BehaviorTree/Conditions/CheckShouldMove")]
 public class CheckShouldMove : EnemyConditionSO
 {
     public override NodeState Evaluate(EnemyAIController controller)

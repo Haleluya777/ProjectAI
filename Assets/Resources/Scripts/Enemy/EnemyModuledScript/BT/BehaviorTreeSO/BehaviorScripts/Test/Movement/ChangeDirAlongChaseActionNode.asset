@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae9f25a71b8699d4083a7d9d04ed4abe, type: 3}
-  m_Name: Movement
+  m_Script: {fileID: 11500000, guid: 94e82df21a0f3eb48832d584758fcd17, type: 3}
+  m_Name: ChangeDirAlongChaseActionNode
   m_EditorClassIdentifier: 
   nodeName: 
-  children:
-  - {fileID: 11400000, guid: 9a5446472626e9545b9b58873ac544cf, type: 2}
+  Action: {fileID: 11400000, guid: 16b9bd91d530c6a4aa0e4b1140a1c22a, type: 2}

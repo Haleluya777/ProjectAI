@@ -14,7 +14,6 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     private RaycastHit2D raycastHit;
     private Rigidbody2D rigid;
     private Vector2 moveDirection; // 몬스터의 현재 이동 방향
-    private MovementMode mode;
     private IBlackBoard blackBoard;
     private float moveSpeed;
     private float detectionRange;
@@ -50,6 +49,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         blackBoard.Set("Direction", 1);
         blackBoard.Set("Patrolling", true);
         blackBoard.Set("ShouldMove", false);
+        blackBoard.Set("MovementMode", MovementMode.Horizontal);
     }
 
     public void CheckingFlatForm()
@@ -68,11 +68,12 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
             if (parentTransform.rotation.z == 90)
             {
                 parentTransform.position = new Vector2(currentPos.x, raycastHit.point.y);
-
+                blackBoard.Set("MovementMode", MovementMode.Vertical);
             }
             else if (parentTransform.rotation.z == 0)
             {
                 parentTransform.position = new Vector2(raycastHit.point.x, currentPos.y);
+                blackBoard.Set("MovementMode", MovementMode.Horizontal);
             }
         }
 

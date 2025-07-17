@@ -9,10 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae9f25a71b8699d4083a7d9d04ed4abe, type: 3}
-  m_Name: ChangeDirectionSelector
+  m_Script: {fileID: 11500000, guid: 244bf625b80d7b04b912df1c2db4168f, type: 3}
+  m_Name: ChasingPlayer
   m_EditorClassIdentifier: 
-  nodeName: 
-  children:
-  - {fileID: 11400000, guid: 4f749e1928481e040b6384fb6bb1ca1e, type: 2}
-  - {fileID: 11400000, guid: 9a5446472626e9545b9b58873ac544cf, type: 2}
