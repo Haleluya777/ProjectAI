@@ -16,6 +16,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     private int maxHp;
     private int currentHp;
     private int defense;
+    private int scale;
     private int magicalDefense;
     private bool isdead;
     private int phase2Threshold;
@@ -24,6 +25,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     public int CurrentHp => currentHp;
     public int Phase2Threshold => phase2Threshold;
     public bool IsDead => isdead;
+    public int Scale => scale;
 
     public bool CanAction { get; set; }
 
@@ -32,6 +34,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
         CanAction = true;
         maxHp = info.Base_Status.HP;
         currentHp = maxHp;
+        scale = info.Base_Status.Scale;
         defense = info.Base_Status.Defense;
         magicalDefense = info.Base_Status.MagicalDefense;
     }
@@ -39,6 +42,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     public void UpdateDataPerFrame(IBlackBoard local)
     {
         local.Set("CanAction", CanAction);
+        local.Set("Scale", scale);
     }
 
     public void InjectAnimator(Animator _anim)

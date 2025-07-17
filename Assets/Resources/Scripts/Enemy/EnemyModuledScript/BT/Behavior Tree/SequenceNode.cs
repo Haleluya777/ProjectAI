@@ -1,33 +1,28 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 
+/// <summary>
+/// 자식 노드를 순서대로 실행하는 런타임 노드입니다.
+/// 자식 중 하나라도 Failure나 Running을 반환하면 즉시 중단하고 해당 상태를 반환합니다.
+/// </summary>
 public sealed class SequenceNode : INode
 {
-    public string Name { get; private set; }
-    public INode.NodeState LastState { get; private set; }
+    private readonly List<INode> _children;
 
-    List<INode> _childs;
-    public SequenceNode(string name, List<INode> childs)
+    public SequenceNode(List<INode> children)
     {
-        Name = name;
-        _childs = childs;
+        _children = children;
     }
 
-    public INode.NodeState Evaluate(IBlackBoard local, IBlackBoard global)
+    public NodeState Evaluate(EnemyAIController controller)
     {
-        Debug.Log($"Running Sequence: {Name}");
-        foreach (var child in _childs)
+        foreach (var child in _children)
         {
-            var state = child.Evaluate(local, global);
-            if (state == INode.NodeState.Running || state == INode.NodeState.Failure)
+            var state = child.Evaluate(controller);
+            if (state != NodeState.Success)
             {
-                LastState = state;
-                return state;
+                return state; // Failure 또는 Running이면 즉시 반환
             }
         }
-        LastState = INode.NodeState.Success;
-        return LastState;
+        return NodeState.Success; // 모든 자식이 성공했을 때만 성공
     }
 }

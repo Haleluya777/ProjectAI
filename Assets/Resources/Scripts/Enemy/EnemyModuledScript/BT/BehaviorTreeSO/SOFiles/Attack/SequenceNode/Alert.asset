@@ -15,6 +15,5 @@ MonoBehaviour:
   nodeName: Alert
   children:
   - {fileID: 11400000, guid: 37f6b6d4fcc59a747b4a692dde4df167, type: 2}
-  - {fileID: 11400000, guid: 80d330324edcfdc41ba05d75286d15bf, type: 2}
   - {fileID: 11400000, guid: ddffd1a12831be64f9fb81c3af166402, type: 2}
   - {fileID: 11400000, guid: beebbd088a1645546bc9a7eb904da1cd, type: 2}

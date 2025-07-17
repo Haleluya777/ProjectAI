@@ -1,32 +1,28 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
+/// <summary>
+/// 자식 노드를 순서대로 실행하는 런타임 노드입니다.
+/// 자식 중 하나라도 Success나 Running을 반환하면 즉시 중단하고 해당 상태를 반환합니다.
+/// </summary>
 public sealed class SelectorNode : INode
 {
-    public string Name { get; private set; }
-    public INode.NodeState LastState { get; private set; }
+    private readonly List<INode> _children;
 
-    private List<INode> _children;
-
-    public SelectorNode(string name, List<INode> children)
+    public SelectorNode(List<INode> children)
     {
-        Name = name;
         _children = children;
     }
 
-    public INode.NodeState Evaluate(IBlackBoard local, IBlackBoard global)
+    public NodeState Evaluate(EnemyAIController controller)
     {
         foreach (var child in _children)
         {
-            var state = child.Evaluate(local, global);
-            if (state == INode.NodeState.Success || state == INode.NodeState.Running)
+            var state = child.Evaluate(controller);
+            if (state != NodeState.Failure)
             {
-                LastState = state;
-                return state;
+                return state; // Success 또는 Running이면 즉시 반환
             }
         }
-        LastState = INode.NodeState.Failure;
-        return LastState;
+        return NodeState.Failure; // 모든 자식이 실패했을 때만 실패
     }
 }

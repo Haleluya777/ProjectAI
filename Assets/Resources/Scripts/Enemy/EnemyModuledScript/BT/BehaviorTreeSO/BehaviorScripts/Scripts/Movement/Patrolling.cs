@@ -1,0 +1,23 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "Patrolling", menuName = "BehaviorTree/Actions/Patrolling")]
+public class Patrolling : EnemyActionSO
+{
+    public override NodeState Execute(EnemyAIController controller)
+    {
+        Debug.Log("Patrolling 액션 노드 실행중");
+        Animator anim = controller.LocalBlackboard.Get<Animator>("Animator");
+        Transform objTransform = controller.LocalBlackboard.Get<Transform>("Transform");
+
+        float moveSpeed = controller.LocalBlackboard.Get<float>("MoveSpeed");
+        int dir = controller.LocalBlackboard.Get<int>("Direction");
+
+        anim.CrossFade("Enemy_Moving", 0f);
+        objTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
+
+        return NodeState.Running;
+    }
+}

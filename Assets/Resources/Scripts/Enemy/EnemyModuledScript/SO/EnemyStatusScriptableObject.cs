@@ -39,9 +39,11 @@ public class Enemy_Base_Status
     [SerializeField] private int hp;
     [SerializeField] private int defense;
     [SerializeField] private int magicalDefense;
+    [SerializeField] private int scale;
 
     public string Name => name;
     public int HP => hp;
+    public int Scale => scale;
     public int Defense => defense;
     public int MagicalDefense => magicalDefense;
 }

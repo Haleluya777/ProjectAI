@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private int curMoveSpeed;
     private int jumpPower;
     private int holdJumpPower;
+    private int scale = 1;
     [SerializeField] private int combo;
     private bool isdead;
     private bool canJump;
@@ -31,6 +32,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public int CurrentHp => curHp;
     public int Att => att;
     public bool IsDead => isdead;
+    public int Scale => scale;
     public bool CanAction { get; set; }
     private Vector3 dir;
     private float moveX;

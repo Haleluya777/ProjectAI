@@ -17,6 +17,6 @@ public class BehaviorTreeRunner
 
     public void Operate()
     {
-        var result = _rootNode.Evaluate(_local, _global);
+        //var result = _rootNode.Evaluate(_local, _global);
     }
 }

@@ -1,24 +1,21 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+/// <summary>
+/// 런타임에 ActionNodeSO로부터 생성되어, 연결된 EnemyActionSO를 실행하는 노드입니다.
+/// </summary>
 public sealed class ActionNode : INode
 {
-    public string Name { get; private set; }
-    public INode.NodeState LastState { get; private set; }
-
-    private Func<IBlackBoard, IBlackBoard, INode.NodeState> _onUpdate;
-
-    public ActionNode(string name, Func<IBlackBoard, IBlackBoard, INode.NodeState> onUpdate)
+    private readonly EnemyActionSO _action;
+    
+    public ActionNode(EnemyActionSO action)
     {
-        Name = name;
-        _onUpdate = onUpdate;
+        _action = action;
     }
 
-    public INode.NodeState Evaluate(IBlackBoard local, IBlackBoard global)
+    public NodeState Evaluate(EnemyAIController controller)
     {
-        LastState = _onUpdate?.Invoke(local, global) ?? INode.NodeState.Failure;
-        return LastState;
+        if (_action == null)
+        {
+            return NodeState.Failure;
+        }
+        return _action.Execute(controller);
     }
 }

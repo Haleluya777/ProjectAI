@@ -1,33 +1,28 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyAIController : MonoBehaviour, IAiManager
 {
-    [Header("Scriptable Tree Root")]
-    public BaseNodeSO behaviorTreeAsset;
-    [SerializeField] private IBlackBoard globalBlackboard ; //모든 몬스터가 공유하는 블랙보드
-    [SerializeField] private IBlackBoard localBlackboard;
-    private INode rootNode;
+    public BaseNodeSO behaviorTreeRoot;
 
+    // 공개 프로퍼티로 블랙보드를 노출하여 Action/Condition SO에서 쉽게 접근하도록 함
+    public IBlackBoard GlobalBlackboard { get; private set; }
+    public IBlackBoard LocalBlackboard { get; private set; }
+
+    private INode _rootNode;
+    
     void Awake()
     {
-        rootNode = TreeCompiler.Compile(behaviorTreeAsset);
+        _rootNode = TreeCompiler.Compile(behaviorTreeRoot, this);
     }
 
     public void BlackBoardInit(IBlackBoard local, IBlackBoard global)
     {
-        localBlackboard = local;
-        globalBlackboard = global;
+        LocalBlackboard = local;
+        GlobalBlackboard = global;
     }
 
     void Update()
     {
-        if (localBlackboard.Get<Boolean>("CanAction") == true)
-        {
-            rootNode?.Evaluate(localBlackboard, globalBlackboard);
-        }
+        _rootNode?.Evaluate(this);
     }
 }

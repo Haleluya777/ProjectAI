@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
@@ -19,7 +20,10 @@ public class Enemy_Animation_Event : MonoBehaviour, IInitializable
 
     public void AttackAnimationEnd()
     {
+        Debug.Log("할렐루야!");
         blackBoard.Set("CanAttack", false);
         blackBoard.Set("MainCoolRegain", 0f);
+        Debug.Log(blackBoard.Get<bool>("CanAttack"));
+        Debug.Log(blackBoard.Get<float>("MainCoolRegain"));
     }
 }

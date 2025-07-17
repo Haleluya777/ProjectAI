@@ -39,8 +39,6 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         meleeRange = info.Combat_Status.ShortAttackRange;
         rangedRange = info.Combat_Status.LongAttackRange;
 
-        canAttack = false;
-
         blackBoard.Set("Attack", GetComponent<IAttackable>());
         blackBoard.Set("AttDamage", att);
         blackBoard.Set("MainCool", mainAttCool);
@@ -48,7 +46,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         blackBoard.Set("RangedCools", rangedCools);
         blackBoard.Set("MeleeRange", meleeRange);
         blackBoard.Set("RangedRange", rangedRange);
-        blackBoard.Set("CanAttack", canAttack);
+        blackBoard.Set("CanAttack", false);
     }
 
     public void UpdateDataPerFrame(IBlackBoard local)

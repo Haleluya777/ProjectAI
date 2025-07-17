@@ -19,6 +19,7 @@ MonoBehaviour:
       hp: 100
       defense: 10
       magicalDefense: 5
+      scale: 2
     combatStatus:
       atk: 10
       shortAttackRange: 5

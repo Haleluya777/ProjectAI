@@ -1,9 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "AI/Nodes/SelectorNode")]
+[CreateAssetMenu(fileName = "SelectorNode", menuName = "BehaviorTree/Nodes/SelectorNode")]
 public class SelectorNodeSO : BaseNodeSO
 {
-    public List<BaseNodeSO> children;
+    [Tooltip("성공할 때까지 순서대로 시도할 자식 노드들입니다.")]
+    public List<BaseNodeSO> children = new List<BaseNodeSO>();
 }

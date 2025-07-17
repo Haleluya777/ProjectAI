@@ -13,6 +13,9 @@ public class Enemy_Manager : MonoBehaviour
     [SerializeField] private IBlackBoard localBlackBoard = new BlackBoard();
 
     [SerializeField] private Animator anim;
+    [SerializeField] private Rigidbody2D rigid;
+    [SerializeField] private Transform trans;
+    [SerializeField] private Transform rayCastTrans;
 
     public IDamageable istatus;
     public IMoveable imove;
@@ -20,6 +23,7 @@ public class Enemy_Manager : MonoBehaviour
     public IAiManager iai;
 
     [SerializeField] private int id;
+    private int layerMask;
 
     private EnemyStatusInfo statusInfo;
 
@@ -45,12 +49,22 @@ public class Enemy_Manager : MonoBehaviour
         iattack = GetComponentInChildren<IAttackable>();
         imove = GetComponentInChildren<IMoveable>();
         iai = GetComponentInChildren<IAiManager>();
+        Debug.Log(iai == null);
     }
 
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
     {
+        layerMask = 1 << LayerMask.NameToLayer("FlatForm");
+
         info = dataBase.GetEnemyData(id);
         anim.runtimeAnimatorController = info.Visual.Anim;
+        
+        localBlackBoard.Set("Animator", anim);
+        localBlackBoard.Set("RigidBody", rigid);
+        localBlackBoard.Set("Transform", trans);
+        localBlackBoard.Set("LayerMask", layerMask);
+        localBlackBoard.Set("RayCastTransform", rayCastTrans);
+
         foreach (var init in GetComponentsInChildren<IInitializable>())
         {
             init.DataInitialize(info, local);

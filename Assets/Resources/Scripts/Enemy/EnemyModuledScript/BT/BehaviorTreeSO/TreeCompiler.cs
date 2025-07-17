@@ -1,63 +1,41 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
+/// <summary>
+/// ScriptableObject 기반의 트리(SO)를 런타임에 실행 가능한 노드 객체로 변환합니다.
+/// </summary>
 public static class TreeCompiler
 {
-    public static INode Compile(BaseNodeSO nodeSO)
+    public static INode Compile(BaseNodeSO nodeSO, EnemyAIController controller)
     {
+        if (nodeSO == null) return null;
+
         switch (nodeSO)
         {
-            case ConditionNodeSO condition:
-                return new ConditionNode(
-                    name: condition.nodeName,
-                    operatorKey: condition.operatorKey,
-                    operandKey: condition.operandKey,
-                    operatorBoard: (ConditionNode.Board)condition.operatorBoard,
-                    operandBoard: (ConditionNode.Board)condition.operandBoard,
-                    mode: (ConditionNode.CompareMode)condition.mode
-                );
-
             case ActionNodeSO action:
-                return new ActionNode(
-                    name: action.nodeName,
-                    onUpdate: (local, global) =>
-                    {
-                        var target = local.Get<object>(action.targetKey);
-                        var method = target.GetType().GetMethod(action.methodName);
+                return new ActionNode(action.Action);
 
-                        object[] parameters = null;
-                        if (action.hasParameter)
-                        {
-                            IBlackBoard source = action.parameterSource == ActionNodeSO.ParameterSource.Global ? global : local;
-                            switch (action.parameterType)
-                            {
-                                case ActionNodeSO.ParameterType.Transform:
-                                    parameters = new object[] { source.Get<Transform>(action.parameterKey) };
-                                    break;
-                            }
-                        }
-
-                        method.Invoke(target, parameters);
-                        return INode.NodeState.Success;
-                    }
-                );
+            case ConditionNodeSO condition:
+                return new ConditionNode(condition.Condition);
 
             case SequenceNodeSO sequence:
-                List<INode> seqChildren = new();
-                foreach (var child in sequence.children)
-                    seqChildren.Add(Compile(child));
-                return new SequenceNode(sequence.nodeName, seqChildren);
+                var seqChildren = new List<INode>();
+                foreach (var childSO in sequence.children)
+                {
+                    seqChildren.Add(Compile(childSO, controller));
+                }
+                return new SequenceNode(seqChildren);
 
             case SelectorNodeSO selector:
-                List<INode> selChildren = new();
-                foreach (var child in selector.children)
-                    selChildren.Add(Compile(child));
-                return new SelectorNode(selector.nodeName, selChildren);
+                var selChildren = new List<INode>();
+                foreach (var childSO in selector.children)
+                {
+                    selChildren.Add(Compile(childSO, controller));
+                }
+                return new SelectorNode(selChildren);
 
             default:
-                UnityEngine.Debug.LogError($"[Compiler] 알 수 없는 노드 타입: {nodeSO.name}");
+                Debug.LogError($"[TreeCompiler] 알 수 없는 노드 타입입니다: {nodeSO.GetType()}");
                 return null;
         }
     }

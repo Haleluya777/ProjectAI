@@ -40,7 +40,7 @@ public class Enemy_Movement_Aerial : MonoBehaviour, IMoveable, IInitializable, I
         anim.CrossFade("Enemy_Moving", 0f);
     }
 
-    public void UpdateDirection(Transform targetPos)
+    public void UpdateDirection()
     {
         
     }
