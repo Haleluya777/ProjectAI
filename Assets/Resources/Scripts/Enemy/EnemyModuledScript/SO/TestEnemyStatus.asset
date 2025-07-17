@@ -30,7 +30,7 @@ MonoBehaviour:
       longDisAttCool:
       - 3
     movementStatus:
-      moveSpeed: 3
+      moveSpeed: 15
       detectionRange: 15
     visual:
       sprite: {fileID: 21300000, guid: d6337446ecadade40a8346255c6da2cc, type: 3}
