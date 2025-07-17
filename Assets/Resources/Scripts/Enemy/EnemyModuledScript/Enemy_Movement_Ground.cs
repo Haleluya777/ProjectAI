@@ -89,6 +89,16 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         local.Set("EnemyPosition", parentTransform.position);
 
         CheckingFlatForm();
+        MoveToTarget();
+    }
+
+    public void MoveToTarget()
+    {
+        if (blackBoard.Get<bool>("ShouldMove"))
+        {
+            int dir = blackBoard.Get<int>("Direction");
+            parentTransform.Translate(Vector2.left * dir * 10 * Time.deltaTime);
+        }
     }
 
     public void InjectAnimator(Animator _anim)
