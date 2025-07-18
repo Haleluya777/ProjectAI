@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: CheckPlayerInAttackRangeConditionNode
   m_EditorClassIdentifier: 
   nodeName: 
-  Condition: {fileID: 0}
+  Condition: {fileID: 11400000, guid: 75e58aabf020245498102d3aa99ff417, type: 2}

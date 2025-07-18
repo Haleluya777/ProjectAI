@@ -5,13 +5,24 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerInAttackDis", menuName = "BehaviorTree/Conditions/PlayerInAttackDis")]
 public class CheckPlayerInAttackDis : EnemyConditionSO
 {
-    private float attRange;
-
     public override NodeState Evaluate(EnemyAIController controller)
     {
-        attRange = controller.LocalBlackboard.Get<float>("MeleeRange");
+        float attRange = controller.LocalBlackboard.Get<float>("MeleeRange");
         float dis = GameManager.instance.globalBlackBoard.Get<float>("DistanceToPlayer");
 
-        return dis <= attRange ? NodeState.Success : NodeState.Failure;
+        if (dis <= attRange)
+        {
+            Debug.Log("공격 범위 안에 들어옴!");
+            controller.LocalBlackboard.Set("Attacking", true);
+            return NodeState.Success;
+        }
+        else
+        {
+            Debug.Log("공격 범위 밖에 있음");
+            controller.LocalBlackboard.Set("Attacking", false);
+            return NodeState.Failure;
+        }
+
+        //return dis <= attRange ? NodeState.Failure : NodeState.Success;
     }
 }

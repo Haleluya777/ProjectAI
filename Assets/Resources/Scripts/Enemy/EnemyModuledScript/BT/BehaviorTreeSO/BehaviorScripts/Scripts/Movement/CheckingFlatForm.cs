@@ -11,10 +11,9 @@ public class CheckingFlatForm : EnemyConditionSO
 
         if (!isGround)
         {
-            Debug.Log("방향을 전환합니다!");
-            return NodeState.Success;
+            controller.LocalBlackboard.Set("isGound", false);
+            return NodeState.Failure;
         }
-        Debug.Log("실패!");
         return NodeState.Failure;
     }
 }

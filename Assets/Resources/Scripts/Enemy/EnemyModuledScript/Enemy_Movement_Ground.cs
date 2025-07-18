@@ -88,17 +88,21 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     public void UpdateDataPerFrame(IBlackBoard local) // 매 프레임당 로컬 블랙 보드에 갱신될 정보들.
     {
         local.Set("EnemyPosition", parentTransform.position);
-
+        local.Set("ModeChangeCoolDown", local.Get<float>("ModeChangeCoolDown") + Time.deltaTime);
+        if (local.Get<float>("ModeChangeCoolDown") >= 1f)
+        {
+            local.Set("CanChangeMode", true);
+        }
         CheckingFlatForm();
         MoveToTarget();
     }
 
     public void MoveToTarget()
     {
-        if (blackBoard.Get<bool>("ShouldMove"))
+        if (blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking"))
         {
             int dir = blackBoard.Get<int>("Direction");
-            parentTransform.Translate(Vector2.left * dir * 10 * Time.deltaTime);
+            parentTransform.Translate(Vector2.left * dir * blackBoard.Get<float>("MoveSpeed") * Time.deltaTime);
         }
     }
 

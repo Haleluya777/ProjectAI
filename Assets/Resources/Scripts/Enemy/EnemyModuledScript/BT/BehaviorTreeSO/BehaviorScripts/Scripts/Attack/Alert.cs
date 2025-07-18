@@ -18,6 +18,7 @@ public class Alert : EnemyActionSO
 
         if (Time.time < waitTime)
         {
+            Debug.Log("경고중!");
             return NodeState.Running;
         }
 

@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9f6919a6ca68014ab79d69e0f44ad9b, type: 3}
-  m_Name: ChangeDirAlongChaseSequenceNode
+  m_Name: PerformAttackSequenceNode
   m_EditorClassIdentifier: 
   nodeName: 
   children:
-  - {fileID: 11400000, guid: 1c2108319f1cb824eaf8740e519715a6, type: 2}
+  - {fileID: 11400000, guid: 1aaaffd5485be4a41a1cbce722594de1, type: 2}
+  - {fileID: 11400000, guid: aa995085e549bb1499f426e513c7d41e, type: 2}
+  - {fileID: 11400000, guid: f796214f05fb33e4eabcbba71dd0e3a5, type: 2}

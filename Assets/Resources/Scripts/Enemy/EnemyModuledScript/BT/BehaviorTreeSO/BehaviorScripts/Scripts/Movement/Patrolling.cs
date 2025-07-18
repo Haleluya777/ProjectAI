@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,16 +9,19 @@ public class Patrolling : EnemyActionSO
 {
     public override NodeState Execute(EnemyAIController controller)
     {
-        Debug.Log("Patrolling 액션 노드 실행중");
-        Animator anim = controller.LocalBlackboard.Get<Animator>("Animator");
-        Transform objTransform = controller.LocalBlackboard.Get<Transform>("Transform");
+        if (controller.LocalBlackboard.Get<bool>("Patrolling"))
+        {
+            Animator anim = controller.LocalBlackboard.Get<Animator>("Animator");
+            Transform objTransform = controller.LocalBlackboard.Get<Transform>("Transform");
 
-        float moveSpeed = controller.LocalBlackboard.Get<float>("MoveSpeed");
-        int dir = controller.LocalBlackboard.Get<int>("Direction");
+            float moveSpeed = controller.LocalBlackboard.Get<float>("MoveSpeed");
+            int dir = controller.LocalBlackboard.Get<int>("Direction");
 
-        anim.CrossFade("Enemy_Moving", 0f);
-        objTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
+            anim.CrossFade("Enemy_Moving", 0f);
+            objTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
 
-        return NodeState.Running;
+            return NodeState.Success;
+        }
+        return NodeState.Failure;
     }
 }

@@ -6478,7 +6478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bdb87799f1b38a4590740a69a4ff799, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyObj: {fileID: 1918281722}
+  enemyObj: {fileID: 1722404531}
   playerObj: {fileID: 1915231743}
   objectPoolManger_DmgTxt: {fileID: 2010290514}
   objectPoolManger_EffectTime: {fileID: 1541981803}
@@ -8612,6 +8612,11 @@ RectTransform:
   m_AnchoredPosition: {x: -130, y: 485}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1722404531 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 266567166905828983, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
+  m_PrefabInstance: {fileID: 2027139321}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1740621090
 GameObject:
   m_ObjectHideFlags: 0
@@ -9841,7 +9846,7 @@ Transform:
   m_GameObject: {fileID: 1915231743}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.06, y: 15.47, z: 0}
+  m_LocalPosition: {x: 13.97, y: 5.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10028,11 +10033,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1 &1918281722 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 266567166905828983, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
-  m_PrefabInstance: {fileID: 1921529130406387418}
-  m_PrefabAsset: {fileID: 0}
 --- !u!50 &1918281725 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 2748734534882879762, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
@@ -10294,7 +10294,7 @@ PrefabInstance:
     - target: {fileID: 485248839012369019, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: behaviorTreeRoot
       value: 
-      objectReference: {fileID: 11400000, guid: 009f2943ae7b58b43bcc6466166d5bd4, type: 2}
+      objectReference: {fileID: 11400000, guid: ec44005113e69a143a3e0206d518d8e4, type: 2}
     - target: {fileID: 2445909684292287778, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_FlipX
       value: 0
@@ -10309,11 +10309,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4897081054617709871, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.28
+      value: 19.88
       objectReference: {fileID: 0}
     - target: {fileID: 4897081054617709871, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 9.57
+      value: 17.1
       objectReference: {fileID: 0}
     - target: {fileID: 4897081054617709871, guid: d5cc36caeb465714a9393c04ef451ac1, type: 3}
       propertyPath: m_LocalPosition.z

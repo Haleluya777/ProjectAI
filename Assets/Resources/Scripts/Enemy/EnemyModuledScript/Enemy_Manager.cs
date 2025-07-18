@@ -49,7 +49,6 @@ public class Enemy_Manager : MonoBehaviour
         iattack = GetComponentInChildren<IAttackable>();
         imove = GetComponentInChildren<IMoveable>();
         iai = GetComponentInChildren<IAiManager>();
-        Debug.Log(iai == null);
     }
 
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)

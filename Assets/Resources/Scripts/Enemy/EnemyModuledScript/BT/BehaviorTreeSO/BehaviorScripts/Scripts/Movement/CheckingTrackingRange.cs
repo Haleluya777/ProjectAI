@@ -7,12 +7,25 @@ public class CheckingTrackingRange : EnemyConditionSO
 {
     public override NodeState Evaluate(EnemyAIController controller)
     {
-        if (controller.LocalBlackboard.Get<float>("DistanceToPlayer") < controller.LocalBlackboard.Get<float>("DetectionRange")
-        && controller.LocalBlackboard.Get<float>("DistanceToPlayer") > controller.LocalBlackboard.Get<float>("MeleeRange"))
+        if (GameManager.instance.globalBlackBoard.Get<float>("DistanceToPlayer") <= controller.LocalBlackboard.Get<float>("DetectionRange"))
         {
-            controller.LocalBlackboard.Set("Patrolling", false);
-            return NodeState.Success;
+            if (controller.LocalBlackboard.Get<bool>("CanChangeMode"))
+            {
+                Debug.Log("추적모드 전환");
+                controller.LocalBlackboard.Set("Patrolling", false);
+                return NodeState.Failure;
+            }
+            else
+            {
+                controller.LocalBlackboard.Set("Patrolling", true);
+                return NodeState.Failure;
+            }
         }
-        return NodeState.Failure;
+        else
+        {
+            Debug.Log("탐색 모드 전환");
+            controller.LocalBlackboard.Set("Patrolling", true);
+            return NodeState.Failure;
+        }
     }
 }
