@@ -5,8 +5,10 @@ using UnityEngine;
 public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, IInitializable, IRequiredAnimator
 {
     private Transform parentTransform;
+    private Transform initPos;
     private Animator anim;
     private IBlackBoard blackBoard;
+    private Vector3 dir;
     private float moveSpeed;
     private bool shouldMove;
     private int angle;
@@ -23,6 +25,8 @@ public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, I
         parentTransform = this.transform.parent.transform;
         moveSpeed = info.Movement_Status.MoveSpeed;
 
+        initPos = parentTransform;
+
         local.Set("Movement", this.GetComponent<IMovable>());
         local.Set("Transform", parentTransform);
         local.Set("MoveSpeed", moveSpeed);
@@ -31,8 +35,6 @@ public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, I
 
     public void UpdateDataPerFrame(IBlackBoard local) //매 프레임당 로컬 블랙 보드에 갱신될 정보들.
     {
-        local.Set("EnemyPosition", parentTransform.position);
-
         MoveToTarget();
     }
 
@@ -43,12 +45,25 @@ public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, I
 
     public void MoveToTarget()
     {
-        if (blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking"))
+        Transform destination = blackBoard.Get<bool>("Patrolling") ? initPos : GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform");
+
+        //추적, 비 추적 상태일 때의 목적지 설정.
+        if (blackBoard.Get<bool>("Patrolling")) //초기 위치로 돌아감.
         {
-            Debug.Log("울랄라!");
+            if (parentTransform.position == initPos.position) return;
+            dir = (destination.position - parentTransform.position).normalized;
+        }
+
+        else //플레이어 추적 상태일 때.
+        {
+            dir = (GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position - parentTransform.position).normalized;
+        }
+
+        if (!blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking"))
+        {
             anim.CrossFade("Enemy_Moving", 0f);
-            Vector3 dir = (GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position - parentTransform.position).normalized;
             parentTransform.Translate(dir * moveSpeed * Time.deltaTime, Space.World);
+
             UpdateAngle();
         }
     }

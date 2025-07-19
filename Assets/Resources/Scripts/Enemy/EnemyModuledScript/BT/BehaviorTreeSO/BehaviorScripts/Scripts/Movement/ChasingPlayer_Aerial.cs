@@ -8,18 +8,16 @@ public class ChasingPlayer_Aerial : EnemyActionSO
     public override NodeState Execute(EnemyAIController controller)
     {
         float playerX = GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position.x;
+        Transform objTransform = controller.LocalBlackboard.Get<Transform>("Transform");
+
+        int scale = controller.LocalBlackboard.Get<int>("Scale");
+        int dir = controller.LocalBlackboard.Get<int>("Direction");
 
         if (!controller.LocalBlackboard.Get<bool>("Patrolling"))
         {
-            Debug.Log("추적중...");
-            if (playerX >= controller.LocalBlackboard.Get<Transform>("Transform").position.x)
-            {
-                controller.LocalBlackboard.Set("Direction", -1);
-            }
-            else
-            {
-                controller.LocalBlackboard.Set("Direction", 1);
-            }
+            dir = playerX >= controller.LocalBlackboard.Get<Transform>("Transform").position.x ? -1 : 1;
+            controller.LocalBlackboard.Set("Direction", dir);
+            objTransform.localScale = new Vector2(scale * dir, scale);
         }
         return NodeState.Success;
     }
