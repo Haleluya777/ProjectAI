@@ -24,5 +24,6 @@ public class Enemy_Animation_Event : MonoBehaviour, IInitializable
         blackBoard.Set("CanAttack", false);
         blackBoard.Remove("WaitTime");
         blackBoard.Set("MainCoolRegain", 0f);
+        if (blackBoard.HasKey("AimingTime")) blackBoard.Remove("AimingTime");
     }
 }

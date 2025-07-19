@@ -5,13 +5,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Alert", menuName = "BehaviorTree/Actions/Alert")]
 public class Alert : EnemyActionSO
 {
+    [SerializeField] private int duration;
     public override NodeState Execute(EnemyAIController controller)
     {
         Debug.Log(controller.LocalBlackboard.HasKey("WaitTime"));
         if (!controller.LocalBlackboard.HasKey("WaitTime"))
         {
             Debug.Log("대기 시간 생성");
-            controller.LocalBlackboard.Set("WaitTime", Time.time + 1);
+            controller.LocalBlackboard.Set("WaitTime", Time.time + duration);
             return NodeState.Running;
         }
 
