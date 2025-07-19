@@ -18,7 +18,7 @@ public class Enemy_Manager : MonoBehaviour
     [SerializeField] private Transform rayCastTrans;
 
     public IDamageable istatus;
-    public IMoveable imove;
+    public IMovable imove;
     public IAttackable iattack;
     public IAiManager iai;
 
@@ -47,7 +47,7 @@ public class Enemy_Manager : MonoBehaviour
     {
         istatus = GetComponentInChildren<IDamageable>();
         iattack = GetComponentInChildren<IAttackable>();
-        imove = GetComponentInChildren<IMoveable>();
+        imove = GetComponentInChildren<IMovable>();
         iai = GetComponentInChildren<IAiManager>();
     }
 

@@ -21,6 +21,7 @@ public class Aiming : EnemyActionSO
             if (Time.time >= controller.LocalBlackboard.Get<float>("AimingTime"))
             {
                 Debug.Log("조준 완료!");
+                controller.LocalBlackboard.Remove("AimingTime");
                 return NodeState.Success;
             }
             else

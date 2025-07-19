@@ -5,7 +5,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Animations;
 
-public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, IRequiredAnimator
+public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IRequiredAnimator
 {
     private enum MovementMode {Horizontal, Vertical}
     [SerializeField] private Transform raycastPos; // 레이캐스트 시작 위치를 위한 Transform
@@ -16,7 +16,6 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     private Vector2 moveDirection; // 몬스터의 현재 이동 방향
     private IBlackBoard blackBoard;
     private float moveSpeed;
-    private float detectionRange;
     private bool shouldMove;
     private bool patrolling;
     private bool isGround; // 지면 감지 여부
@@ -37,11 +36,9 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
 
         parentTransform = this.transform.parent.transform;
         moveSpeed = info.Movement_Status.MoveSpeed;
-        detectionRange = info.Movement_Status.DetectionRange;
         patrolling = true; // 순찰 모드 활성화
 
-        blackBoard.Set("Movement", this.GetComponent<IMoveable>());
-        blackBoard.Set("DetectionRange", detectionRange);
+        blackBoard.Set("Movement", this.GetComponent<IMovable>());
         blackBoard.Set("Transform", parentTransform);
         blackBoard.Set("MoveSpeed", moveSpeed);
         blackBoard.Set("CanChangeMode", true);
@@ -102,6 +99,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
         if (blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking"))
         {
             int dir = blackBoard.Get<int>("Direction");
+            anim.CrossFade("Enemy_Moving", 0f);
             parentTransform.Translate(Vector2.left * dir * blackBoard.Get<float>("MoveSpeed") * Time.deltaTime);
         }
     }

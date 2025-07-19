@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3b9e367657527541a94904abfc71d4b, type: 3}
+  m_Name: TestEnemyStatus
+  m_EditorClassIdentifier: 
+  status:
+  - id: 0
+    baseStatus:
+      name: Test
+      hp: 100
+      defense: 10
+      magicalDefense: 5
+      scale: 2
+    combatStatus:
+      atk: 10
+      detectionRange: 15
+      shortAttackRange: 5
+      longAttackRange: 10
+      mainAttCool: 1
+      shortDisAttCool:
+      - 2
+      longDisAttCool:
+      - 3
+    movementStatus:
+      moveSpeed: 10
+    visual:
+      sprite: {fileID: 21300000, guid: d6337446ecadade40a8346255c6da2cc, type: 3}
+      anim: {fileID: 9100000, guid: 0a0da702db45dd44aa40bc75a4dd4dbf, type: 2}
+  - id: 2
+    baseStatus:
+      name: TestAerial
+      hp: 100
+      defense: 10
+      magicalDefense: 5
+      scale: 2
+    combatStatus:
+      atk: 10
+      detectionRange: 15
+      shortAttackRange: 10
+      longAttackRange: 10
+      mainAttCool: 1
+      shortDisAttCool:
+      - 2
+      longDisAttCool:
+      - 3
+    movementStatus:
+      moveSpeed: 10
+    visual:
+      sprite: {fileID: 21300000, guid: d6337446ecadade40a8346255c6da2cc, type: 3}
+      anim: {fileID: 9100000, guid: 0a0da702db45dd44aa40bc75a4dd4dbf, type: 2}

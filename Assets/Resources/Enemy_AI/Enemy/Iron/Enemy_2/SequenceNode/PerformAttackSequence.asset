@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9f6919a6ca68014ab79d69e0f44ad9b, type: 3}
+  m_Name: PerformAttackSequence
+  m_EditorClassIdentifier: 
+  nodeName: 
+  children:
+  - {fileID: 11400000, guid: c984a4a22976bdd4b8befcaf795d8cd1, type: 2}
+  - {fileID: 11400000, guid: 6ebde2b47b3afd74ebc686a607a835e9, type: 2}
+  - {fileID: 11400000, guid: 226851dfda6805240919b8474b2737e1, type: 2}
+  - {fileID: 11400000, guid: 8bfb54b6408c2bc4caeacbdfdc883da7, type: 2}

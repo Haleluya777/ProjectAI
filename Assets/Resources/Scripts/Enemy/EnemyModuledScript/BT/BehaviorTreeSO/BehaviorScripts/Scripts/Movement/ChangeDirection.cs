@@ -7,6 +7,7 @@ public class ChangeDirection : EnemyActionSO
 {
     public override NodeState Execute(EnemyAIController controller)
     {
+        Debug.Log("방향 변경!");
         if (!controller.LocalBlackboard.Get<bool>("isGround"))
         {
             Transform transform = controller.LocalBlackboard.Get<Transform>("Transform");
