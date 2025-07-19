@@ -5,26 +5,27 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Alert", menuName = "BehaviorTree/Actions/Alert")]
 public class Alert : EnemyActionSO
 {
-    public float waitDuration = 1f;
-
     public override NodeState Execute(EnemyAIController controller)
     {
-        float waitTime = 0f;
-
-        if (waitTime == 0f)
+        Debug.Log(controller.LocalBlackboard.HasKey("WaitTime"));
+        if (!controller.LocalBlackboard.HasKey("WaitTime"))
         {
-            waitTime = Time.time + waitDuration;
-        }
-
-        if (Time.time < waitTime)
-        {
-            Debug.Log("경고중!");
+            Debug.Log("대기 시간 생성");
+            controller.LocalBlackboard.Set("WaitTime", Time.time + 1);
             return NodeState.Running;
         }
 
         else
         {
-            return NodeState.Success;
+            if (Time.time >= controller.LocalBlackboard.Get<float>("WaitTime"))
+            {
+                return NodeState.Success;
+            }
+            else
+            {
+                Debug.Log("경고중!");
+                return NodeState.Running;
+            }
         }
     }
 }

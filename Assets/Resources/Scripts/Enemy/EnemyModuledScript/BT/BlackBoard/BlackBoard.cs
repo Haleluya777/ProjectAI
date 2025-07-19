@@ -9,5 +9,6 @@ public class BlackBoard :  IBlackBoard
     public void Set<T>(string key, T value) => data[key] = value;
     public T Get<T>(string key) => data.TryGetValue(key, out var value) ? (T)value : default;
     public bool HasKey(string key) => data.ContainsKey(key);
+    public void Remove(string key) => data.Remove(key);
     public void Clear() => data.Clear();
 }

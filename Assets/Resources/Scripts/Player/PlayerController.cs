@@ -359,7 +359,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         if (other.gameObject.layer == 6)
         {
-            Debug.Log("땅에 닿음");
             overground = false;
             currentState = State.Idle;
             attacking = false;

@@ -8,4 +8,5 @@ public interface IBlackBoard
     T Get<T>(string key);
     bool HasKey(string key);
     void Clear();
+    void Remove(string key);
 }
