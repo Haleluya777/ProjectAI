@@ -55,6 +55,7 @@ public class Enemy_Combat_Status
 
     [SerializeField] private int detectionRange; //탐지 범위
     [SerializeField] private float escapeRange; //도주 범위
+    [SerializeField] private float guardRange; //경계 범위
 
     [SerializeField] private float shortAttackRange;
     [SerializeField] private float longAttackRange;
@@ -67,6 +68,7 @@ public class Enemy_Combat_Status
 
     public int DetectionRange => detectionRange;
     public float EscapeRange => escapeRange;
+    public float GuardRange => guardRange;
 
     public float ShortAttackRange => shortAttackRange;
     public float LongAttackRange => longAttackRange;

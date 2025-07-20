@@ -23,6 +23,7 @@ MonoBehaviour:
     combatStatus:
       atk: 10
       detectionRange: 20
+      escapeRange: 0
       shortAttackRange: 5
       longAttackRange: 10
       mainAttCool: 1
@@ -45,6 +46,7 @@ MonoBehaviour:
     combatStatus:
       atk: 10
       detectionRange: 15
+      escapeRange: 0
       shortAttackRange: 10
       longAttackRange: 10
       mainAttCool: 1
@@ -66,9 +68,10 @@ MonoBehaviour:
       scale: 2
     combatStatus:
       atk: 10
-      detectionRange: 10
+      detectionRange: 30
+      escapeRange: 10
       shortAttackRange: 10
-      longAttackRange: 5
+      longAttackRange: 20
       mainAttCool: 1
       shortDisAttCool:
       - 2

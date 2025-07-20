@@ -22,6 +22,10 @@ public class Enemy_Manager : MonoBehaviour
     public IAttackable iattack;
     public IAiManager iai;
 
+    //디버깅 용
+    public EnemyUI ui;
+    //
+
     [SerializeField] private int id;
     private int layerMask;
 
@@ -81,5 +85,6 @@ public class Enemy_Manager : MonoBehaviour
         {
             updatedData.UpdateDataPerFrame(local);
         }
+        ui.HpBarUpdate(100, istatus.CurrentHp);
     }
 }

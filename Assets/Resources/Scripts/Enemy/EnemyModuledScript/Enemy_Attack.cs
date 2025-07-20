@@ -56,6 +56,8 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
 
         blackBoard.Set("MeleeRange", meleeRange);
         blackBoard.Set("RangedRange", rangedRange);
+
+        blackBoard.Set("Guarding", false);
         blackBoard.Set("CanAttack", false);
         blackBoard.Set("Attacking", false);
     }

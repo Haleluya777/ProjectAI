@@ -20,6 +20,7 @@ public class ChasingPlayer_Ground : EnemyActionSO
 
             if (!controller.LocalBlackboard.Get<bool>("isGround"))//추적 중인데 앞에 플랫폼이 없는 경우.
             {
+                Debug.Log("추적 해제");
                 controller.LocalBlackboard.Set("CanChangeMode", false);
                 controller.LocalBlackboard.Set("ModeChangeCoolDown", 0f);
                 return NodeState.Failure;
@@ -31,7 +32,6 @@ public class ChasingPlayer_Ground : EnemyActionSO
                 {
                     dir = objTransform.position.x > playerTransform.position.x ? 1 : -1;
                     controller.LocalBlackboard.Set("Direction", dir);
-                    objTransform.localScale = new Vector2(scale * dir, scale);
                 }
 
                 else //Mode = Veritcal일 때. (수직이동)
@@ -39,6 +39,7 @@ public class ChasingPlayer_Ground : EnemyActionSO
                     dir = objTransform.position.y > playerTransform.position.y ? 1 : -1;
                     controller.LocalBlackboard.Set("Direction", dir);
                 }
+                objTransform.localScale = new Vector2(scale * dir, scale);
             }
             return NodeState.Success;
         }

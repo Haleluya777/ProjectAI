@@ -26,7 +26,7 @@ public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, I
         moveSpeed = info.Movement_Status.MoveSpeed;
 
         initPos = parentTransform.position;
-        Debug.Log(initPos + "최초 위치");
+        
         local.Set("Movement", this.GetComponent<IMovable>());
         local.Set("Transform", parentTransform);
         local.Set("MoveSpeed", moveSpeed);
@@ -38,7 +38,6 @@ public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, I
     public void UpdateDataPerFrame(IBlackBoard local) //매 프레임당 로컬 블랙 보드에 갱신될 정보들.
     {
         MoveToTarget();
-        Debug.Log(initPos);
     }
 
     public void InjectAnimator(Animator _anim)

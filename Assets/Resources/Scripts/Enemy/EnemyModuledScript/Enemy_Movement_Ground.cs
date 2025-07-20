@@ -86,17 +86,20 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
     {
         local.Set("EnemyPosition", parentTransform.position);
         local.Set("ModeChangeCoolDown", local.Get<float>("ModeChangeCoolDown") + Time.deltaTime);
-        if (local.Get<float>("ModeChangeCoolDown") >= 1f)
+
+        if (local.Get<float>("ModeChangeCoolDown") >= 3f)
         {
+            Debug.Log("모드 변환 가능");
             local.Set("CanChangeMode", true);
         }
+
         CheckingFlatForm();
         MoveToTarget();
     }
 
     public void MoveToTarget()
     {
-        if (blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking"))
+        if (blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking") && !blackBoard.Get<bool>("Guarding"))
         {
             int dir = blackBoard.Get<int>("Direction");
             anim.CrossFade("Enemy_Moving", 0f);

@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc7c1f3ccf75f1e418588bb82811e358, type: 3}
   m_Name: Shooting
   m_EditorClassIdentifier: 
-  totalAttacks: 0
-  interval: 0
-  bulletObj: 0
-  bulletPos: {fileID: 0}
+  totalAttacks: 3
+  interval: 0.25
+  bulletObj: {fileID: 953012935713848762, guid: 864e77b12a281f54b81e4f1ac1fce509, type: 3}
