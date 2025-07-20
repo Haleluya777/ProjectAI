@@ -57,7 +57,7 @@ public class Enemy_Manager : MonoBehaviour
 
         info = dataBase.GetEnemyData(id);
         anim.runtimeAnimatorController = info.Visual.Anim;
-        
+
         localBlackBoard.Set("Animator", anim);
         localBlackBoard.Set("RigidBody", rigid);
         localBlackBoard.Set("Transform", trans);

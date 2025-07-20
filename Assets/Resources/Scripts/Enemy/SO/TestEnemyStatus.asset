@@ -15,14 +15,14 @@ MonoBehaviour:
   status:
   - id: 0
     baseStatus:
-      name: Test
+      name: Enemy_0
       hp: 100
       defense: 10
       magicalDefense: 5
       scale: 2
     combatStatus:
       atk: 10
-      detectionRange: 15
+      detectionRange: 20
       shortAttackRange: 5
       longAttackRange: 10
       mainAttCool: 1
@@ -59,7 +59,7 @@ MonoBehaviour:
       anim: {fileID: 9100000, guid: 0a0da702db45dd44aa40bc75a4dd4dbf, type: 2}
   - id: 2
     baseStatus:
-      name: TestAerial
+      name: Enemy_2
       hp: 100
       defense: 10
       magicalDefense: 5

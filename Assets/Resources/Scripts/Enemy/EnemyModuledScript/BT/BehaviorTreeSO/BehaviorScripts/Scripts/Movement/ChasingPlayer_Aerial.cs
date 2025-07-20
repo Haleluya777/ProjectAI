@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ChasingPlayer_Aerial", menuName = "BehaviorTree/Actions/ChasingPlayer_Aerial")]
@@ -7,6 +8,8 @@ public class ChasingPlayer_Aerial : EnemyActionSO
 {
     public override NodeState Execute(EnemyAIController controller)
     {
+        if (!GameManager.instance.globalBlackBoard.HasKey("PlayerTransform")) return NodeState.Failure;
+        
         float playerX = GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position.x;
         Transform objTransform = controller.LocalBlackboard.Get<Transform>("Transform");
 

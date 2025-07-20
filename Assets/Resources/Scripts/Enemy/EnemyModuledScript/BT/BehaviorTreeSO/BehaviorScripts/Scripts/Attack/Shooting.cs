@@ -15,6 +15,7 @@ public class Shooting : EnemyActionSO
 
     public override NodeState Execute(EnemyAIController controller)
     {
+        Debug.Log("공격시작");
         timer += Time.deltaTime;
 
         if (timer >= interval)

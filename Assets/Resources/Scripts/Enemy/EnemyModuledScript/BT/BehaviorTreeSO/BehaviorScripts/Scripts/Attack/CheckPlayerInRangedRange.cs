@@ -13,17 +13,30 @@ public class CheckPlayerInRangedRange : EnemyConditionSO
         }
 
         float attRange = controller.LocalBlackboard.Get<float>("RangedRange");
+        float escapeRange = controller.LocalBlackboard.Get<float>("EscapeRange");
         float dis = GameManager.instance.globalBlackBoard.Get<float>("DistanceToPlayer");
 
         if (dis <= attRange)
         {
-            Debug.Log("공격 범위 안에 들어옴!");
-            controller.LocalBlackboard.Set("Attacking", true);
-            return NodeState.Success;
+            if (dis > escapeRange)
+            {
+                Debug.Log("공격 범위 안에 들어옴!");
+                controller.LocalBlackboard.Set("Attacking", true);
+                controller.LocalBlackboard.Set("State", 1);
+                return NodeState.Success;
+            }
+            else
+            {
+                Debug.Log("도주 범위 안에 들어옴!");
+                controller.LocalBlackboard.Set("Attacking", false);
+                controller.LocalBlackboard.Set("State", -1);
+                return NodeState.Failure;
+            }
         }
         else
         {
             controller.LocalBlackboard.Set("Attacking", false);
+            controller.LocalBlackboard.Set("State", 1);
             return NodeState.Failure;
         }
     }
