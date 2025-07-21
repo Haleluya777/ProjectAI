@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: Test
   m_EditorClassIdentifier: 
   nodeName: 
-  children: []
+  children:
+  - {fileID: 11400000, guid: 2358a8ebc67c56043aaa585bb58ee4c2, type: 2}
