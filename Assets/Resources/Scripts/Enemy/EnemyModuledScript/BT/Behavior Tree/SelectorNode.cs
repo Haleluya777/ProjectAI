@@ -1,9 +1,5 @@
 using System.Collections.Generic;
 
-/// <summary>
-/// 자식 노드를 순서대로 실행하는 런타임 노드입니다.
-/// 자식 중 하나라도 Success나 Running을 반환하면 즉시 중단하고 해당 상태를 반환합니다.
-/// </summary>
 public sealed class SelectorNode : INode
 {
     private readonly List<INode> _children;
@@ -20,9 +16,9 @@ public sealed class SelectorNode : INode
             var state = child.Evaluate(controller);
             if (state != NodeState.Failure)
             {
-                return state; // Success 또는 Running이면 즉시 반환
+                return state;
             }
         }
-        return NodeState.Failure; // 모든 자식이 실패했을 때만 실패
+        return NodeState.Failure;
     }
 }

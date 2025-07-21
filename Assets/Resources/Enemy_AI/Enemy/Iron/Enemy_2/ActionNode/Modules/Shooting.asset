@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Shooting
   m_EditorClassIdentifier: 
   totalAttacks: 3
-  interval: 0.25
+  interval: 0.001
   bulletObj: {fileID: 953012935713848762, guid: 864e77b12a281f54b81e4f1ac1fce509, type: 3}

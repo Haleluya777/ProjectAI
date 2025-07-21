@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -18,11 +19,11 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
     private float moveSpeed;
     private bool shouldMove;
     private bool patrolling;
-    private bool isGround; // 지면 감지 여부
     private int dir = 1; // 몬스터의 현재 방향
     private int layerMask; // "FlatForm" 레이어 마스크
     private const int OBJ_SCALE = 2; // 오브젝트 스케일 상수
     [SerializeField] private const float groundRaycastDistance = 0.5f; // 지면 감지 레이캐스트 길이
+    [SerializeField] private float frontBoxCastDistance = 1f; //전방 장애물 감지 레이 캐스트 길이
 
     public bool ShouldMove => shouldMove;
     public Transform ParentTransform => parentTransform;
@@ -52,8 +53,16 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
     public void CheckingFlatForm()
     {
         raycastHit = Physics2D.Raycast(parentTransform.position, parentTransform.up * -1, groundRaycastDistance, layerMask);
-        isGround = Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask);
-        blackBoard.Set("isGround", isGround);
+        if (!Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask) || Physics2D.Raycast(new Vector2(raycastPos.position.x, raycastPos.position.y + 0.1f), raycastPos.right * -1, frontBoxCastDistance, layerMask))
+        {
+            blackBoard.Set("CannotMove", true);
+            Debug.Log("전진 불가.");
+        }
+        else
+        {
+            blackBoard.Set("CannotMove", false);
+            Debug.Log("전진 가능");
+        }
 
         if (raycastHit.collider != null)
         {
@@ -93,8 +102,16 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
             local.Set("CanChangeMode", true);
         }
 
-        CheckingFlatForm();
-        MoveToTarget();
+        //테스트 용
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            blackBoard.Set("Patrolling", false);
+            Debug.Log(blackBoard.Get<bool>("Patrolling"));
+        }
+        //
+
+            CheckingFlatForm();
+        //MoveToTarget();
     }
 
     public void MoveToTarget()

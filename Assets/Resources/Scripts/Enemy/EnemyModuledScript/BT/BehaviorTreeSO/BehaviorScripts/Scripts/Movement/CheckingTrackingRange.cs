@@ -13,21 +13,19 @@ public class CheckingTrackingRange : EnemyConditionSO
             {
                 Debug.Log("추적모드 전환");
                 controller.LocalBlackboard.Set("Patrolling", false);
-                controller.LocalBlackboard.Set("Guarding", false);
-                Debug.Log(controller.LocalBlackboard.Get<bool>("Patrolling"));
-                return NodeState.Failure;
+                return NodeState.Success;
             }
             else
             {
                 controller.LocalBlackboard.Set("Patrolling", true);
-                return NodeState.Failure;
+                return NodeState.Success;
             }
         }
         else
         {
             Debug.Log("탐색 모드 전환");
             controller.LocalBlackboard.Set("Patrolling", true);
-            return NodeState.Failure;
+            return NodeState.Success;
         }
     }
 }

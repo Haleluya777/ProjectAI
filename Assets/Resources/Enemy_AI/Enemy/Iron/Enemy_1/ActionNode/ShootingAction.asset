@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ShootingAction
   m_EditorClassIdentifier: 
   nodeName: 
-  Action: {fileID: 0}
+  Action: {fileID: 11400000, guid: 1f40377d170c4eb4c9282e6ece9cd387, type: 2}

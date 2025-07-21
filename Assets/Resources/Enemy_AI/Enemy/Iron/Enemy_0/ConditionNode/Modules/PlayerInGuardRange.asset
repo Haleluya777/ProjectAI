@@ -9,9 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9f6919a6ca68014ab79d69e0f44ad9b, type: 3}
-  m_Name: ChangeDirAlongChaseSequenceNode
+  m_Script: {fileID: 11500000, guid: 8cad4a1a9270bb4448ef5071f502fd52, type: 3}
+  m_Name: PlayerInGuardRange
   m_EditorClassIdentifier: 
-  nodeName: 
-  children:
-  - {fileID: 11400000, guid: 1c2108319f1cb824eaf8740e519715a6, type: 2}

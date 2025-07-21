@@ -10,10 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae9f25a71b8699d4083a7d9d04ed4abe, type: 3}
-  m_Name: ChangeDirectionSelector
+  m_Name: Test
   m_EditorClassIdentifier: 
-  nodeName: "\uBC29\uD5A5 \uC804\uD658 \uC140\uB809\uD130"
-  children:
-  - {fileID: 11400000, guid: 07a1821dc44dea14d9e57f2b3c975a12, type: 2}
-  - {fileID: 11400000, guid: 4f749e1928481e040b6384fb6bb1ca1e, type: 2}
-  - {fileID: 11400000, guid: 9a5446472626e9545b9b58873ac544cf, type: 2}
+  nodeName: 
+  children: []

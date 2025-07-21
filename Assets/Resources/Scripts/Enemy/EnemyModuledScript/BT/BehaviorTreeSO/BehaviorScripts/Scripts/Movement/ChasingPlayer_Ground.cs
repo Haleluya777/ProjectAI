@@ -16,9 +16,7 @@ public class ChasingPlayer_Ground : EnemyActionSO
             int scale = controller.LocalBlackboard.Get<int>("Scale");
             int dir = controller.LocalBlackboard.Get<int>("Direction");
 
-            Debug.Log(controller.LocalBlackboard.Get<bool>("isGround"));
-
-            if (!controller.LocalBlackboard.Get<bool>("isGround"))//추적 중인데 앞에 플랫폼이 없는 경우.
+            if (controller.LocalBlackboard.Get<bool>("CannotMove"))//추적 중인데 전진 불가능한 경우.
             {
                 Debug.Log("추적 해제");
                 controller.LocalBlackboard.Set("CanChangeMode", false);

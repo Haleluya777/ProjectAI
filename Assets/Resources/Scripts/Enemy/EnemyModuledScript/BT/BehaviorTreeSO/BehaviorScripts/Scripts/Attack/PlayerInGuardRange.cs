@@ -10,14 +10,13 @@ public class PlayerInGuardRange : EnemyConditionSO
     {
         if (controller.LocalBlackboard.Get<float>("GuardRange") <= GameManager.instance.globalBlackBoard.Get<float>("DistanceToPlayer"))
         {
-            Debug.Log("저기 뭔가 있는 것 같다.");
             controller.LocalBlackboard.Set("Guarding", true);
             return NodeState.Success;
         }
         else
         {
-            Debug.Log("주변 이상 무.");
             controller.LocalBlackboard.Set("Guarding", false);
+            controller.LocalBlackboard.Set("GuardGage", 0f);
             return NodeState.Failure;
         }
     }
