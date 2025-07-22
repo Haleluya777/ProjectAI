@@ -11,23 +11,69 @@ public class Movingplatform : MonoBehaviour
     Rigidbody2D rb;
     public Vector3 platformspd;
     public Vector3 movingspeed;
+    public Vector3 returnspeed;
+    public Vector2 initialplatformpos;
+    public Vector2 curplatformpos;
+    public Vector2 destinationpos;
+    bool arrive;
+    bool atorigin;
+    float coyoteTime = 0.2f;
+    float coyoteTimeCounter;
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody2D>();
+        initialplatformpos = GetComponent<Transform>().position;
+        destinationpos = new Vector2(initialplatformpos.x, initialplatformpos.y + 50f);
+        arrive = false;
+        coyoteTimeCounter = 0;
     }
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (playerOnPlatform)
+        curplatformpos = GetComponent<Transform>().position;
+        speed();
+        //platformpos = player.transform.position;
+        //platformpos.x += 2.5f;
+        //if (transform.position.x > 10f){transform.position = new Vector3(-10f, transform.position.y, transform.position.z);}
+
+        if (curplatformpos.y <= initialplatformpos.y)
         {
-            platformspd = movingspeed;
-            //platformpos = player.transform.position;
-            //platformpos.x += 2.5f;
-            //if (transform.position.x > 10f){transform.position = new Vector3(-10f, transform.position.y, transform.position.z);}
+            arrive = false;
+            if (!playerOnPlatform) rb.velocity = new Vector3(0, 0, 0);
+            coyoteTimeCounter = 0;
         }
-        else platformspd = new Vector3(0, 0, 0);
-        rb.velocity = platformspd;
+        else
+        {
+            if (!playerOnPlatform || curplatformpos.y >= destinationpos.y) arrive = true;
+        }
+    }
+    private void speed()
+    {
+        if (playerOnPlatform && !arrive)//도착하지 않았고 플레이어가 플랫폼 위에 있을 때
+        {
+            rb.velocity = movingspeed;
+            platformspd = movingspeed;
+            coyoteTimeCounter = 0;
+        }
+        else if (arrive) //도착했을 때
+        {
+            rb.velocity = returnspeed;
+            if (playerOnPlatform)
+            {
+                if (coyoteTimeCounter < coyoteTime)
+                {
+                    coyoteTimeCounter += Time.fixedDeltaTime;
+                    if (Input.GetButtonDown("Jump"))
+                    {
+                        playerOnPlatform = false;
+                        platformspd = movingspeed;
+                        return;
+                    }
+                }
+                platformspd = returnspeed;
+            }
+        }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -42,6 +88,7 @@ public class Movingplatform : MonoBehaviour
         if (collision.transform.parent.gameObject == player)
         {
             playerOnPlatform = false;
+            coyoteTimeCounter = 0;
         }
     }
 }

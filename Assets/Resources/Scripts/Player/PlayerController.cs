@@ -215,7 +215,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             if (Input.GetButtonDown("Jump") && currentState != State.Jumping && !delayed && !attacking)
             {
-                rigid.velocity = new Vector2(rigid.velocity.x, plusspeed.y);
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 curjumpHoldTime = 0;
             }
@@ -378,6 +377,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 if (platform != null && platform.playerOnPlatform)
                 {
                     plusspeed = new Vector2(platform.platformspd.x, platform.platformspd.y);
+                    rigid.velocity = new Vector2(rigid.velocity.x, plusspeed.y);
+                    rigid.gravityScale = 0f;
                 }
             }
         }
@@ -388,6 +389,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (ground.gameObject.layer == 6)
         {
             overground = true;
+            rigid.gravityScale = 4f;
+            if (currentState != State.Jumping)
+            {
+                rigid.velocity = new Vector2(rigid.velocity.x, 0f);
+            }
         }
     }
 
