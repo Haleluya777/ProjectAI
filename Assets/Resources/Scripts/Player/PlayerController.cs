@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 {
-    // --- 상태 및 기본 변수들 (변경 없음) ---
     private enum State { Idle, Moving, Dash, Attacking, Jumping }
     public Vector3 respawn;
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
@@ -59,7 +58,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     void Start()
     {
         StatusInit();
-        // SetCaster 호출은 이제 필요 없음
     }
 
     void Update()
@@ -308,7 +306,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void DamagedProcess(int totalDmg, Color txtColor)
     {
+        //받은 데미지만큼 체력이 줄어듬
         curHp -= totalDmg;
+
+        //UI에 받은 데미지 띄우기, 디버깅 용.
         var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
         dmgText.transform.SetParent(this.transform.GetChild(0));
         dmgText.transform.localPosition = new Vector2(0, 4.5f);
@@ -392,7 +393,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             rigid.gravityScale = 4f;
             if (currentState != State.Jumping)
             {
-                rigid.velocity = new Vector2(rigid.velocity.x, 0f);
+                //rigid.velocity = new Vector2(rigid.velocity.x, 0f);
             }
         }
     }

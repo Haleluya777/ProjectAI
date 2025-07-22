@@ -7,7 +7,7 @@ public class CheckingTrackingRange : EnemyConditionSO
 {
     public override NodeState Evaluate(EnemyAIController controller)
     {
-        if (GameManager.instance.globalBlackBoard.Get<float>("DistanceToPlayer") <= controller.LocalBlackboard.Get<float>("DetectionRange"))
+        if (controller.LocalBlackboard.Get<float>("DistanceToPlayer") <= controller.LocalBlackboard.Get<float>("DetectionRange"))
         {
             if (controller.LocalBlackboard.Get<bool>("CanChangeMode"))
             {
@@ -24,7 +24,6 @@ public class CheckingTrackingRange : EnemyConditionSO
         else
         {
             Debug.Log("탐색 모드 전환");
-            controller.LocalBlackboard.Set("Patrolling", true);
             return NodeState.Success;
         }
     }

@@ -13,10 +13,7 @@ public class CheckPlayerInMeleeRange : EnemyConditionSO
             return NodeState.Failure;
         }
 
-        float attRange = controller.LocalBlackboard.Get<float>("MeleeRange");
-        float dis = GameManager.instance.globalBlackBoard.Get<float>("DistanceToPlayer");
-
-        if (dis <= attRange)
+        if (controller.LocalBlackboard.Get<float>("DistanceToPlayer") <= controller.LocalBlackboard.Get<float>("MeleeRange"))
         {
             Debug.Log("공격 범위 안에 들어옴!");
             controller.LocalBlackboard.Set("Attacking", true);

@@ -21,6 +21,8 @@ public class ChangeDirection : EnemyActionSO
             if (!controller.LocalBlackboard.Get<bool>("Patrolling")) //방향을 반전할 때 추적 상태였다면.
             {
                 controller.LocalBlackboard.Set("Patrolling", true); //추적 상태 해제
+                controller.LocalBlackboard.Set("Guarding", false);
+                controller.LocalBlackboard.Remove("GuardGage");
                 controller.LocalBlackboard.Set("ModeChangeCoolDown", 0f);
                 controller.LocalBlackboard.Set("CanChangeMode", false);
             }

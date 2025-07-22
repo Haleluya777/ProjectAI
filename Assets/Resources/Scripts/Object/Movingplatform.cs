@@ -15,13 +15,14 @@ public class Movingplatform : MonoBehaviour
     public Vector2 initialplatformpos;
     public Vector2 curplatformpos;
     public Vector2 destinationpos;
-    bool arrive;
+    [SerializeField] private bool arrive;
     bool atorigin;
     float coyoteTime = 0.2f;
     float coyoteTimeCounter;
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = GameManager.instance.playerObj;
+        //player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody2D>();
         initialplatformpos = GetComponent<Transform>().position;
         destinationpos = new Vector2(initialplatformpos.x, initialplatformpos.y + 50f);
@@ -75,6 +76,8 @@ public class Movingplatform : MonoBehaviour
             }
         }
     }
+
+    //플랫폼 위에 플레이어가 올라왔는지 체크.
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.parent.gameObject == player)
@@ -83,6 +86,8 @@ public class Movingplatform : MonoBehaviour
             Debug.Log("Player on platform");
         }
     }
+
+    //플레이어가 플랫폼 위를 벗어났는지 체크.
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.transform.parent.gameObject == player)

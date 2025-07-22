@@ -17,6 +17,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     private int att;
     private float mainAttCool;
     private float detectionRange;
+    private float guardRange;
     private float escapeRange;
     private float meleeRange;
     private float rangedRange;
@@ -39,6 +40,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         meleeCools = info.Combat_Status.ShortDisAttCool;
         rangedCools = info.Combat_Status.LongDisAttCool;
 
+        guardRange = info.Combat_Status.GuardRange;
         detectionRange = info.Combat_Status.DetectionRange;
         escapeRange = info.Combat_Status.EscapeRange;
 
@@ -53,6 +55,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
 
         blackBoard.Set("DetectionRange", detectionRange);
         blackBoard.Set("EscapeRange", escapeRange);
+        blackBoard.Set("GuardRange", guardRange);
 
         blackBoard.Set("MeleeRange", meleeRange);
         blackBoard.Set("RangedRange", rangedRange);

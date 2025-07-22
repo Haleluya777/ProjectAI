@@ -50,7 +50,6 @@ public class GameManager : MonoBehaviour
     private void UpdateDataPerFrame() //매 프레임당 업데이트 해야 할 공용 블랙보드 데이터
     {
         globalBlackBoard.Set<Transform>("PlayerTransform", playerObj.transform);
-        globalBlackBoard.Set("DistanceToPlayer", Vector2.Distance(playerObj.transform.position, enemyObj.transform.position));
     }
 
     public void InBattleState()

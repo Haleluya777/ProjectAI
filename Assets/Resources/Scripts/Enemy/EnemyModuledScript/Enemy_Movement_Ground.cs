@@ -23,7 +23,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
     private int layerMask; // "FlatForm" 레이어 마스크
     private const int OBJ_SCALE = 2; // 오브젝트 스케일 상수
     [SerializeField] private const float groundRaycastDistance = 0.5f; // 지면 감지 레이캐스트 길이
-    [SerializeField] private float frontBoxCastDistance = 1f; //전방 장애물 감지 레이 캐스트 길이
+    [SerializeField] private float frontRayCastDistance = 1f; //전방 장애물 감지 레이 캐스트 길이
 
     public bool ShouldMove => shouldMove;
     public Transform ParentTransform => parentTransform;
@@ -53,15 +53,13 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
     public void CheckingFlatForm()
     {
         raycastHit = Physics2D.Raycast(parentTransform.position, parentTransform.up * -1, groundRaycastDistance, layerMask);
-        if (!Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask) || Physics2D.Raycast(new Vector2(raycastPos.position.x, raycastPos.position.y + 0.1f), raycastPos.right * -1, frontBoxCastDistance, layerMask))
+        if (!Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask) || Physics2D.Raycast(new Vector2(raycastPos.position.x, raycastPos.position.y + 0.1f), raycastPos.right * -1, frontRayCastDistance, layerMask))
         {
             blackBoard.Set("CannotMove", true);
-            Debug.Log("전진 불가.");
         }
         else
         {
             blackBoard.Set("CannotMove", false);
-            Debug.Log("전진 가능");
         }
 
         if (raycastHit.collider != null)
@@ -96,21 +94,14 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
         local.Set("EnemyPosition", parentTransform.position);
         local.Set("ModeChangeCoolDown", local.Get<float>("ModeChangeCoolDown") + Time.deltaTime);
 
-        if (local.Get<float>("ModeChangeCoolDown") >= 3f)
+        if (!GameManager.instance.globalBlackBoard.HasKey("PlayerTransform")) return;
+        local.Set("DistanceToPlayer", Vector2.Distance(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position, parentTransform.position));
+
+        if (local.Get<float>("ModeChangeCoolDown") >= 1f)
         {
-            Debug.Log("모드 변환 가능");
             local.Set("CanChangeMode", true);
         }
-
-        //테스트 용
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            blackBoard.Set("Patrolling", false);
-            Debug.Log(blackBoard.Get<bool>("Patrolling"));
-        }
-        //
-
-            CheckingFlatForm();
+        CheckingFlatForm();
         //MoveToTarget();
     }
 
@@ -127,16 +118,6 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
     public void InjectAnimator(Animator _anim)
     {
         anim = _anim;
-    }
-
-    public void ChasingMode() //플레이어가 범위 내에 존재할 때 쫒아감.
-    {
-        if (!patrolling) return;
-        Debug.Log(blackBoard.Get<Boolean>("CanChangeMode"));
-        if (blackBoard.Get<Boolean>("CanChangeMode") == true)
-        {
-            patrolling = false;
-        }
     }
 
     public void PatrollingMode() //추적 모드 해제 및 일정 시간 동안 추적 불가.
