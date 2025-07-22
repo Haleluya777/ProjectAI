@@ -9,19 +9,15 @@ public class Patrolling : EnemyActionSO
 {
     public override NodeState Execute(EnemyAIController controller)
     {
-        if (controller.LocalBlackboard.Get<bool>("Patrolling"))
-        {
-            Animator anim = controller.LocalBlackboard.Get<Animator>("Animator");
-            Transform objTransform = controller.LocalBlackboard.Get<Transform>("Transform");
+        Animator anim = controller.LocalBlackboard.Get<Animator>("Animator");
+        Transform objTransform = controller.LocalBlackboard.Get<Transform>("Transform");
 
-            float moveSpeed = controller.LocalBlackboard.Get<float>("MoveSpeed");
-            int dir = controller.LocalBlackboard.Get<int>("Direction");
+        float moveSpeed = controller.LocalBlackboard.Get<float>("MoveSpeed");
+        int dir = controller.LocalBlackboard.Get<int>("Direction");
 
-            anim.CrossFade("Enemy_Moving", 0f);
-            objTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
+        anim.CrossFade("Enemy_Moving", 0f);
+        objTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
 
-            return NodeState.Success;
-        }
-        return NodeState.Failure;
+        return NodeState.Success;
     }
 }

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Animations;
 
-public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, IRequiredAnimator
+public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IRequiredAnimator
 {
     private enum MovementMode {Horizontal, Vertical}
     [SerializeField] private Transform raycastPos; // 레이캐스트 시작 위치를 위한 Transform
@@ -16,14 +17,13 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     private Vector2 moveDirection; // 몬스터의 현재 이동 방향
     private IBlackBoard blackBoard;
     private float moveSpeed;
-    private float detectionRange;
     private bool shouldMove;
     private bool patrolling;
-    private bool isGround; // 지면 감지 여부
     private int dir = 1; // 몬스터의 현재 방향
     private int layerMask; // "FlatForm" 레이어 마스크
     private const int OBJ_SCALE = 2; // 오브젝트 스케일 상수
     [SerializeField] private const float groundRaycastDistance = 0.5f; // 지면 감지 레이캐스트 길이
+    [SerializeField] private float frontBoxCastDistance = 1f; //전방 장애물 감지 레이 캐스트 길이
 
     public bool ShouldMove => shouldMove;
     public Transform ParentTransform => parentTransform;
@@ -37,11 +37,9 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
 
         parentTransform = this.transform.parent.transform;
         moveSpeed = info.Movement_Status.MoveSpeed;
-        detectionRange = info.Movement_Status.DetectionRange;
         patrolling = true; // 순찰 모드 활성화
 
-        blackBoard.Set("Movement", this.GetComponent<IMoveable>());
-        blackBoard.Set("DetectionRange", detectionRange);
+        blackBoard.Set("Movement", this.GetComponent<IMovable>());
         blackBoard.Set("Transform", parentTransform);
         blackBoard.Set("MoveSpeed", moveSpeed);
         blackBoard.Set("CanChangeMode", true);
@@ -55,8 +53,16 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     public void CheckingFlatForm()
     {
         raycastHit = Physics2D.Raycast(parentTransform.position, parentTransform.up * -1, groundRaycastDistance, layerMask);
-        isGround = Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask);
-        blackBoard.Set("isGround", isGround);
+        if (!Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask) || Physics2D.Raycast(new Vector2(raycastPos.position.x, raycastPos.position.y + 0.1f), raycastPos.right * -1, frontBoxCastDistance, layerMask))
+        {
+            blackBoard.Set("CannotMove", true);
+            Debug.Log("전진 불가.");
+        }
+        else
+        {
+            blackBoard.Set("CannotMove", false);
+            Debug.Log("전진 가능");
+        }
 
         if (raycastHit.collider != null)
         {
@@ -89,19 +95,31 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMoveable, IInitializable, I
     {
         local.Set("EnemyPosition", parentTransform.position);
         local.Set("ModeChangeCoolDown", local.Get<float>("ModeChangeCoolDown") + Time.deltaTime);
-        if (local.Get<float>("ModeChangeCoolDown") >= 1f)
+
+        if (local.Get<float>("ModeChangeCoolDown") >= 3f)
         {
+            Debug.Log("모드 변환 가능");
             local.Set("CanChangeMode", true);
         }
-        CheckingFlatForm();
-        MoveToTarget();
+
+        //테스트 용
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            blackBoard.Set("Patrolling", false);
+            Debug.Log(blackBoard.Get<bool>("Patrolling"));
+        }
+        //
+
+            CheckingFlatForm();
+        //MoveToTarget();
     }
 
     public void MoveToTarget()
     {
-        if (blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking"))
+        if (blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking") && !blackBoard.Get<bool>("Guarding"))
         {
             int dir = blackBoard.Get<int>("Direction");
+            anim.CrossFade("Enemy_Moving", 0f);
             parentTransform.Translate(Vector2.left * dir * blackBoard.Get<float>("MoveSpeed") * Time.deltaTime);
         }
     }

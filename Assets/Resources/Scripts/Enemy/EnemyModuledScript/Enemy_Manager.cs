@@ -18,9 +18,13 @@ public class Enemy_Manager : MonoBehaviour
     [SerializeField] private Transform rayCastTrans;
 
     public IDamageable istatus;
-    public IMoveable imove;
+    public IMovable imove;
     public IAttackable iattack;
     public IAiManager iai;
+
+    //디버깅 용
+    public EnemyUI ui;
+    //
 
     [SerializeField] private int id;
     private int layerMask;
@@ -47,7 +51,7 @@ public class Enemy_Manager : MonoBehaviour
     {
         istatus = GetComponentInChildren<IDamageable>();
         iattack = GetComponentInChildren<IAttackable>();
-        imove = GetComponentInChildren<IMoveable>();
+        imove = GetComponentInChildren<IMovable>();
         iai = GetComponentInChildren<IAiManager>();
     }
 
@@ -57,7 +61,7 @@ public class Enemy_Manager : MonoBehaviour
 
         info = dataBase.GetEnemyData(id);
         anim.runtimeAnimatorController = info.Visual.Anim;
-        
+
         localBlackBoard.Set("Animator", anim);
         localBlackBoard.Set("RigidBody", rigid);
         localBlackBoard.Set("Transform", trans);
@@ -81,5 +85,6 @@ public class Enemy_Manager : MonoBehaviour
         {
             updatedData.UpdateDataPerFrame(local);
         }
+        ui.HpBarUpdate(100, istatus.CurrentHp);
     }
 }

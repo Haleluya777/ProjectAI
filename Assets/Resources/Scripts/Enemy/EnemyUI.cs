@@ -14,11 +14,6 @@ public class EnemyUI : MonoBehaviour
         transform.localScale = transform.parent.localScale.x == -1 ? new Vector3(-1, 1, 1) : new Vector3(1, 1, 1);
     }
 
-    public void TextUpdate(string _text)
-    {
-        txt.text = _text;
-    }
-
     public void HpBarUpdate(float maxHp, float curHp)
     {
         hpBar.value = curHp / maxHp;

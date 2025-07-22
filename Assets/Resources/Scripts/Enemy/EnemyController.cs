@@ -74,8 +74,8 @@ public class EnemyController : MonoBehaviour, IDamageable
         StateAction(currentState);
         Targeting(dir);
 
-        enemyUI.HpBarUpdate(maxHp, curHp);
-        enemyUI.TextUpdate(currentState.ToString());
+        //enemyUI.HpBarUpdate(maxHp, curHp);
+        //enemyUI.TextUpdate(currentState.ToString());
     }
 
     private void StatusInit()

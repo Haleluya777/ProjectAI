@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
@@ -15,6 +16,8 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
 
     private int att;
     private float mainAttCool;
+    private float detectionRange;
+    private float escapeRange;
     private float meleeRange;
     private float rangedRange;
     private int meleeCount;
@@ -36,6 +39,9 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         meleeCools = info.Combat_Status.ShortDisAttCool;
         rangedCools = info.Combat_Status.LongDisAttCool;
 
+        detectionRange = info.Combat_Status.DetectionRange;
+        escapeRange = info.Combat_Status.EscapeRange;
+
         meleeRange = info.Combat_Status.ShortAttackRange;
         rangedRange = info.Combat_Status.LongAttackRange;
 
@@ -44,8 +50,14 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         blackBoard.Set("MainCool", mainAttCool);
         blackBoard.Set("MeleeCools", meleeCools);
         blackBoard.Set("RangedCools", rangedCools);
+
+        blackBoard.Set("DetectionRange", detectionRange);
+        blackBoard.Set("EscapeRange", escapeRange);
+
         blackBoard.Set("MeleeRange", meleeRange);
         blackBoard.Set("RangedRange", rangedRange);
+
+        blackBoard.Set("Guarding", false);
         blackBoard.Set("CanAttack", false);
         blackBoard.Set("Attacking", false);
     }
