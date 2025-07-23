@@ -8,7 +8,7 @@ public class CheckPlayerInMeleeRange : EnemyConditionSO
 {
     public override NodeState Evaluate(EnemyAIController controller)
     {
-        if(!controller.LocalBlackboard.HasKey("MeleeRange") || !GameManager.instance.globalBlackBoard.HasKey("DistanceToPlayer"))
+        if(!controller.LocalBlackboard.HasKey("MeleeRange") || !controller.LocalBlackboard.HasKey("DistanceToPlayer"))
         {
             return NodeState.Failure;
         }
@@ -21,6 +21,7 @@ public class CheckPlayerInMeleeRange : EnemyConditionSO
         }
         else
         {
+            Debug.Log("공격 범위 밖임");
             controller.LocalBlackboard.Set("Attacking", false);
             return NodeState.Failure;
         }

@@ -42,6 +42,8 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     public void UpdateDataPerFrame(IBlackBoard local)
     {
         local.Set("CanAction", CanAction);
+        local.Set("MaxHp", maxHp);
+        local.Set("CurHp", currentHp);
         local.Set("Scale", scale);
     }
 

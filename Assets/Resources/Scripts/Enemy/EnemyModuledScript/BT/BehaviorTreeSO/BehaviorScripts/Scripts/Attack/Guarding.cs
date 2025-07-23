@@ -19,6 +19,7 @@ public class Guard : EnemyActionSO
             {
                 Debug.Log("키 값 생성!");
                 controller.LocalBlackboard.Set("GuardGage", Time.time + guardTime); //현재 시각 + guardTime 을 GuardGage에 셋팅한다.
+                controller.LocalBlackboard.Set("CurrentTime", Time.time);
 
                 return NodeState.Running;
             }
@@ -29,6 +30,7 @@ public class Guard : EnemyActionSO
                 {
                     Debug.Log("저기 뭐가 있다! 추적해!");
                     controller.LocalBlackboard.Remove("GuardGage"); //게이지 삭제 (더 이상 필요가 없기 때문)
+                    controller.LocalBlackboard.Remove("CurrentTime");
                     controller.LocalBlackboard.Set("Patrolling", false); //탐색 모드 끄기.
                     return NodeState.Failure; //Failure를 반환하는 이유는 경계 시퀀스 다음이 이동 및 추적 시퀀스이기 때문. Success를 반환하면 다시 처음 시퀀스 노드부터 탐색함.
                 }

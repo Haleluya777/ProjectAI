@@ -10,8 +10,8 @@ public class CheckShouldMove : EnemyConditionSO
         bool shouldMove = controller.LocalBlackboard.Get<bool>("ShouldMove");
         if (shouldMove)
         {
-            return NodeState.Failure;
+            return NodeState.Success;
         }
-        return NodeState.Success;
+        return NodeState.Failure;
     }
 }
