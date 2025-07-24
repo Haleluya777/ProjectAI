@@ -7,12 +7,21 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.SocialPlatforms;
 
-public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequiredAnimator
+public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequiredAnimator, ISkillCaster
 {
     private Animator anim;
     private IBlackBoard blackBoard;
     private List<float> meleeCools;
     private List<float> rangedCools;
+    
+    //투사체를 쏘는 원거리 공격을 하는 경우에만 사용.
+    [SerializeField] private Transform shootingPos; 
+    [SerializeField] private GameObject shootingObj;
+    //
+
+    //모듈화 된 스킬
+    [SerializeField] private Skill_Module skill;
+    //
 
     private int att;
     private float mainAttCool;
@@ -48,10 +57,12 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         rangedRange = info.Combat_Status.LongAttackRange;
 
         blackBoard.Set("Attack", GetComponent<IAttackable>());
+        blackBoard.Set("SkillCaster", GetComponent<ISkillCaster>());
         blackBoard.Set("AttDamage", att);
         blackBoard.Set("MainCool", mainAttCool);
         blackBoard.Set("MeleeCools", meleeCools);
         blackBoard.Set("RangedCools", rangedCools);
+        blackBoard.Set("ShootingPoint", shootingPos);
 
         blackBoard.Set("DetectionRange", detectionRange);
         blackBoard.Set("EscapeRange", escapeRange);
@@ -64,6 +75,8 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         blackBoard.Set("Guarding", false);
         blackBoard.Set("CanAttack", false);
         blackBoard.Set("Attacking", false);
+
+        blackBoard.Set("Skill", skill);
     }
 
     public void UpdateDataPerFrame(IBlackBoard local)
@@ -94,5 +107,30 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     public void PerformAttack()
     {
         anim.CrossFade("Enemy_Attack", 0f);
+    }
+
+    public Vector3 GetPosition()
+    {
+        return blackBoard.Get<Transform>("ShootingPos").position;
+    }
+
+    public Quaternion GetRotation()
+    {
+        return blackBoard.Get<Transform>("ShootingPos").rotation;
+    }
+
+    public int GetAttackPower()
+    {
+        return att;
+    }
+
+    public IDamageable GetDamageableComponent()
+    {
+        return this.gameObject.transform.parent.GetComponentInChildren<IDamageable>();
+    }
+
+    public GameObject GetGameObject()
+    {
+        return shootingObj;
     }
 }
