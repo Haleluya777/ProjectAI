@@ -9,6 +9,7 @@ using UnityEngine.SocialPlatforms;
 
 public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequiredAnimator, ISkillCaster
 {
+    private enum AttackType {Melee, Range}
     private Animator anim;
     private IBlackBoard blackBoard;
     private List<float> meleeCools;
@@ -21,6 +22,10 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
 
     //모듈화 된 스킬
     [SerializeField] private Skill_Module skill;
+    //
+
+    //공격 타입 (원,근거리)
+    [SerializeField] private AttackType attackType;
     //
 
     private int att;
@@ -58,6 +63,9 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
 
         blackBoard.Set("Attack", GetComponent<IAttackable>());
         blackBoard.Set("SkillCaster", GetComponent<ISkillCaster>());
+
+        blackBoard.Set("AttackType", attackType);
+
         blackBoard.Set("AttDamage", att);
         blackBoard.Set("MainCool", mainAttCool);
         blackBoard.Set("MeleeCools", meleeCools);
