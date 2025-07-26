@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: CheckingObstacleChasing
   m_EditorClassIdentifier: 
   nodeName: 
-  Condition: {fileID: 0}
+  Condition: {fileID: 11400000, guid: c0bf13c194bff80498201b0e52347e11, type: 2}

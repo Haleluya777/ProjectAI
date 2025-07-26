@@ -17,6 +17,11 @@ public class Alert : EnemyActionSO
 
         else
         {
+            if (controller.LocalBlackboard.Get<bool>("Attacking"))
+            {
+                return NodeState.Success;
+            }
+
             if (Time.time >= controller.LocalBlackboard.Get<float>("WaitTime"))
             {
                 controller.LocalBlackboard.Remove("WaitTime");

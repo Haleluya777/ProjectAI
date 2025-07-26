@@ -48,8 +48,8 @@ MonoBehaviour:
       atk: 10
       detectionRange: 20
       escapeRange: 0
-      guardRange: 0
-      shortAttackRange: 10
+      guardRange: 25
+      shortAttackRange: 15
       longAttackRange: 15
       mainAttCool: 1
       shortDisAttCool:

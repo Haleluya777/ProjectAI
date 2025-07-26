@@ -16,7 +16,7 @@ public class Patrolling : EnemyActionSO
         int dir = controller.LocalBlackboard.Get<int>("Direction");
 
         anim.CrossFade("Enemy_Moving", 0f);
-        objTransform.Translate(Vector2.left * dir * moveSpeed * Time.deltaTime);
+        objTransform.Translate(Vector2.right * dir * moveSpeed * Time.deltaTime);
 
         return NodeState.Success;
     }

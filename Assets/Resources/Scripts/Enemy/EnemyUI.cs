@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class EnemyUI : MonoBehaviour, IInitializable
 {
     [SerializeField] private Slider hpBar, guardGage;
-    [SerializeField] private TextMeshProUGUI txt;
 
     private IBlackBoard localBlackBoard;
 
