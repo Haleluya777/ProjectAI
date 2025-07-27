@@ -17,12 +17,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private int level;
     private int maxHp, curHp;
     private float maxStm, curStm;
-    private int curMoveSpeed;
-    private int jumpPower;
+    [SerializeField] private int curMoveSpeed;
+    [SerializeField] private int jumpPower;
     private int holdJumpPower;
     private int scale = 1;
     private int layerMask;
-    [SerializeField] private int combo;
+    private int combo;
     private bool isdead;
     private bool canJump;
     private bool canDamaged;
@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private SpriteRenderer sprite;
     private Coroutine newCorutine;
     private Coroutine comboCoroutine;
-    private const int WALK_SPEED = 10;
+    private const int WALK_SPEED = 15;
     public Vector3 Dir => dir;
     public Vector2 plusspeed;
     public bool overground;
@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         curStm = maxStm;
         regenSpeed = 10f;
         curMoveSpeed = WALK_SPEED;
-        jumpPower = 15;
+        jumpPower = 45;
         holdJumpPower = 20;
         att = 20;
         combo = 1;
@@ -414,7 +414,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (ground.gameObject.layer == 6)
         {
             overground = true;
-            rigid.gravityScale = 4f;
+            rigid.gravityScale = 12f;
             if (currentState != State.Jumping)
             {
                 //rigid.velocity = new Vector2(rigid.velocity.x, 0f);
