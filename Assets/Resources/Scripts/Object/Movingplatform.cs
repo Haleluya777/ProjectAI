@@ -15,10 +15,11 @@ public class Movingplatform : MonoBehaviour
     public Vector2 initialplatformpos;
     public Vector2 curplatformpos;
     public Vector2 destinationpos;
-    [SerializeField] private bool arrive;
+    public bool arrive;
     bool atorigin;
     float coyoteTime = 0.2f;
     float coyoteTimeCounter;
+    float reversecoyote;
     private void Start()
     {
         player = GameManager.instance.playerObj;
@@ -28,6 +29,7 @@ public class Movingplatform : MonoBehaviour
         destinationpos = new Vector2(initialplatformpos.x, initialplatformpos.y + 50f);
         arrive = false;
         coyoteTimeCounter = 0;
+        reversecoyote = 0;
     }
     // Update is called once per frame
     void FixedUpdate()
@@ -41,7 +43,6 @@ public class Movingplatform : MonoBehaviour
         if (curplatformpos.y <= initialplatformpos.y)
         {
             arrive = false;
-            if (!playerOnPlatform) rb.velocity = new Vector3(0, 0, 0);
             coyoteTimeCounter = 0;
         }
         else
@@ -51,11 +52,28 @@ public class Movingplatform : MonoBehaviour
     }
     private void speed()
     {
-        if (playerOnPlatform && !arrive)//도착하지 않았고 플레이어가 플랫폼 위에 있을 때
+        if (!arrive)//도착하지 않았고 플레이어가 플랫폼 위에 있을 때
         {
-            rb.velocity = movingspeed;
-            platformspd = movingspeed;
-            coyoteTimeCounter = 0;
+            if (playerOnPlatform)
+            {
+                rb.velocity = movingspeed;
+                coyoteTimeCounter = 0;
+                if (reversecoyote < coyoteTime)
+                {
+                    reversecoyote += Time.fixedDeltaTime;
+                    if (Input.GetButtonDown("Jump"))
+                    {
+                        playerOnPlatform = false;
+                        platformspd = returnspeed;
+                        return;
+                    }
+                }
+                platformspd = movingspeed;
+            }
+            else
+            {
+                rb.velocity = new Vector3(0, 0, 0);
+            }
         }
         else if (arrive) //도착했을 때
         {
@@ -72,6 +90,7 @@ public class Movingplatform : MonoBehaviour
                         return;
                     }
                 }
+                reversecoyote = 0;
                 platformspd = returnspeed;
             }
         }
