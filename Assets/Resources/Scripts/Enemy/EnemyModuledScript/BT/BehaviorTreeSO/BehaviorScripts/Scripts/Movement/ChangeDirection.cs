@@ -34,7 +34,7 @@ public class ChangeDirection : EnemyActionSO
             if (!controller.LocalBlackboard.Get<bool>("Patrolling")) //추적 상태일 때 플레이어의 위치에 따라 방향 전환.
             {
                 if (!GameManager.instance.globalBlackBoard.HasKey("PlayerTransform")) return NodeState.Failure;
-                dir = GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position.x < transform.position.x ? 1 : -1;
+                dir = GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position.x < transform.position.x ? -1 : 1;
                 controller.LocalBlackboard.Set("Direction", dir);
                 transform.localScale = new Vector2(scale * dir, scale);
                 return NodeState.Success;

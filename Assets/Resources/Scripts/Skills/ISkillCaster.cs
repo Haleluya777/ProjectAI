@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface ISkillCaster
 {
+    string GetTag();
+
     // 스킬 사용자의 현재 위치
     Vector3 GetPosition();
 

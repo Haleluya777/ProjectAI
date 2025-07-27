@@ -18,7 +18,7 @@ public class Aiming : EnemyActionSO
 
         else
         {
-            if (Time.time >= controller.LocalBlackboard.Get<float>("AimingTime"))
+            if (Time.time >= controller.LocalBlackboard.Get<float>("AimingTime") || controller.LocalBlackboard.Get<bool>("Attacking"))
             {
                 Debug.Log("조준 완료!");
                 controller.LocalBlackboard.Remove("AimingTime");

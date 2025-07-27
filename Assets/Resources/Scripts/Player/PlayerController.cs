@@ -146,6 +146,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         return gameObject;
     }
 
+    public string GetTag()
+    {
+        return this.gameObject.tag;
+    }
+
     private State StateUpdate()
     {
         float horizontal = moveX;

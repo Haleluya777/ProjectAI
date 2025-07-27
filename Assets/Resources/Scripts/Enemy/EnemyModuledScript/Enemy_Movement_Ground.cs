@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -10,6 +11,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
 {
     private enum MovementMode {Horizontal, Vertical}
     [SerializeField] private Transform raycastPos; // 레이캐스트 시작 위치를 위한 Transform
+    [SerializeField] private Transform raycastCenterPos; //Enemy 오브젝트 가운데에 위치할 레이캐스트 시작점.
     private Transform parentTransform;
     private Animator anim;
     private RaycastHit2D raycastHit;
@@ -24,6 +26,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
     private const int OBJ_SCALE = 2; // 오브젝트 스케일 상수
     [SerializeField] private const float groundRaycastDistance = 0.5f; // 지면 감지 레이캐스트 길이
     [SerializeField] private float frontRayCastDistance = 1f; //전방 장애물 감지 레이 캐스트 길이
+    [SerializeField] private float canDetectionCool;
 
     public bool ShouldMove => shouldMove;
     public Transform ParentTransform => parentTransform;
@@ -48,12 +51,15 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
         blackBoard.Set("Patrolling", true);
         blackBoard.Set("ShouldMove", false);
         blackBoard.Set("MovementMode", MovementMode.Horizontal);
+        blackBoard.Set("RayCastCenterPos", raycastCenterPos);
     }
 
     public void CheckingFlatForm()
     {
         raycastHit = Physics2D.Raycast(parentTransform.position, parentTransform.up * -1, groundRaycastDistance, layerMask);
-        if (!Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask) || Physics2D.Raycast(new Vector2(raycastPos.position.x, raycastPos.position.y + 0.1f), raycastPos.right * -1, frontRayCastDistance, layerMask))
+        Vector2 raycastDir = (Vector2.right * blackBoard.Get<int>("Direction"));
+        Debug.DrawRay(new Vector2(raycastPos.position.x, raycastPos.position.y + 0.1f), raycastDir * frontRayCastDistance, Color.red);
+        if (!Physics2D.Raycast(raycastPos.position, raycastPos.up * -1, groundRaycastDistance, layerMask) || Physics2D.Raycast(new Vector2(raycastPos.position.x, raycastPos.position.y + 0.1f), raycastDir, frontRayCastDistance, layerMask))
         {
             blackBoard.Set("CannotMove", true);
         }
@@ -102,17 +108,11 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
             local.Set("CanChangeMode", true);
         }
         CheckingFlatForm();
-        //MoveToTarget();
     }
 
     public void MoveToTarget()
     {
-        if (blackBoard.Get<bool>("ShouldMove") && !blackBoard.Get<bool>("Attacking") && !blackBoard.Get<bool>("Guarding"))
-        {
-            int dir = blackBoard.Get<int>("Direction");
-            anim.CrossFade("Enemy_Moving", 0f);
-            parentTransform.Translate(Vector2.left * dir * blackBoard.Get<float>("MoveSpeed") * Time.deltaTime);
-        }
+        
     }
 
     public void InjectAnimator(Animator _anim)

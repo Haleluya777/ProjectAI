@@ -15,7 +15,7 @@ public class Skill_FireBall : SkillBase
 
         // Caster의 위치와 방향에 프리팹 생성
         GameObject fireballInstance = Instantiate(fireBallPrefab, caster.GetPosition(), caster.GetRotation());
-        
+
         // FireBall 스크립트에 데미지와 사용자 정보 전달
         FireBall fireballComponent = fireballInstance.GetComponent<FireBall>();
         if (fireballComponent != null)
@@ -30,14 +30,14 @@ public class Skill_FireBall : SkillBase
             {
                 Debug.LogWarning("Damage Calculator가 할당되지 않아 기본 데미지 0으로 설정됩니다.");
             }
-            fireballComponent.ObjInit(caster.GetGameObject().transform, calculatedDamage, damagType.ToString());
+            fireballComponent.ObjInit(caster.GetGameObject().transform, calculatedDamage, damagType.ToString(), caster.GetTag());
         }
         else
         {
             Debug.LogError("FireBall Prefab에 FireBall 컴포넌트가 없음.");
         }
 
-        Debug.Log($"{caster.GetGameObject().name}이(가) 파이어볼 발사!");
+        Debug.Log("파이어볼 발사!");
         return true;
     }
 }

@@ -6,10 +6,10 @@ using UnityEngine;
 public class FireBall : SkillObjectBase
 {
     //그냥 투사체.
-    
+    private string caster;
     public int dmg;
     private Vector3 dir;
-    private const int OBJECT_SPEED = 5;
+    private const int OBJECT_SPEED = 10;
 
 
     private void Start() 
@@ -27,21 +27,22 @@ public class FireBall : SkillObjectBase
         transform.position += dir.normalized * OBJECT_SPEED * Time.deltaTime;
     }
 
-    public void ObjInit(Transform _localScale, int _dmg, string _tag)
+    public void ObjInit(Transform _localScale, int _dmg, string _tag, string _caster)
     {
-        dir = _localScale.localScale.x == -1 ? Vector3.left : Vector3.right;
+        dir = _localScale.localScale.x < 0 ? Vector3.left : Vector3.right;
         transform.localScale = _localScale.localScale;
         dmg = _dmg;
         this.gameObject.tag = _tag;
+        caster = _caster;
     }
 
     private void OnTriggerEnter2D(Collider2D other) 
     {
-        if(other.gameObject.name != "Player" && other.GetComponentInChildren<IDamageable>() != null)
+        if (other.gameObject.tag != caster && other.GetComponentInChildren<IDamageable>() != null)
         {
             var damagable = other.GetComponentInChildren<IDamageable>();
             damagable.Damaged(dmg, this.gameObject.tag);
-            damagable.StatusEffectProcess(3f, "Stun");
+            //damagable.StatusEffectProcess(3f, "Stun");
         }
     }
 }

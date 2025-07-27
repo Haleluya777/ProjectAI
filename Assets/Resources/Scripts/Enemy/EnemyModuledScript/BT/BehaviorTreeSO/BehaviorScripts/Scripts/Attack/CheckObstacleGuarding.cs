@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CheckObstacleBeforeAttack",menuName ="BehaviorTree/Conditions/CheckObstacleBeforeAttack")]
-public class CheckObstacleBeforeAttack : EnemyConditionSO
+[CreateAssetMenu(fileName = "CheckObstacleGuarding", menuName = "BehaviorTree/Conditions/CHeckObstacleGuarding")]
+public class CheckObstacleGuarding : EnemyConditionSO
 {
     public override NodeState Evaluate(EnemyAIController controller)
     {
@@ -12,11 +11,12 @@ public class CheckObstacleBeforeAttack : EnemyConditionSO
         Vector3 raycastDir = (GameManager.instance.globalBlackBoard.Get<Transform>("PlayerCenter").position - controller.LocalBlackboard.Get<Transform>("RayCastCenterPos").position).normalized;
 
         int layerMask = 1 << LayerMask.NameToLayer("FlatForm");
-        float attRange = controller.LocalBlackboard.Get<int>("AttackType") == 0 ? controller.LocalBlackboard.Get<float>("MeleeRange") : controller.LocalBlackboard.Get<float>("RangedRange");
+        float guardRange = controller.LocalBlackboard.Get<float>("DistanceToPlayer");
 
-        if (Physics2D.Raycast(raycastPos.position, raycastDir, attRange, layerMask))
+        if (Physics2D.Raycast(raycastPos.position, raycastDir, guardRange, layerMask))
         {
             Debug.Log("장애물 있음");
+            controller.LocalBlackboard.Set("Patrolling", true);
             return NodeState.Failure;
         }
 

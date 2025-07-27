@@ -21,21 +21,21 @@ public class CheckPlayerInRangedRange : EnemyConditionSO
             if (dis > escapeRange)
             {
                 Debug.Log("공격 범위 안에 들어옴!");
-                controller.LocalBlackboard.Set("Attacking", true);
+                controller.LocalBlackboard.Set("ReadyToAttack", true);
                 controller.LocalBlackboard.Set("State", 1);
                 return NodeState.Success;
             }
             else
             {
                 Debug.Log("도주 범위 안에 들어옴!");
-                controller.LocalBlackboard.Set("Attacking", false);
+                controller.LocalBlackboard.Set("ReadyToAttack", false);
                 controller.LocalBlackboard.Set("State", -1);
                 return NodeState.Failure;
             }
         }
         else
         {
-            controller.LocalBlackboard.Set("Attacking", false);
+            controller.LocalBlackboard.Set("ReadyToAttack", false);
             controller.LocalBlackboard.Set("State", 1);
             return NodeState.Failure;
         }

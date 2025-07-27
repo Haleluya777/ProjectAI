@@ -17,7 +17,6 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     
     //투사체를 쏘는 원거리 공격을 하는 경우에만 사용.
     [SerializeField] private Transform shootingPos; 
-    [SerializeField] private GameObject shootingObj;
     //
 
     //모듈화 된 스킬
@@ -61,8 +60,8 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         meleeRange = info.Combat_Status.ShortAttackRange;
         rangedRange = info.Combat_Status.LongAttackRange;
 
-        blackBoard.Set("Attack", GetComponent<IAttackable>());
-        blackBoard.Set("SkillCaster", GetComponent<ISkillCaster>());
+        blackBoard.Set("Attack", this.GetComponent<IAttackable>());
+        blackBoard.Set("SkillCaster", this.GetComponent<ISkillCaster>());
 
         blackBoard.Set("AttackType", attackType);
 
@@ -70,7 +69,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         blackBoard.Set("MainCool", mainAttCool);
         blackBoard.Set("MeleeCools", meleeCools);
         blackBoard.Set("RangedCools", rangedCools);
-        blackBoard.Set("ShootingPoint", shootingPos);
+        blackBoard.Set("ShootingPos", shootingPos);
 
         blackBoard.Set("DetectionRange", detectionRange);
         blackBoard.Set("EscapeRange", escapeRange);
@@ -90,6 +89,10 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     public void UpdateDataPerFrame(IBlackBoard local)
     {
         blackBoard.Set("MainCoolRegain", blackBoard.Get<float>("MainCoolRegain") + Time.deltaTime);
+        if (skill != null)
+        {
+            skill.UpdateCoolDown(Time.deltaTime);
+        }
     }
 
     public void InjectAnimator(Animator _anim)
@@ -132,6 +135,11 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         return att;
     }
 
+    public string GetTag()
+    {
+        return this.transform.parent.tag;
+    }
+
     public IDamageable GetDamageableComponent()
     {
         return this.gameObject.transform.parent.GetComponentInChildren<IDamageable>();
@@ -139,6 +147,6 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
 
     public GameObject GetGameObject()
     {
-        return shootingObj;
+        return this.transform.parent.gameObject;
     }
 }

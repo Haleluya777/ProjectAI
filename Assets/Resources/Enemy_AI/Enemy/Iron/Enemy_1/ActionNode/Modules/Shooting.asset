@@ -12,6 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc7c1f3ccf75f1e418588bb82811e358, type: 3}
   m_Name: Shooting
   m_EditorClassIdentifier: 
-  totalAttacks: 0
-  interval: 0
-  bulletObj: {fileID: 0}
+  attackCount: 3

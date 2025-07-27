@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: CheckObstacle
   m_EditorClassIdentifier: 
   nodeName: 
-  Condition: {fileID: 0}
+  Condition: {fileID: 11400000, guid: bd4d4881e97662745a83ec59a6f119c9, type: 2}
