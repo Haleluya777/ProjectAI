@@ -17,3 +17,4 @@ MonoBehaviour:
   cancleDelay: 1
   skills:
   - {fileID: 11400000, guid: 41eb99799c69ade408cb27f8a6cf5b41, type: 2}
+  - {fileID: 11400000, guid: 9e9b2b4564af8684e83895d48615fbd6, type: 2}
