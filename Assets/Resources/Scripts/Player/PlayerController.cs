@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public Vector3 respawn;
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
+    private RaycastHit2D raycastHit;
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private BoxCollider2D hitBox;
@@ -20,9 +21,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private int jumpPower;
     private int holdJumpPower;
     private int scale = 1;
+    private int layerMask;
     [SerializeField] private int combo;
     private bool isdead;
     private bool canJump;
+    private bool canDamaged;
     private float curjumpHoldTime;
     private float maxjumpHoldTime;
     [SerializeField] private int att, defense, magicalDefense;
@@ -77,6 +80,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         UseSkill();
         StmRegen();
         PlayerUIUpdate();
+        //CheckFlatForm();
+        Debug.Log(rigid.velocity.x+ " , " + rigid.velocity.y);
 
         // 스킬 모듈의 쿨다운을 매 프레임 업데이트
         if (currentSkill != null)
@@ -99,6 +104,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     }
     private void StatusInit()
     {
+        layerMask = 1 << LayerMask.NameToLayer("FlatForm");
+
         level = 1;
         maxHp = 100;
         maxStm = 100;
@@ -149,6 +156,18 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public string GetTag()
     {
         return this.gameObject.tag;
+    }
+
+    private void CheckFlatForm()
+    {
+        raycastHit = Physics2D.Raycast(this.transform.position, this.transform.right, .5f, layerMask);
+        if (Physics2D.Raycast(this.transform.position, this.transform.right, 0.5f, layerMask))
+        {
+            Debug.Log("In FlatForm");
+            rigid.gravityScale = 0;
+            rigid.velocity = Vector2.zero;
+            this.transform.position = raycastHit.point;
+        }
     }
 
     private State StateUpdate()

@@ -9,7 +9,7 @@ public class CheckingObstacleChasing : EnemyConditionSO
     {
         Transform trans = controller.LocalBlackboard.Get<Transform>("Transform");
         Transform raycastPos = controller.LocalBlackboard.Get<Transform>("Transform");
-        Vector3 raycastDir = (GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position - controller.LocalBlackboard.Get<Transform>("Transform").position).normalized;
+        Vector3 raycastDir = (GameManager.instance.globalBlackBoard.Get<Transform>("PlayerCenter").position - controller.LocalBlackboard.Get<Transform>("Transform").position).normalized;
 
         int layerMask = 1 << LayerMask.NameToLayer("FlatForm");
         float detRange = controller.LocalBlackboard.Get<float>("DetectionRange");
