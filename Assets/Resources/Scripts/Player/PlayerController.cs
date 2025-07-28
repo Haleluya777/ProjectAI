@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
@@ -80,8 +81,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         UseSkill();
         StmRegen();
         PlayerUIUpdate();
-        //CheckFlatForm();
-        Debug.Log(rigid.velocity.x+ " , " + rigid.velocity.y);
+        CheckFlatForm();
 
         // 스킬 모듈의 쿨다운을 매 프레임 업데이트
         if (currentSkill != null)
@@ -160,13 +160,15 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void CheckFlatForm()
     {
-        raycastHit = Physics2D.Raycast(this.transform.position, this.transform.right, .5f, layerMask);
-        if (Physics2D.Raycast(this.transform.position, this.transform.right, 0.5f, layerMask))
+        raycastHit = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.up * -1, .5f, layerMask);
+        if (raycastHit.collider != null)
         {
-            Debug.Log("In FlatForm");
-            rigid.gravityScale = 0;
-            rigid.velocity = Vector2.zero;
-            this.transform.position = raycastHit.point;
+            currentState = State.Idle;
+            overground = false;
+        }
+        else
+        {
+            overground = true;
         }
     }
 
@@ -175,12 +177,15 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         float horizontal = moveX;
         bool checkAttack = attacking;
         bool _delayed = delayed;
+
         if (rigid.velocity.y > 0 && overground) { return State.Jumping; }
+
         else if (rigid.velocity.y < 0 && overground)
         {
             if (currentState == State.Jumping) { return State.Jumping; }
             else { if (curcoyoteTime >= coyoteTime) { return State.Jumping; } }
         }
+
         return (horizontal, checkAttack, _delayed) switch
         {
             (not 0, false, false) => State.Moving,
@@ -195,7 +200,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         switch(curState)
         {
             case State.Idle:
-                rigid.velocity = new Vector2(0, rigid.velocity.y);
                 anim.CrossFade("Idle", 0f);
                 Movement();
                 break;
@@ -218,7 +222,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         { 
             dir = new Vector3(moveX, 0).normalized;
         } 
-        rigid.velocity = new Vector2 (moveX * curMoveSpeed + plusspeed.x, rigid.velocity.y); 
+        rigid.velocity = new Vector2 (moveX * curMoveSpeed, rigid.velocity.y); 
         transform.localScale = new Vector3(dir.x, 1, 1);
     }
 
@@ -239,14 +243,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             {
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
                 curjumpHoldTime = 0;
-            }
-            if (Input.GetButton("Jump") && currentState == State.Jumping)
-            {
-                if (curjumpHoldTime < maxjumpHoldTime)
-                {
-                    rigid.velocity += new Vector2(0, holdJumpPower * Time.deltaTime);
-                    curjumpHoldTime += Time.deltaTime;
-                }
             }
         }
     }
@@ -392,21 +388,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void OnTriggerStay2D(Collider2D ground)
     {
-        if (ground.gameObject.layer == 6)
-        {
-            overground = false;
-            curcoyoteTime = 0f; //땅에 닿았을 때 코요테 타임 초기화
-            if (ground.GetComponent<Movingplatform>() != null)
-            {
-                Movingplatform platform = ground.GetComponent<Movingplatform>();
-                if (platform != null && platform.playerOnPlatform)
-                {
-                    plusspeed = new Vector2(platform.platformspd.x, platform.platformspd.y);
-                    rigid.velocity = new Vector2(rigid.velocity.x, plusspeed.y);
-                    rigid.gravityScale = 0f;
-                }
-            }
-        }
+        
     }
 
     private void OnTriggerExit2D(Collider2D ground)
@@ -417,7 +399,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             rigid.gravityScale = 12f;
             if (currentState != State.Jumping)
             {
-                //rigid.velocity = new Vector2(rigid.velocity.x, 0f);
+
             }
         }
     }
