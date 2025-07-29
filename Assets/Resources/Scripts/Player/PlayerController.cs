@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private Coroutine comboCoroutine;
     private const int WALK_SPEED = 15;
     public Vector3 Dir => dir;
-    public Vector2 plusspeed;
+    public Vector2 platFormVelocity;
     public bool overground;
 
     [SerializeField] private Skill_Module currentSkill;
@@ -163,6 +163,17 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         raycastHit = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.up * -1, .5f, layerMask);
         if (raycastHit.collider != null)
         {
+            IMovablePlatForm momentumPlatForm = raycastHit.collider.GetComponent<IMovablePlatForm>() != null ? raycastHit.collider.GetComponent<IMovablePlatForm>() : null;
+
+            if (momentumPlatForm != null)
+            {
+                
+            }
+            else
+            {
+
+            }
+
             currentState = State.Idle;
             overground = false;
         }
@@ -201,6 +212,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             case State.Idle:
                 anim.CrossFade("Idle", 0f);
+                attacking = false;
                 Movement();
                 break;
 
@@ -221,8 +233,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (moveX != 0) 
         { 
             dir = new Vector3(moveX, 0).normalized;
-        } 
-        rigid.velocity = new Vector2 (moveX * curMoveSpeed, rigid.velocity.y); 
+        }
+        rigid.velocity = new Vector2 (moveX * curMoveSpeed + platFormVelocity.x, rigid.velocity.y);
         transform.localScale = new Vector3(dir.x, 1, 1);
     }
 
@@ -376,14 +388,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             damagable.StatusEffectProcess(5f, "Stun");
             GameManager.instance.InBattleState();
         }
-
-        if (other.gameObject.layer == 6)
-        {
-            overground = false;
-            currentState = State.Idle;
-            attacking = false;
-            plusspeed = Vector2.zero;
-        }
     }
 
     private void OnTriggerStay2D(Collider2D ground)
@@ -438,7 +442,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     IEnumerator ComboReset()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.2f);
         combo = 1;
     }
 

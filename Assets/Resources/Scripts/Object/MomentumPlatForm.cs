@@ -3,14 +3,13 @@ using DG.Tweening; // DoTween 네임스페이스 추가
 
 public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
 {
-    [Header("Movement Settings")]
-    [SerializeField] private float moveSpeed = 2f; // 이동 속도 (SetSpeedBased 사용 시 실제 속도)
-    [SerializeField] private Transform destination; // 플랫폼의 목표 목적지 Transform
-
+    [SerializeField] private float moveSpeed = 2f; // 이동 속도
+    [SerializeField] private Transform destination; // 플랫폼의 목표
     private Vector2 initialPosition; 
     
-    private Vector2 previousPositionForMomentum;
+    private Vector2 previousPos;
     public Vector2 currentMomentumVector2;
+    public Vector2 deltaPos { get; set; }
     public float maxMomentumMagnitude2D = 0f; 
     
     private Vector2 targetPos;
@@ -25,7 +24,7 @@ public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
         rb = GetComponent<Rigidbody2D>();
 
         initialPosition = transform.position;
-        previousPositionForMomentum = transform.position;
+        previousPos = transform.position;
     }
 
     void FixedUpdate()
@@ -68,7 +67,9 @@ public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
     private void CalculateMomentum()
     {
         Vector2 currentPosition = rb.position; 
-        Vector2 calculatedVelocity = (currentPosition - previousPositionForMomentum) / Time.fixedDeltaTime;
+        Vector2 calculatedVelocity = (currentPosition - previousPos) / Time.fixedDeltaTime; //모멘텀 계산
+
+        deltaPos = currentPosition - previousPos;
 
         currentMomentumVector2 = calculatedVelocity * rb.mass; 
         
@@ -80,7 +81,7 @@ public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
             momentum = currentMomentumVector2;
         }
 
-        previousPositionForMomentum = currentPosition;
+        previousPos = currentPosition;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
