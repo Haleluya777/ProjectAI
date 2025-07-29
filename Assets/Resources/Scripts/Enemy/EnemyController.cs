@@ -22,7 +22,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private int maxHp, curHp;
     private int att, defense, magicalDefense;
-    private int scale = 2;
+    private float scale = 2;
     private float attRange;
     private float detectionRange;
     private float boundaryRange;
@@ -47,7 +47,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     public bool CanAction { get; set; }
     public int CurrentHp => curHp;
     public bool IsDead => isdead;
-    public int Scale => scale;
+    public float Scale => scale;
     //----------------------------------//
 
 

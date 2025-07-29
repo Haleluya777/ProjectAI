@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -23,7 +24,6 @@ public class Movingplatform : MonoBehaviour
     private void Start()
     {
         player = GameManager.instance.playerObj;
-        //player = GameObject.FindGameObjectWithTag("Player");
         rb = GetComponent<Rigidbody2D>();
         initialplatformpos = GetComponent<Transform>().position;
         destinationpos = new Vector2(initialplatformpos.x, initialplatformpos.y + 50f);
@@ -52,7 +52,7 @@ public class Movingplatform : MonoBehaviour
     }
     private void speed()
     {
-        if (!arrive)//µµÂøÇÏÁö ¾Ê¾Ò°í ÇÃ·¹ÀÌ¾î°¡ ÇÃ·§Æû À§¿¡ ÀÖÀ» ¶§
+        if (!arrive)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò°ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         {
             if (playerOnPlatform)
             {
@@ -75,7 +75,7 @@ public class Movingplatform : MonoBehaviour
                 rb.velocity = new Vector3(0, 0, 0);
             }
         }
-        else if (arrive) //µµÂøÇßÀ» ¶§
+        else if (arrive) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         {
             rb.velocity = returnspeed;
             if (playerOnPlatform)
@@ -96,7 +96,7 @@ public class Movingplatform : MonoBehaviour
         }
     }
 
-    //ÇÃ·§Æû À§¿¡ ÇÃ·¹ÀÌ¾î°¡ ¿Ã¶ó¿Ô´ÂÁö Ã¼Å©.
+    //ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ã¶ï¿½Ô´ï¿½ï¿½ï¿½? Ã¼Å©.
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.parent.gameObject == player)
@@ -106,7 +106,7 @@ public class Movingplatform : MonoBehaviour
         }
     }
 
-    //ÇÃ·¹ÀÌ¾î°¡ ÇÃ·§Æû À§¸¦ ¹þ¾î³µ´ÂÁö Ã¼Å©.
+    //ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î³µï¿½ï¿½ï¿½ï¿½ Ã¼Å©.
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.transform.parent.gameObject == player)

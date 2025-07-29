@@ -2,7 +2,7 @@
 public interface IDamageable
 {
     int CurrentHp { get; }
-    int Scale{ get; }
+    float Scale{ get; }
     bool CanAction { get; set; }
 
     void Damaged(int damage, string damageType);
