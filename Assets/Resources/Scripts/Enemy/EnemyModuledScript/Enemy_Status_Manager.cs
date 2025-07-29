@@ -16,7 +16,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     private int maxHp;
     private int currentHp;
     private int defense;
-    private int scale;
+    private float scale;
     private int magicalDefense;
     private bool isdead;
     private int phase2Threshold;
@@ -25,7 +25,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     public int CurrentHp => currentHp;
     public int Phase2Threshold => phase2Threshold;
     public bool IsDead => isdead;
-    public int Scale => scale;
+    public float Scale => scale;
 
     public bool CanAction { get; set; }
 

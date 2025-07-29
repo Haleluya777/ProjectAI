@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public Vector3 respawn;
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
-    private RaycastHit2D raycastHit;
+    private RaycastHit2D raycastHitUnder;
+    private RaycastHit2D raycastHitFront;
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private BoxCollider2D hitBox;
@@ -21,7 +22,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private int curMoveSpeed;
     [SerializeField] private int jumpPower;
     private int holdJumpPower;
-    private int scale = 1;
+    [SerializeField] private float scale = 1;
     private int layerMask;
     private int combo;
     private bool isdead;
@@ -35,18 +36,18 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public int CurrentHp => curHp;
     public int Att => att;
     public bool IsDead => isdead;
-    public int Scale => scale;
+    public float Scale => scale;
     public bool CanAction { get; set; }
     private Vector3 dir;
     private float moveX;
-    private float moveY;
     private float regenSpeed;
     private bool canRegen;
     [SerializeField] private bool delayed;
     [SerializeField] private float coyoteTime;
     [SerializeField] private float curcoyoteTime;
-    [SerializeField] private float checkingDis;
-    [SerializeField] private float attCool, attTime;
+    [SerializeField] private Vector2 momentum;
+    private float momentumX, momentumY;
+    private float attCool, attTime;
     private Rigidbody2D rigid;
     private Animator anim;
     private SpriteRenderer sprite;
@@ -54,7 +55,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private Coroutine comboCoroutine;
     private const int WALK_SPEED = 15;
     public Vector3 Dir => dir;
-    public Vector2 platFormVelocity;
     public bool overground;
 
     [SerializeField] private Skill_Module currentSkill;
@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     {
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
-        
+
         Jump();
 
         if (CanAction)
@@ -76,12 +76,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             currentState = StateUpdate();
             StateAction(currentState);
         }
-        
+
         InputAttack();
         UseSkill();
         StmRegen();
         PlayerUIUpdate();
-        CheckFlatForm();
 
         // 스킬 모듈의 쿨다운을 매 프레임 업데이트
         if (currentSkill != null)
@@ -91,6 +90,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
         curStm = Mathf.Clamp(curStm, 0, maxStm);
+    }
+
+    private void FixedUpdate()
+    {
+        //Debug.Log(momentum);
+        CheckFlatForm();
     }
 
     private void PlayerUIUpdate()
@@ -128,7 +133,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         canJump = true;
         dir = new Vector3(1, 0).normalized;
         rigid = this.GetComponent<Rigidbody2D>();
-        anim = this.GetComponent <Animator>();
+        anim = this.GetComponent<Animator>();
         sprite = this.GetComponent<SpriteRenderer>();
     }
 
@@ -160,18 +165,24 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void CheckFlatForm()
     {
-        raycastHit = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.up * -1, .5f, layerMask);
-        if (raycastHit.collider != null)
+        raycastHitUnder = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.up * -1, .5f, layerMask);
+        raycastHitFront = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.right, .5f, layerMask);
+
+        if (raycastHitUnder.collider != null)
         {
-            IMovablePlatForm momentumPlatForm = raycastHit.collider.GetComponent<IMovablePlatForm>() != null ? raycastHit.collider.GetComponent<IMovablePlatForm>() : null;
+            IMovablePlatForm momentumPlatForm = raycastHitUnder.collider.GetComponent<IMovablePlatForm>() != null ? raycastHitUnder.collider.GetComponent<IMovablePlatForm>() : null;
 
             if (momentumPlatForm != null)
             {
-                
+                transform.SetParent(raycastHitUnder.collider.transform);
+                scale = (float)(1 / transform.parent.localScale.x);
+                momentum = momentumPlatForm.GetMomentum();
             }
             else
             {
-
+                transform.SetParent(null);
+                momentum = Vector2.zero;
+                scale = 1;
             }
 
             currentState = State.Idle;
@@ -179,6 +190,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
         else
         {
+            transform.SetParent(null);
+            momentum = Vector2.zero;
+            scale = 1;
             overground = true;
         }
     }
@@ -208,7 +222,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void StateAction(State curState)
     {
-        switch(curState)
+        switch (curState)
         {
             case State.Idle:
                 anim.CrossFade("Idle", 0f);
@@ -230,12 +244,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Movement()
     {
-        if (moveX != 0) 
-        { 
+        if (moveX != 0)
+        {
             dir = new Vector3(moveX, 0).normalized;
         }
-        rigid.velocity = new Vector2 (moveX * curMoveSpeed + platFormVelocity.x, rigid.velocity.y);
-        transform.localScale = new Vector3(dir.x, 1, 1);
+        rigid.velocity = new Vector2((moveX + momentumX) * curMoveSpeed, rigid.velocity.y);
+        transform.localScale = new Vector3(scale * dir.x, scale, scale);
     }
 
     private void Jump()
@@ -244,7 +258,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             curcoyoteTime += Time.deltaTime;
         }
-        else if(!overground && rigid.velocity.y >= 0)
+        else if (!overground && rigid.velocity.y >= 0)
         {
             curcoyoteTime = 0;
         }
@@ -253,7 +267,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             if (Input.GetButtonDown("Jump") && currentState != State.Jumping && !delayed && !attacking)
             {
-                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                momentumX = momentum.x * .05f;
+                momentumY = momentum.y;
+
+                Debug.Log(momentumX);
+
+                rigid.AddForce(Vector2.up * (jumpPower + momentumY), ForceMode2D.Impulse);
                 curjumpHoldTime = 0;
             }
         }
@@ -355,7 +374,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void StmRegen()
     {
-        if(canRegen)
+        if (canRegen)
         {
             curStm += regenSpeed * Time.deltaTime;
         }
@@ -390,27 +409,18 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
-    private void OnTriggerStay2D(Collider2D ground)
-    {
-        
-    }
-
     private void OnTriggerExit2D(Collider2D ground)
     {
         if (ground.gameObject.layer == 6)
         {
             overground = true;
             rigid.gravityScale = 12f;
-            if (currentState != State.Jumping)
-            {
-
-            }
         }
     }
 
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
     {
-        if(!activeEffect.ContainsKey(effect.effectName))
+        if (!activeEffect.ContainsKey(effect.effectName))
         {
             activeEffect.Add(effect.effectName, effect);
             effect.ApplyEffect();

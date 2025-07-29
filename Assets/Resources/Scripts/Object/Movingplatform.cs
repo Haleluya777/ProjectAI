@@ -96,7 +96,7 @@ public class Movingplatform : MonoBehaviour
         }
     }
 
-    //�÷��� ���� �÷��̾ �ö�Դ���? üũ.
+    //�÷��� ���� �÷��̾ �ö�Դ���? üũ.
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.transform.parent.gameObject == player)
