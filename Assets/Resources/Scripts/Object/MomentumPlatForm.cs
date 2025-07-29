@@ -35,7 +35,6 @@ public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
 
     void FixedUpdate()
     {
-        Debug.Log(momentum);
         if ((Vector2)transform.position == initialPosition)
         {
             reTurning = false;
@@ -100,7 +99,7 @@ public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
 
     IEnumerator ResetMomentum()
     {
-        yield return waitForSeconds;
+        yield return new WaitForSeconds(returnMomentumTime);
         finalMomentum = Vector3.zero;
         momentum = Vector3.zero;
         maxMomentumMagnitude2D = 0;

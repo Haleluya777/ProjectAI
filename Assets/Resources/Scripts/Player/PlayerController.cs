@@ -180,6 +180,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             }
             else
             {
+                momentum = Vector2.zero;
+                momentumX = momentum.x;
+                momentumY = momentum.y;
+                
                 transform.SetParent(null);
                 momentum = Vector2.zero;
                 scale = 1;
