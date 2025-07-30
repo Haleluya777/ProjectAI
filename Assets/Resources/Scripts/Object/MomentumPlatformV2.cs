@@ -1,0 +1,92 @@
+    using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using UnityEngine.UIElements;
+
+public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
+{
+    [SerializeField] private EnemyAIController ai;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private Transform destination;
+    private BoxCollider2D col;
+    private Rigidbody2D rb;
+
+    private BlackBoard local;
+    private BlackBoard global;
+
+    private Vector2 previousPos;
+    private Vector2 currentMomentumVector2;
+    private float maxMomentumMagnitude2D = 0f;
+
+
+    private void Awake()
+    {
+        local = new BlackBoard();
+        col = this.GetComponent<BoxCollider2D>();
+        rb = this.GetComponent<Rigidbody2D>();
+
+        local.Set("InitPos", this.transform.position);
+        previousPos = this.transform.position;
+    }
+
+    private void Update()
+    {
+        Debug.Log(local.Get<Vector2>("Momentum"));
+    }
+
+    private void FixedUpdate()
+    {
+        CalculateMomentum();
+    }
+
+    private void CalculateMomentum()
+    {
+        Vector2 currentPosition = rb.position;
+        Vector2 calculatedVelocity = (currentPosition - previousPos) / Time.fixedDeltaTime; //모멘텀 계산
+
+        currentMomentumVector2 = calculatedVelocity * rb.mass;
+
+        float currentMagnitude = currentMomentumVector2.magnitude;
+
+        if (currentMagnitude > maxMomentumMagnitude2D)
+        {
+            maxMomentumMagnitude2D = currentMagnitude;
+            local.Set("Momentum", currentMomentumVector2);
+        }
+
+        previousPos = currentPosition;
+    }
+
+    private void Start()
+    {
+        ai.BlackBoardInit(local, GameManager.instance.globalBlackBoard);
+
+        local.Set("MoveSpeed", moveSpeed);
+        local.Set("Transform", this.transform);
+        local.Set("Destination", destination);
+        local.Set("Collider", col);
+        local.Set("LayerMask", 1 << LayerMask.NameToLayer("Player"));
+        local.Set("Momentum", Vector2.zero);
+        local.Set("Rigid", this.GetComponent<Rigidbody2D>());
+        local.Set("CanReturnMomentum", false);
+        local.Set("Trigger", false);
+    }
+
+    public Vector2 GetMomentum()
+    {
+        if (local.Get<bool>("CanReturnMomentum"))
+        {
+            return local.Get<Vector2>("Momentum");
+        }
+        else
+        {
+            return Vector2.zero;
+        }
+    }
+
+    public BlackBoard GetBlackBoard()
+    {
+        return local;
+    }
+}

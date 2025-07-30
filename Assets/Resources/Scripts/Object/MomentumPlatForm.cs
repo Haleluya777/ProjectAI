@@ -10,12 +10,12 @@ public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
 
     private Vector2 initialPosition;
     private Vector2 previousPos;
-    public Vector2 currentMomentumVector2;
-    public float maxMomentumMagnitude2D = 0f;
+    private Vector2 currentMomentumVector2;
+    private float maxMomentumMagnitude2D = 0f;
 
     private Vector2 targetPos;
-    public Vector2 momentum;
-    public Vector2 finalMomentum;
+    private Vector2 momentum;
+    private Vector2 finalMomentum;
     private Rigidbody2D rb;
     private Tween platformTween;
 
@@ -92,7 +92,7 @@ public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
         previousPos = currentPosition;
     }
 
-    public Vector3 GetMomentum()
+    public Vector2 GetMomentum()
     {
         return finalMomentum;
     }

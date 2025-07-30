@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IMovablePlatForm
 {
-    Vector3 GetMomentum();
+    Vector2 GetMomentum();
 }

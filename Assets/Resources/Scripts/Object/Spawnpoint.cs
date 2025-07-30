@@ -4,19 +4,8 @@ using UnityEngine;
 
 public class Spawnpoint : MonoBehaviour, IInteractable
 {
-    public string Dialog { get; } = ("세이브 포인트 지정");
-    PlayerController playerController;
-
-    void Start()
+    public void Interacte()
     {
-        
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            playerController.RespawnInteract();
-        }
+        Debug.Log("세이브 위치 지정");
     }
 }

@@ -10,11 +10,13 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public Vector3 respawn;
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
-    private RaycastHit2D raycastHitUnder;
+    private RaycastHit2D raycastHit;
     private RaycastHit2D raycastHitFront;
+    private IInteractable interactable; //상호작용 가능한 오브젝트.
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private BoxCollider2D hitBox;
+    [SerializeField] private BoxCollider2D col;
     [SerializeField] private GameObject particle;
     private int level;
     private int maxHp, curHp;
@@ -165,16 +167,16 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void CheckFlatForm()
     {
-        raycastHitUnder = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.up * -1, .5f, layerMask);
+        raycastHit = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.up * -1, .5f, layerMask);
         raycastHitFront = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.right, .5f, layerMask);
 
-        if (raycastHitUnder.collider != null)
+        if (raycastHit.collider != null)
         {
-            IMovablePlatForm momentumPlatForm = raycastHitUnder.collider.GetComponent<IMovablePlatForm>() != null ? raycastHitUnder.collider.GetComponent<IMovablePlatForm>() : null;
+            IMovablePlatForm momentumPlatForm = raycastHit.collider.GetComponent<IMovablePlatForm>() != null ? raycastHit.collider.GetComponent<IMovablePlatForm>() : null;
 
             if (momentumPlatForm != null)
             {
-                transform.SetParent(raycastHitUnder.collider.transform);
+                transform.SetParent(raycastHit.collider.transform);
                 scale = (float)(1 / transform.parent.localScale.x);
                 momentum = momentumPlatForm.GetMomentum();
             }
