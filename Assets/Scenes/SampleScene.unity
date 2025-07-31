@@ -2639,7 +2639,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 5.1, z: -10}
+  m_LocalPosition: {x: 15.43, y: 20.43, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10550,7 +10550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 543ae94e5ae81de47b546c1500cc94a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  behaviorTreeRoot: {fileID: 11400000, guid: 3e77febfc9c99914dafba4e63051dc5e, type: 2}
+  behaviorTreeRoot: {fileID: 11400000, guid: 65632ceafee5f844c81b31420cf22553, type: 2}
 --- !u!212 &1313187498
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -14053,7 +14053,7 @@ Transform:
   m_GameObject: {fileID: 1915231743}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 5.1, z: 0}
+  m_LocalPosition: {x: 15.43, y: 20.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14080,7 +14080,7 @@ MonoBehaviour:
   statusEffectUI: {fileID: 566516037}
   currentState: 0
   hitBox: {fileID: 1200567237}
-  col: {fileID: 0}
+  col: {fileID: 1915231747}
   particle: {fileID: 561683600}
   curMoveSpeed: 0
   jumpPower: 0
@@ -41078,6 +41078,6 @@ SceneRoots:
   - {fileID: 5382750785999662662}
   - {fileID: 3659507429279398945}
   - {fileID: 2134437801}
-  - {fileID: 5757996}
   - {fileID: 1313187499}
+  - {fileID: 5757996}
   - {fileID: 663093024}

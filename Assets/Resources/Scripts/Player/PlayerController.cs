@@ -167,7 +167,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void CheckFlatForm()
     {
-        raycastHit = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.up * -1, .5f, layerMask);
+        raycastHit = Physics2D.BoxCast(this.transform.position, col.bounds.size, 0, this.transform.up * -1, .5f, layerMask);
         raycastHitFront = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.right, .5f, layerMask);
 
         if (raycastHit.collider != null)
@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 momentum = Vector2.zero;
                 momentumX = momentum.x;
                 momentumY = momentum.y;
-                
+
                 transform.SetParent(null);
                 momentum = Vector2.zero;
                 scale = 1;
