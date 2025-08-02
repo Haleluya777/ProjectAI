@@ -241,6 +241,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             Debug.Log("플랫폼 닿는 상태");
             IMovablePlatForm momentumPlatForm = hitPlatform.collider.GetComponent<IMovablePlatForm>() != null ? hitPlatform.collider.GetComponent<IMovablePlatForm>() : null;
 
+            if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
+            {
+                Debug.Log("플랫폼과 수직으로 서 있음");
+            }
+
             if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
             {
                 transform.SetParent(hitPlatform.collider.transform);
