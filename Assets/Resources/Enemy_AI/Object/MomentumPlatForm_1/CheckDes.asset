@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae9f25a71b8699d4083a7d9d04ed4abe, type: 3}
-  m_Name: MomentumPlatForm
+  m_Script: {fileID: 11500000, guid: 9d169cca6629f144981903bcfd63ae94, type: 3}
+  m_Name: CheckDes
   m_EditorClassIdentifier: 
   nodeName: 
-  children:
-  - {fileID: 11400000, guid: 7ddb9c197903ea545aefea194e6b5ecb, type: 2}
-  - {fileID: 11400000, guid: 8e55a4cb104694d4eb0dff1b2825e193, type: 2}
+  Condition: {fileID: 11400000, guid: c1679c4589e54ed41851e520926481f9, type: 2}

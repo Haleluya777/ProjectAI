@@ -1,23 +1,38 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 {
-    private enum State { Idle, Moving, Dash, Attacking, Jumping }
+    private enum State { Idle, Moving, Dash, Attacking, Jumping, Climbing }
     public Vector3 respawn;
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
-    private RaycastHit2D raycastHit;
-    private RaycastHit2D raycastHitFront;
+    [SerializeField] private Transform center;
+
+    //레이캐스트 설정----
+    private List<RaycastHit2D> allRayCastHits = new List<RaycastHit2D>();
+    private int hitCount;
+    private ContactFilter2D contactFilter; //레이어, isTrigger필터
+    private List<RaycastHit2D> platformHits = new List<RaycastHit2D>();
+    private List<RaycastHit2D> interactHits = new List<RaycastHit2D>();
+
+    //레이어 마스크에 쓸 레이어들.
+    private const int PLATFORM_LAYER = 6;
+    private const int INTERACTIVE_OBJECT_LAYER = 3;
+    //----------
+
     private IInteractable interactable; //상호작용 가능한 오브젝트.
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private BoxCollider2D hitBox;
     [SerializeField] private BoxCollider2D col;
     [SerializeField] private GameObject particle;
+
+    //플레이어 기본 스탯 및 상태들.
     private int level;
     private int maxHp, curHp;
     private float maxStm, curStm;
@@ -35,6 +50,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
     [SerializeField] private bool castingSkill;
+    //
+
     public int CurrentHp => curHp;
     public int Att => att;
     public bool IsDead => isdead;
@@ -56,6 +73,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private Coroutine newCorutine;
     private Coroutine comboCoroutine;
     private const int WALK_SPEED = 15;
+    private const int GRAVITY_SCALE = 12;
     public Vector3 Dir => dir;
     public bool overground;
 
@@ -64,6 +82,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     void Start()
     {
         StatusInit();
+
+        contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(layerMask);
+        contactFilter.useTriggers = true;
     }
 
     void Update()
@@ -83,6 +105,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         UseSkill();
         StmRegen();
         PlayerUIUpdate();
+        InteractiveObject();
 
         // 스킬 모듈의 쿨다운을 매 프레임 업데이트
         if (currentSkill != null)
@@ -96,8 +119,52 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void FixedUpdate()
     {
-        //Debug.Log(momentum);
+        platformHits.Clear();
+        interactHits.Clear();
+
+        hitCount = Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
+
+        if (hitCount == 0)
+        {
+            CheckFlatForm();
+            return;
+        }
+
+        for (int i = 0; i < hitCount; i++) //레이캐스트에 접촉한 모든 RaycastHit2d를 충돌한 오브젝트의 레이어에 맞게 분류하는 작업.
+        {
+            RaycastHit2D currentHit = allRayCastHits[i];
+            int currentLayer = currentHit.collider.gameObject.layer;
+
+            if (currentLayer == PLATFORM_LAYER)
+            {
+                platformHits.Add(currentHit);
+            }
+            else if (currentLayer == INTERACTIVE_OBJECT_LAYER)
+            {
+                interactHits.Add(currentHit);
+            }
+        }
+
         CheckFlatForm();
+    }
+
+    private RaycastHit2D NearCastHit(List<RaycastHit2D> list) //분류된 RaycastHit2d를 플레이어와 거리가 가까운 순으로 정렬.
+    {
+        if (list.Count > 1)
+        {
+            list.Sort((x, y) =>
+            (x.collider.transform.position - transform.position).sqrMagnitude.CompareTo((y.collider.transform.position - transform.position).sqrMagnitude));
+        }
+        else if (list.Count == 1)
+        {
+            Debug.Log("리스트에 하나의 값만 있기 때문에 정렬할 필요가 없습니다.");
+        }
+        else
+        {
+            Debug.Log("박스캐스트에 감지된 오브젝트가 존재하지 않습니다.");
+            return default;
+        }
+        return list[0];
     }
 
     private void PlayerUIUpdate()
@@ -111,7 +178,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     }
     private void StatusInit()
     {
-        layerMask = 1 << LayerMask.NameToLayer("FlatForm");
+        layerMask = 1 << PLATFORM_LAYER | 1 << INTERACTIVE_OBJECT_LAYER;
 
         level = 1;
         maxHp = 100;
@@ -134,6 +201,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         CanAction = true;
         canJump = true;
         dir = new Vector3(1, 0).normalized;
+
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent<Animator>();
         sprite = this.GetComponent<SpriteRenderer>();
@@ -165,23 +233,24 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         return this.gameObject.tag;
     }
 
-    private void CheckFlatForm()
+    private void CheckFlatForm() //플랫폼에 닿고 있는지 확인
     {
-        raycastHit = Physics2D.BoxCast(this.transform.position, col.bounds.size, 0, this.transform.up * -1, .5f, layerMask);
-        raycastHitFront = Physics2D.BoxCast(this.transform.position, new Vector2(1.5f, .5f), 0, this.transform.right, .5f, layerMask);
-
-        if (raycastHit.collider != null)
+        RaycastHit2D hitPlatform = NearCastHit(platformHits); //접촉한 플랫폼 중 가장 가까운 플랫폼을 저장.
+        if (hitPlatform.collider != null) //접촉한 플랫폼이 존재할 경우.
         {
-            IMovablePlatForm momentumPlatForm = raycastHit.collider.GetComponent<IMovablePlatForm>() != null ? raycastHit.collider.GetComponent<IMovablePlatForm>() : null;
+            Debug.Log("플랫폼 닿는 상태");
+            IMovablePlatForm momentumPlatForm = hitPlatform.collider.GetComponent<IMovablePlatForm>() != null ? hitPlatform.collider.GetComponent<IMovablePlatForm>() : null;
 
-            if (momentumPlatForm != null)
+            if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
             {
-                transform.SetParent(raycastHit.collider.transform);
+                transform.SetParent(hitPlatform.collider.transform);
                 scale = (float)(1 / transform.parent.localScale.x);
                 momentum = momentumPlatForm.GetMomentum();
             }
-            else
+            else //접촉한 플랫폼이 모멘텀 플랫폼이 아닌 일반 플랫폼인 경우.
             {
+                rigid.gravityScale = GRAVITY_SCALE;
+
                 momentum = Vector2.zero;
                 momentumX = momentum.x;
                 momentumY = momentum.y;
@@ -194,12 +263,28 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             currentState = State.Idle;
             overground = false;
         }
-        else
+        else //접촉한 플랫폼이 없는 경우 (공중에 있을 때.)
         {
             transform.SetParent(null);
+            rigid.gravityScale = GRAVITY_SCALE;
             momentum = Vector2.zero;
             scale = 1;
             overground = true;
+        }
+    }
+
+    private void InteractiveObject() //상호작용이 가능한 오브젝트에 닿고 있는지 확인.
+    {
+        RaycastHit2D hitObj;
+        hitObj = NearCastHit(interactHits);
+        if (hitObj.collider == null || hitObj.collider.GetComponent<IInteractable>() == null)
+        {
+            return;
+        }
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            Debug.Log("레버 상호작용");
+            hitObj.collider.GetComponent<IInteractable>().Interacte();
         }
     }
 
