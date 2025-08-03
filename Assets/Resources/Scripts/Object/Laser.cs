@@ -29,19 +29,18 @@ public class Laser : MonoBehaviour, ITriggerable
         return local;
     }
 
-    public void Trigger(bool trigger)
+    public void Trigger()
     {
-        render.sprite = !trigger ? sprites[0] : sprites[1];
+        render.sprite = !local.Get<bool>("Trigger") ? sprites[0] : sprites[1];
     }
 
     private void FixedUpdate()
     {
-        rayHit = Physics2D.BoxCast(this.transform.position, col.bounds.size, 0, Vector2.zero, 0);
-        if (rayHit.collider != null && rayHit.collider.tag == "Player")
+        rayHit = Physics2D.BoxCast(this.transform.position, col.bounds.size, 0, Vector2.zero, 0, 1 << 7);
+        if (rayHit.collider != null && rayHit.collider.tag == "Player" && local.Get<bool>("Trigger"))
         {
             Debug.Log("이얍!");
             rayHit.collider.GetComponent<IDamageable>().Damaged(dmg, "Physical");
-
         }
     }
 

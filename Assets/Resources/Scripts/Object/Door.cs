@@ -17,10 +17,10 @@ public class Door : MonoBehaviour, ITriggerable
         col = GetComponent<BoxCollider2D>();
     }
 
-    public void Trigger(bool trigger)
+    public void Trigger()
     {
-        render.sprite = !trigger ? sprites[0] : sprites[1];
-        col.enabled = !trigger ? true : false;
+        render.sprite = !local.Get<bool>("Trigger") ? sprites[0] : sprites[1];
+        col.enabled = !local.Get<bool>("Trigger") ? true : false;
     }
 
     public BlackBoard GetBlackBoard()

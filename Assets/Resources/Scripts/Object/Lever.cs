@@ -30,8 +30,12 @@ public class Lever : MonoBehaviour, IInteractable
         trigger = trigger ? false : true;
         for (int i = 0; i < linkedObjBoard.Count; i++)
         {
-            linkedObjBoard[i].GetBlackBoard().Set("Trigger", trigger);
-            linkedObjBoard[i].Trigger(trigger);
+            if (linkedObjBoard[i].GetBlackBoard().HasKey("Trigger"))
+            {
+                linkedObjBoard[i].GetBlackBoard().Set("Trigger", trigger);
+            }
+
+            linkedObjBoard[i].Trigger();
         }
     }
 }

@@ -6,5 +6,5 @@ using UnityEngine;
 public interface ITriggerable
 {
     BlackBoard GetBlackBoard();
-    void Trigger(bool trigger);
+    void Trigger();
 }

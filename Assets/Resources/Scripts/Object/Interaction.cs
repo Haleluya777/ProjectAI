@@ -11,18 +11,18 @@ public class Interaction : MonoBehaviour
     void Start()
     {
         player = GameManager.instance.playerObj;
-        interactsign = player.transform.GetChild(5).gameObject;
+        interactsign = player.transform.GetChild(3).gameObject;
         controller = GetComponent<PlayerController>();
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject == player)
+        if (collision.gameObject == player)
         {
             interactsign.SetActive(true);
             isInteractable = true;
         }
     }
-    
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject == player)
@@ -31,7 +31,7 @@ public class Interaction : MonoBehaviour
             isInteractable = false;
         }
     }
-    
+
     private void Update()
     {
         if (isInteractable && Input.GetKeyDown(KeyCode.I))

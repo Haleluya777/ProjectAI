@@ -122,6 +122,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
         curStm = Mathf.Clamp(curStm, 0, maxStm);
+
+        //플레이어 상태이상 확인용
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            StatusEffectProcess(3f, "Stun");
+        }
     }
 
     private void FixedUpdate()
@@ -264,7 +270,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
             {
-                Debug.Log("아야야");
                 IMovablePlatForm momentumPlatForm = hitPlatform.collider.GetComponent<IMovablePlatForm>() != null ? hitPlatform.collider.GetComponent<IMovablePlatForm>() : null;
 
                 if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
@@ -308,10 +313,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             return;
         }
+
         if (Input.GetKeyDown(KeyCode.G))
         {
             Debug.Log("레버 상호작용");
-            hitObj.collider.GetComponent<IInteractable>().Interacte();
+            hitObj.collider.GetComponent<IInteractable>().Interact();
         }
     }
 

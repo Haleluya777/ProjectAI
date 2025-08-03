@@ -96,8 +96,8 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
         return local;
     }
 
-    public void Trigger(bool trigger)
+    public void Trigger()
     {
-        render.sprite = !trigger ? sprites[0] : sprites[1];
+        render.sprite = !local.Get<bool>("Trigger") ? sprites[0] : sprites[1];
     }
 }

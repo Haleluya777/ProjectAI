@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CheckPlayerOn",menuName = "BehaviorTree/Object/Platform/Conditions/CheckPlayerOn")]
+[CreateAssetMenu(fileName = "CheckPlayerOn", menuName = "BehaviorTree/Object/Platform/Conditions/CheckPlayerOn")]
 public class CheckPlayerOn : EnemyConditionSO
 {
     public override NodeState Evaluate(EnemyAIController controller)
