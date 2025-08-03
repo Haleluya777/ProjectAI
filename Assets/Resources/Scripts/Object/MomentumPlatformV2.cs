@@ -1,4 +1,4 @@
-    using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
@@ -9,6 +9,9 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
     [SerializeField] private EnemyAIController ai;
     [SerializeField] private float moveSpeed;
     [SerializeField] private Transform destination;
+    [SerializeField] private List<Sprite> sprites = new List<Sprite>();
+
+    private SpriteRenderer render;
     private BoxCollider2D col;
     private Rigidbody2D rb;
 
@@ -25,14 +28,17 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
         local = new BlackBoard();
         col = this.GetComponent<BoxCollider2D>();
         rb = this.GetComponent<Rigidbody2D>();
+        render = this.GetComponent<SpriteRenderer>();
 
         local.Set("InitPos", this.transform.position);
+        local.Set("Destination", destination);
         previousPos = this.transform.position;
     }
 
     private void Update()
     {
-        Debug.Log(local.Get<Vector2>("Momentum"));
+        //Debug.Log(local.Get<bool>("CanReturnMomentum"));
+        //Debug.Log(local.Get<Vector2>("MaxMomentum"));
     }
 
     private void FixedUpdate()
@@ -48,13 +54,13 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
         currentMomentumVector2 = calculatedVelocity * rb.mass;
 
         float currentMagnitude = currentMomentumVector2.magnitude;
+        local.Set("CurrentMomentum", currentMomentumVector2);
 
-        if (currentMagnitude > maxMomentumMagnitude2D)
+        if (currentMagnitude > local.Get<Vector2>("MaxMomentum").magnitude)
         {
             maxMomentumMagnitude2D = currentMagnitude;
-            local.Set("Momentum", currentMomentumVector2);
+            local.Set("MaxMomentum", currentMomentumVector2);
         }
-
         previousPos = currentPosition;
     }
 
@@ -64,20 +70,20 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
 
         local.Set("MoveSpeed", moveSpeed);
         local.Set("Transform", this.transform);
-        local.Set("Destination", destination);
         local.Set("Collider", col);
         local.Set("LayerMask", 1 << LayerMask.NameToLayer("Player"));
         local.Set("Momentum", Vector2.zero);
         local.Set("Rigid", this.GetComponent<Rigidbody2D>());
         local.Set("CanReturnMomentum", false);
         local.Set("Trigger", false);
+        local.Set("PreviousTrigger", local.Get<bool>("Trigger"));
     }
 
     public Vector2 GetMomentum()
     {
         if (local.Get<bool>("CanReturnMomentum"))
         {
-            return local.Get<Vector2>("Momentum");
+            return local.Get<Vector2>("MaxMomentum");
         }
         else
         {
@@ -88,5 +94,10 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
     public BlackBoard GetBlackBoard()
     {
         return local;
+    }
+
+    public void Trigger(bool trigger)
+    {
+        render.sprite = !trigger ? sprites[0] : sprites[1];
     }
 }

@@ -9,23 +9,37 @@ public class Waiting : EnemyActionSO
 
     public override NodeState Execute(EnemyAIController controller)
     {
-        if (!controller.LocalBlackboard.HasKey("WaitingTime"))
-        {
-            controller.LocalBlackboard.Set("WaitingTime", Time.time + waitingTime);
-            return NodeState.Running;
-        }
+        bool trigger = controller.LocalBlackboard.Get<bool>("Trigger");
+        bool previousTrigger = controller.LocalBlackboard.Get<bool>("PreviousTrigger");
 
-        else
+        if (previousTrigger != trigger || controller.LocalBlackboard.HasKey("WaitingTime")) //현재 트리거와 이전 트리거가 다를 때. (트리거가 바뀔 때.)
         {
-            if (Time.time >= controller.LocalBlackboard.Get<float>("WaitingTime"))
+            Debug.Log("대기 후 이동 합니다. 대기 시작");
+            //대기 시간 활성화
+            if (!controller.LocalBlackboard.HasKey("WaitingTime"))
             {
-                controller.LocalBlackboard.Remove("WaitingTime");
-                return NodeState.Success;
-            }
-            else
-            {
+                controller.LocalBlackboard.Set("WaitingTime", Time.time + waitingTime);
                 return NodeState.Running;
             }
+
+            else
+            {
+                if (Time.time >= controller.LocalBlackboard.Get<float>("WaitingTime"))
+                {
+                    controller.LocalBlackboard.Remove("WaitingTime");
+                    controller.LocalBlackboard.Set("PreviousTrigger", controller.LocalBlackboard.Get<bool>("Trigger"));
+                    return NodeState.Success;
+                }
+                else
+                {
+                    return NodeState.Running;
+                }
+            }
+        }
+
+        else//현재 트리거와 이전 트리거가 같을 때 ()
+        {
+            return NodeState.Success;
         }
     }
 }

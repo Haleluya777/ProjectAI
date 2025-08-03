@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        globalBlackBoard.Set<Transform>("PlayerCenter", playerObj.transform.GetChild(4).transform);
+        globalBlackBoard.Set<Transform>("PlayerCenter", playerObj.transform.GetChild(3).transform);
     }
 
     void Update()
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
     private void UpdateDataPerFrame() //매 프레임당 업데이트 해야 할 공용 블랙보드 데이터
     {
         globalBlackBoard.Set<Transform>("PlayerTransform", playerObj.transform);
-        
+
     }
 
     public void InBattleState()

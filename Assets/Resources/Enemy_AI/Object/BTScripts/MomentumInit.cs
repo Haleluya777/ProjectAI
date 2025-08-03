@@ -10,12 +10,16 @@ public class MomentumInit : EnemyActionSO
 
     public override NodeState Execute(EnemyAIController controller)
     {
-        if (!controller.LocalBlackboard.HasKey("MomentumInitTime") && controller.LocalBlackboard.Get<int>("Count") == 0)
+        if (!controller.LocalBlackboard.HasKey("MomentumInitTime"))
         {
+            if (controller.LocalBlackboard.Get<Vector2>("CurrentMomentum") == Vector2.zero)
+            {
+                Debug.Log("이미 목적지에 도착하고 최대 모멘텀이 0이 되었으므로, Failure를 반환합니다.");
+                return NodeState.Failure;
+            }
             Debug.Log("타임 생성");
             controller.LocalBlackboard.Set("MomentumInitTime", Time.time + initTime);
             controller.LocalBlackboard.Set("CanReturnMomentum", true);
-            controller.LocalBlackboard.Set("Count", controller.LocalBlackboard.Get<int>("Count") + 1);
             return NodeState.Running;
         }
 
@@ -23,7 +27,9 @@ public class MomentumInit : EnemyActionSO
         {
             if (Time.time >= controller.LocalBlackboard.Get<float>("MomentumInitTime"))
             {
+                Debug.Log("모멘텀 전달 종료");
                 controller.LocalBlackboard.Remove("MomentumInitTime");
+                controller.LocalBlackboard.Set("MaxMomentum", Vector2.zero);
                 controller.LocalBlackboard.Set("CanReturnMomentum", false);
 
                 return NodeState.Success;
@@ -31,7 +37,6 @@ public class MomentumInit : EnemyActionSO
 
             else
             {
-                Debug.Log("할랄라");
                 return NodeState.Running;
             }
         }

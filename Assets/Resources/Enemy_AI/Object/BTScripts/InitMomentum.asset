@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acc8abe0bd5d1d5479918eed243424d7, type: 3}
   m_Name: InitMomentum
   m_EditorClassIdentifier: 
-  initTime: 0.25
+  initTime: 2

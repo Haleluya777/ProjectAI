@@ -10,8 +10,9 @@ public class PlatForm_PerformMovement : EnemyActionSO
     {
         Transform transform = controller.LocalBlackboard.Get<Transform>("Transform");
         Vector3 destination = controller.LocalBlackboard.Get<bool>("Trigger") ? controller.LocalBlackboard.Get<Transform>("Destination").position : controller.LocalBlackboard.Get<Vector3>("InitPos");
+        //Vector3 destination = controller.LocalBlackboard.Get<Transform>("Destination").position;
+        float moveSpeed = controller.LocalBlackboard.Get<bool>("Trigger") ? controller.LocalBlackboard.Get<float>("MoveSpeed") : controller.LocalBlackboard.Get<float>("MoveSpeed") / 2;
 
-        float moveSpeed = controller.LocalBlackboard.Get<float>("MoveSpeed");
         if (transform.position == destination)
         {
             Debug.Log("목적지 도착");
@@ -19,9 +20,10 @@ public class PlatForm_PerformMovement : EnemyActionSO
         }
         else
         {
-            controller.LocalBlackboard.Set("Count", 0);
+            Debug.Log("이동중");
             controller.LocalBlackboard.Set("CanReturnMomentum", false);
-            transform.DOMove(destination, moveSpeed).SetSpeedBased().SetEase(Ease.Linear);
+            controller.LocalBlackboard.Remove("MomentumInitTime");
+            transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
             return NodeState.Running;
         }
     }

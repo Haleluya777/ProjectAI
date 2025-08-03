@@ -8,16 +8,17 @@ TagManager:
   - Magical
   - Platform
   - Enemy
+  - CanInteracte
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - InteractiveObj
   - Water
   - UI
   - FlatForm
   - Player
-  - 
+  - CanClimbWall
   - 
   - 
   - 
