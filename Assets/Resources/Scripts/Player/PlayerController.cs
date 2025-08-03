@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private Transform center;
 
     //레이캐스트 설정----
+    private RaycastHit2D checkingWall;
     private List<RaycastHit2D> allRayCastHits = new List<RaycastHit2D>();
     private int hitCount;
     private ContactFilter2D contactFilter; //레이어, isTrigger필터
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     //레이어 마스크에 쓸 레이어들.
     private const int PLATFORM_LAYER = 6;
     private const int INTERACTIVE_OBJECT_LAYER = 3;
+    private const int CAN_CLIMB_WALL = 8;
     //----------
 
     private IInteractable interactable; //상호작용 가능한 오브젝트.
@@ -76,7 +78,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private const int GRAVITY_SCALE = 12;
     public Vector3 Dir => dir;
     public bool overground;
-
+    [SerializeField] public float gracePeriod;
+    private Coroutine GraceTimeCoroutine;
+    private new WaitForSeconds gp;
+    [SerializeField] private bool damagabool;
     [SerializeField] private Skill_Module currentSkill;
 
     void Start()
@@ -86,6 +91,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         contactFilter = new ContactFilter2D();
         contactFilter.SetLayerMask(layerMask);
         contactFilter.useTriggers = true;
+
+        gp = new WaitForSeconds(gracePeriod);
     }
 
     void Update()
@@ -122,6 +129,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         platformHits.Clear();
         interactHits.Clear();
 
+        checkingWall = Physics2D.Raycast(center.position, Vector2.right, 1f, 1 << CAN_CLIMB_WALL);
         hitCount = Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
 
         if (hitCount == 0)
@@ -200,6 +208,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         coyoteTime = 0.2f;
         CanAction = true;
         canJump = true;
+        damagabool = true;
         dir = new Vector3(1, 0).normalized;
 
         rigid = this.GetComponent<Rigidbody2D>();
@@ -233,40 +242,53 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         return this.gameObject.tag;
     }
 
+    private void Climbing()
+    {
+        rigid.gravityScale = 0;
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            //rigid.velocity = new Vector2(0, 1 * curMoveSpeed);
+        }
+        else
+        {
+
+        }
+        rigid.velocity = Vector2.zero;
+        Debug.Log("벽에 붙어있는 중.");
+    }
+
     private void CheckFlatForm() //플랫폼에 닿고 있는지 확인
     {
         RaycastHit2D hitPlatform = NearCastHit(platformHits); //접촉한 플랫폼 중 가장 가까운 플랫폼을 저장.
         if (hitPlatform.collider != null) //접촉한 플랫폼이 존재할 경우.
         {
-            Debug.Log("플랫폼 닿는 상태");
-            IMovablePlatForm momentumPlatForm = hitPlatform.collider.GetComponent<IMovablePlatForm>() != null ? hitPlatform.collider.GetComponent<IMovablePlatForm>() : null;
-
             if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
             {
-                Debug.Log("플랫폼과 수직으로 서 있음");
+                Debug.Log("아야야");
+                IMovablePlatForm momentumPlatForm = hitPlatform.collider.GetComponent<IMovablePlatForm>() != null ? hitPlatform.collider.GetComponent<IMovablePlatForm>() : null;
+
+                if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
+                {
+                    transform.SetParent(hitPlatform.collider.transform);
+                    scale = (float)(1 / transform.parent.localScale.x);
+                    momentum = momentumPlatForm.GetMomentum();
+                }
+                else //접촉한 플랫폼이 모멘텀 플랫폼이 아닌 일반 플랫폼인 경우.
+                {
+                    rigid.gravityScale = GRAVITY_SCALE;
+
+                    momentum = Vector2.zero;
+                    momentumX = momentum.x;
+                    momentumY = momentum.y;
+
+                    transform.SetParent(null);
+                    momentum = Vector2.zero;
+                    scale = 1;
+                }
+
+                currentState = State.Idle;
+                overground = false;
             }
-
-            if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
-            {
-                transform.SetParent(hitPlatform.collider.transform);
-                scale = (float)(1 / transform.parent.localScale.x);
-                momentum = momentumPlatForm.GetMomentum();
-            }
-            else //접촉한 플랫폼이 모멘텀 플랫폼이 아닌 일반 플랫폼인 경우.
-            {
-                rigid.gravityScale = GRAVITY_SCALE;
-
-                momentum = Vector2.zero;
-                momentumX = momentum.x;
-                momentumY = momentum.y;
-
-                transform.SetParent(null);
-                momentum = Vector2.zero;
-                scale = 1;
-            }
-
-            currentState = State.Idle;
-            overground = false;
         }
         else //접촉한 플랫폼이 없는 경우 (공중에 있을 때.)
         {
@@ -298,6 +320,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         float horizontal = moveX;
         bool checkAttack = attacking;
         bool _delayed = delayed;
+        bool _climbing = checkingWall;
 
         if (rigid.velocity.y > 0 && overground) { return State.Jumping; }
 
@@ -307,13 +330,21 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             else { if (curcoyoteTime >= coyoteTime) { return State.Jumping; } }
         }
 
-        return (horizontal, checkAttack, _delayed) switch
+        if (currentState != State.Jumping)
         {
-            (not 0, false, false) => State.Moving,
-            (0, false, false) => State.Idle,
-            (_, true, _) => State.Attacking,
-            (_, _, true) => State.Attacking
-        };
+            return (horizontal, checkAttack, _delayed, _climbing) switch
+            {
+                (not 0, false, false, false) => State.Moving,
+                (0, false, false, false) => State.Idle,
+                (_, true, _, false) => State.Attacking,
+                (_, _, true, false) => State.Attacking,
+                (_, _, _, true) => State.Climbing,
+            };
+        }
+        else
+        {
+            return State.Jumping;
+        }
     }
 
     private void StateAction(State curState)
@@ -334,6 +365,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             case State.Jumping:
                 anim.CrossFade("Jump", 0f);
                 Movement();
+                break;
+
+            case State.Climbing:
+                Climbing();
                 break;
         }
     }
@@ -361,15 +396,21 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         if (curcoyoteTime <= coyoteTime)
         {
-            if (Input.GetButtonDown("Jump") && currentState != State.Jumping && !delayed && !attacking)
+            if (Input.GetButtonDown("Jump"))
             {
                 momentumX = momentum.x * .05f;
                 momentumY = momentum.y;
 
-                Debug.Log(momentumX);
+                if (currentState == State.Climbing)
+                {
+                    Debug.Log("벽타기 중 점프 누름");
+                }
 
-                rigid.AddForce(Vector2.up * (jumpPower + momentumY), ForceMode2D.Impulse);
-                curjumpHoldTime = 0;
+                else if (currentState != State.Jumping && !delayed && !attacking)
+                {
+                    rigid.AddForce(Vector2.up * (jumpPower + momentumY), ForceMode2D.Impulse);
+                    curjumpHoldTime = 0;
+                }
             }
         }
     }
@@ -444,11 +485,24 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     public void Damaged(int dmg, string attackType)
     {
-        Color txtcolor = new Color();
-        int totalDmg = 0;
-        if (attackType == "Physical") { totalDmg = dmg - defense; txtcolor = Color.white; }
-        else if (attackType == "Magical") { totalDmg = dmg - magicalDefense; txtcolor = Color.blue; }
-        DamagedProcess(totalDmg, txtcolor);
+        if (damagabool)
+        {
+            Debug.Log("크아악!");
+            Color txtcolor = new Color();
+            int totalDmg = 0;
+            damagabool = false;
+            if (attackType == "Physical") { totalDmg = dmg - defense; txtcolor = Color.white; }
+            else if (attackType == "Magical") { totalDmg = dmg - magicalDefense; txtcolor = Color.blue; }
+            DamagedProcess(totalDmg, txtcolor);
+            StartCoroutine(GraceTime());
+        }
+        else return;
+    }
+
+    IEnumerator GraceTime()
+    {
+        yield return gp;
+        damagabool = true;
     }
 
     private void DamagedProcess(int totalDmg, Color txtColor)
@@ -509,8 +563,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     {
         if (ground.gameObject.layer == 6)
         {
-            overground = true;
-            rigid.gravityScale = 12f;
+            //overground = true;
+            //rigid.gravityScale = 12f;
         }
     }
 

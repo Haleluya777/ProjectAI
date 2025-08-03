@@ -6,11 +6,17 @@ public class Laser : MonoBehaviour, ITriggerable
 {
     private BlackBoard local = new BlackBoard();
     IDamageable damaged;
+    SpriteRenderer render;
+    [SerializeField] List<Sprite> sprites = new List<Sprite>();
     [SerializeField] private int dmg;
+    private RaycastHit2D rayHit;
+    private BoxCollider2D col;
 
     private void OnEnable()
     {
         local.Set("Trigger", true);
+        render = GetComponent<SpriteRenderer>();
+        col = GetComponent<BoxCollider2D>();
     }
 
     private void OnDisable()
@@ -23,16 +29,32 @@ public class Laser : MonoBehaviour, ITriggerable
         return local;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    public void Trigger(bool trigger)
     {
-        if (local.Get<bool>("Trigger"))
+        render.sprite = !trigger ? sprites[0] : sprites[1];
+    }
+
+    private void FixedUpdate()
+    {
+        rayHit = Physics2D.BoxCast(this.transform.position, col.bounds.size, 0, Vector2.zero, 0);
+        if (rayHit.collider != null && rayHit.collider.tag == "Player")
         {
-            damaged = other.GetComponent<IDamageable>();
-            if (other.gameObject.tag == "Player" && damaged != null)
-            {
-                Debug.Log("Get Damaged!");
-                damaged.Damaged(dmg, "Physical");
-            }
+            Debug.Log("이얍!");
+            rayHit.collider.GetComponent<IDamageable>();
+
         }
     }
+
+    //private void OnTriggerStay2D(Collider2D other)
+    //{
+    //    if (local.Get<bool>("Trigger"))
+    //    {
+    //        damaged = other.GetComponent<IDamageable>();
+    //        if (other.gameObject.tag == "Player" && damaged != null)
+    //        {
+    //            Debug.Log("Get Damaged!");
+    //            damaged.Damaged(dmg, "Physical");
+    //        }
+    //    }
+    //}
 }

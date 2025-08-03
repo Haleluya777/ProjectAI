@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Lever : MonoBehaviour, IInteractable
 {
-    private List<IBlackBoard> linkedObjBoard = new List<IBlackBoard>();
+    private List<ITriggerable> linkedObjBoard = new List<ITriggerable>();
     [SerializeField] private bool trigger;
     [SerializeField] private List<GameObject> linkedObj = new List<GameObject>();
 
@@ -21,7 +21,7 @@ public class Lever : MonoBehaviour, IInteractable
     {
         for (int i = 0; i < linkedObj.Count; i++)
         {
-            linkedObjBoard.Add(linkedObj[i].GetComponent<ITriggerable>().GetBlackBoard());
+            linkedObjBoard.Add(linkedObj[i].GetComponent<ITriggerable>());
         }
     }
 
@@ -30,7 +30,8 @@ public class Lever : MonoBehaviour, IInteractable
         trigger = trigger ? false : true;
         for (int i = 0; i < linkedObjBoard.Count; i++)
         {
-            linkedObjBoard[i].Set("Trigger", trigger);
+            linkedObjBoard[i].GetBlackBoard().Set("Trigger", trigger);
+            linkedObjBoard[i].Trigger(trigger);
         }
     }
 }

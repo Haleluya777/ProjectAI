@@ -9,6 +9,9 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
     [SerializeField] private EnemyAIController ai;
     [SerializeField] private float moveSpeed;
     [SerializeField] private Transform destination;
+    [SerializeField] private List<Sprite> sprites = new List<Sprite>();
+
+    private SpriteRenderer render;
     private BoxCollider2D col;
     private Rigidbody2D rb;
 
@@ -25,6 +28,7 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
         local = new BlackBoard();
         col = this.GetComponent<BoxCollider2D>();
         rb = this.GetComponent<Rigidbody2D>();
+        render = this.GetComponent<SpriteRenderer>();
 
         local.Set("InitPos", this.transform.position);
         local.Set("Destination", destination);
@@ -90,5 +94,10 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
     public BlackBoard GetBlackBoard()
     {
         return local;
+    }
+
+    public void Trigger(bool trigger)
+    {
+        render.sprite = !trigger ? sprites[0] : sprites[1];
     }
 }
