@@ -311,7 +311,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (Input.GetKeyDown(KeyCode.G))
         {
             Debug.Log("레버 상호작용");
-            hitObj.collider.GetComponent<IInteractable>().Interacte();
+            hitObj.collider.GetComponent<IInteractable>().Interact();
         }
     }
 
