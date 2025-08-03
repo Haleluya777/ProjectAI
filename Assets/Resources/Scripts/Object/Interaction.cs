@@ -10,12 +10,10 @@ public class Interaction : MonoBehaviour
     bool isInteractable;
     void Start()
     {
-        //player = GameObject.FindWithTag("Player");
-        interactsign = player.transform.GetChild(3).gameObject;
+        player = GameManager.instance.playerObj;
+        interactsign = player.transform.GetChild(5).gameObject;
         controller = GetComponent<PlayerController>();
     }
-
-    // ���� ������ ���� ���� �ƴ� ���
     void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject == player)
@@ -38,10 +36,8 @@ public class Interaction : MonoBehaviour
     {
         if (isInteractable && Input.GetKeyDown(KeyCode.I))
         {
-            //��ȣ�ۿ� �޼���
-            Debug.Log("��ȣ�ۿ�");
-
-            //���� ��ȣ�ۿ��� ������ ������Ʈ���� ��� ����.
+            Debug.Log("세이브");
+            GetComponent<IInteractable>().Interact();
             controller.RespawnInteract();
         }
     }

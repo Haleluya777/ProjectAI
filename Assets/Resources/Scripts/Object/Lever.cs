@@ -13,7 +13,7 @@ public class Lever : MonoBehaviour, IInteractable
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            Interacte();
+            Interact();
         }
     }
 
@@ -25,7 +25,7 @@ public class Lever : MonoBehaviour, IInteractable
         }
     }
 
-    public void Interacte()
+    public void Interact()
     {
         trigger = trigger ? false : true;
         for (int i = 0; i < linkedObjBoard.Count; i++)

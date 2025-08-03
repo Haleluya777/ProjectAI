@@ -8,4 +8,5 @@ public class PlayerUIManager : MonoBehaviour
 
     public GameObject combatUIPanel;
     public GameObject menuUIPanel;
+    public GameObject saveUIPanel;
 }
