@@ -40,7 +40,7 @@ public class Laser : MonoBehaviour, ITriggerable
         if (rayHit.collider != null && rayHit.collider.tag == "Player")
         {
             Debug.Log("이얍!");
-            rayHit.collider.GetComponent<IDamageable>();
+            rayHit.collider.GetComponent<IDamageable>().Damaged(dmg, "Physical");
 
         }
     }
