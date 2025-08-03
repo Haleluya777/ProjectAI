@@ -82,7 +82,7 @@ public class Enemy_Combat_Status
 public class Enemy_Movement_Status
 {
     [SerializeField] private int moveSpeed; //이동 속도
-    
+
     public int MoveSpeed => moveSpeed;
 }
 

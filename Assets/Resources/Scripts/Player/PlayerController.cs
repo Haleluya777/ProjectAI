@@ -41,7 +41,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private int curMoveSpeed;
     [SerializeField] private int jumpPower;
     private int holdJumpPower;
-    [SerializeField] private float scale = 1;
+    [SerializeField] private float scaleX = 1;
+    [SerializeField] private float scaleY = 1;
     private int layerMask;
     private int combo;
     private bool isdead;
@@ -57,7 +58,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public int CurrentHp => curHp;
     public int Att => att;
     public bool IsDead => isdead;
-    public float Scale => scale;
+    public float Scale => scaleX;
     public bool CanAction { get; set; }
     private Vector3 dir;
     private float moveX;
@@ -275,7 +276,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
                 {
                     transform.SetParent(hitPlatform.collider.transform);
-                    scale = (float)(1 / transform.parent.localScale.x);
+                    scaleX = (float)(1 / transform.parent.localScale.x);
+                    scaleY = (float)(1 / transform.parent.localScale.y);
                     momentum = momentumPlatForm.GetMomentum();
                 }
                 else //접촉한 플랫폼이 모멘텀 플랫폼이 아닌 일반 플랫폼인 경우.
@@ -288,7 +290,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
                     transform.SetParent(null);
                     momentum = Vector2.zero;
-                    scale = 1;
+                    scaleX = 1;
+                    scaleY = 1;
                 }
 
                 currentState = State.Idle;
@@ -300,7 +303,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             transform.SetParent(null);
             rigid.gravityScale = GRAVITY_SCALE;
             momentum = Vector2.zero;
-            scale = 1;
+            scaleX = 1;
+            scaleY = 1;
             overground = true;
         }
     }
@@ -386,7 +390,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             dir = new Vector3(moveX, 0).normalized;
         }
         rigid.velocity = new Vector2((moveX + momentumX) * curMoveSpeed, rigid.velocity.y);
-        transform.localScale = new Vector3(scale * dir.x, scale, scale);
+        transform.localScale = new Vector3(scaleX * dir.x, scaleY, 1);
     }
 
     private void Jump()

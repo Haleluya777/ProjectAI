@@ -16,7 +16,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     private int maxHp;
     private int currentHp;
     private int defense;
-    private float scale;
+    private int scale;
     private int magicalDefense;
     private bool isdead;
     private int phase2Threshold;
@@ -109,7 +109,7 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
         Debug.Log("죽었다!");
         this.gameObject.transform.parent.gameObject.SetActive(false);
     }
-    
+
     IEnumerator RemoveEffectAfterDuration(StatusEffect effect) //상태 이상 제거.
     {
         yield return new WaitForSeconds(effect.duration);
