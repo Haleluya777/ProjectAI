@@ -6,13 +6,12 @@ public class Interaction : MonoBehaviour
 {
     GameObject interactsign;
     [SerializeField] private GameObject player;
-    PlayerController controller;
     bool isInteractable;
+    bool isinteracting;
     void Start()
     {
         player = GameManager.instance.playerObj;
         interactsign = player.transform.GetChild(3).gameObject;
-        controller = GetComponent<PlayerController>();
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -38,7 +37,17 @@ public class Interaction : MonoBehaviour
         {
             Debug.Log("세이브");
             GetComponent<IInteractable>().Interact();
-            controller.RespawnInteract();
+            isinteracting = true;
+        }
+        if (!isInteractable) 
+        {
+            GetComponent<Spawnpoint>().quitinteract();
+            isinteracting = false;
+        }
+        if (isinteracting && Input.GetKeyDown(KeyCode.I))
+        {
+            GetComponent<Spawnpoint>().quitinteract();
+            isinteracting = false;
         }
     }
 }
