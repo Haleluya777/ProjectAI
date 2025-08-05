@@ -1,71 +1,106 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 {
-    // --- 상태 및 기본 변수들 (변경 없음) ---
-    private enum State { Idle, Moving, Dash, Attacking, Jumping }
+    private enum State { Idle, Moving, Dash, Attacking, Jumping, Climbing }
     public Vector3 respawn;
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
+    [SerializeField] private Transform center;
+
+    //레이캐스트 설정----
+    private RaycastHit2D checkingWall;
+    private List<RaycastHit2D> allRayCastHits = new List<RaycastHit2D>();
+    private int hitCount;
+    private ContactFilter2D contactFilter; //레이어, isTrigger필터
+    private List<RaycastHit2D> platformHits = new List<RaycastHit2D>();
+    private List<RaycastHit2D> interactHits = new List<RaycastHit2D>();
+
+    //레이어 마스크에 쓸 레이어들.
+    private const int PLATFORM_LAYER = 6;
+    private const int INTERACTIVE_OBJECT_LAYER = 3;
+    private const int CAN_CLIMB_WALL = 8;
+    //----------
+
+    private IInteractable interactable; //상호작용 가능한 오브젝트.
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
     [SerializeField] private BoxCollider2D hitBox;
+    [SerializeField] private BoxCollider2D col;
     [SerializeField] private GameObject particle;
+
+    //플레이어 기본 스탯 및 상태들.
     private int level;
     private int maxHp, curHp;
     private float maxStm, curStm;
-    private int curMoveSpeed;
-    private int jumpPower;
+    [SerializeField] private int curMoveSpeed;
+    [SerializeField] private int jumpPower;
     private int holdJumpPower;
-    [SerializeField] private int combo;
+    [SerializeField] private float scaleX = 1;
+    [SerializeField] private float scaleY = 1;
+    private int layerMask;
+    private int combo;
     private bool isdead;
     private bool canJump;
+    private bool canDamaged;
     private float curjumpHoldTime;
     private float maxjumpHoldTime;
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
     [SerializeField] private bool castingSkill;
+    //
+
     public int CurrentHp => curHp;
     public int Att => att;
     public bool IsDead => isdead;
+    public float Scale => scaleX;
     public bool CanAction { get; set; }
     private Vector3 dir;
     private float moveX;
-    private float moveY;
     private float regenSpeed;
     private bool canRegen;
     [SerializeField] private bool delayed;
     [SerializeField] private float coyoteTime;
     [SerializeField] private float curcoyoteTime;
-    [SerializeField] private float checkingDis;
-    [SerializeField] private float attCool, attTime;
+    [SerializeField] private Vector2 momentum;
+    private float momentumX, momentumY;
+    private float attCool, attTime;
     private Rigidbody2D rigid;
     private Animator anim;
     private SpriteRenderer sprite;
     private Coroutine newCorutine;
     private Coroutine comboCoroutine;
-    private const int WALK_SPEED = 10;
+    private const int WALK_SPEED = 15;
+    private const int GRAVITY_SCALE = 12;
     public Vector3 Dir => dir;
-    public float movingspeed;
     public bool overground;
-
-    // --- 스킬 관련 변수 (새로운 설계) ---
-    [SerializeField] private Skill_Module skillModule; // SkillBase 대신 Skill_Module을 직접 사용
+    [SerializeField] public float gracePeriod;
+    private Coroutine GraceTimeCoroutine;
+    private new WaitForSeconds gp;
+    [SerializeField] private bool damagabool;
+    [SerializeField] private Skill_Module currentSkill;
 
     void Start()
     {
         StatusInit();
-        // SetCaster 호출은 이제 필요 없음
+
+        contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(layerMask);
+        contactFilter.useTriggers = true;
+
+        gp = new WaitForSeconds(gracePeriod);
     }
 
     void Update()
     {
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
-        
+
         Jump();
 
         if (CanAction)
@@ -73,77 +108,93 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             currentState = StateUpdate();
             StateAction(currentState);
         }
-        
+
         InputAttack();
-        HandleSkillInput(); // UseSkill() 대신 새로운 이름의 메서드 호출
+        UseSkill();
         StmRegen();
         PlayerUIUpdate();
+        InteractiveObject();
 
         // 스킬 모듈의 쿨다운을 매 프레임 업데이트
-        if (skillModule != null)
+        if (currentSkill != null)
         {
-            skillModule.UpdateCoolDown(Time.deltaTime);
+            currentSkill.UpdateCoolDown(Time.deltaTime);
         }
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
         curStm = Mathf.Clamp(curStm, 0, maxStm);
 
-        // --- 테스트용 코드 (변경 없음) ---
+        //플레이어 상태이상 확인용
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            ApplyEffect(new Stun(5f, "Stun", gameObject.GetComponent<IDamageable>()));
-        }
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            ApplyEffect(new Stun(5f, "DontMove", gameObject.GetComponent<IDamageable>()));
-        }
-        if(Input.GetKeyDown(KeyCode.E))
-        {
-            ApplyEffect(new Stun(5f, "Haleluya", gameObject.GetComponent<IDamageable>()));
-        }
-        if(Input.GetKeyDown(KeyCode.T))
-        {
-            GameManager.instance.InBattleState();
+            StatusEffectProcess(3f, "Stun");
         }
     }
 
-    private void PlayerUIUpdate() // UI 업데이트 메서드 수정
+    private void FixedUpdate()
+    {
+        platformHits.Clear();
+        interactHits.Clear();
+
+        checkingWall = Physics2D.Raycast(center.position, Vector2.right, 1f, 1 << CAN_CLIMB_WALL);
+        hitCount = Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
+
+        if (hitCount == 0)
+        {
+            CheckFlatForm();
+            return;
+        }
+
+        for (int i = 0; i < hitCount; i++) //레이캐스트에 접촉한 모든 RaycastHit2d를 충돌한 오브젝트의 레이어에 맞게 분류하는 작업.
+        {
+            RaycastHit2D currentHit = allRayCastHits[i];
+            int currentLayer = currentHit.collider.gameObject.layer;
+
+            if (currentLayer == PLATFORM_LAYER)
+            {
+                platformHits.Add(currentHit);
+            }
+            else if (currentLayer == INTERACTIVE_OBJECT_LAYER)
+            {
+                interactHits.Add(currentHit);
+            }
+        }
+
+        CheckFlatForm();
+    }
+
+    private RaycastHit2D NearCastHit(List<RaycastHit2D> list) //분류된 RaycastHit2d를 플레이어와 거리가 가까운 순으로 정렬.
+    {
+        if (list.Count > 1)
+        {
+            list.Sort((x, y) =>
+            (x.collider.transform.position - transform.position).sqrMagnitude.CompareTo((y.collider.transform.position - transform.position).sqrMagnitude));
+        }
+        else if (list.Count == 1)
+        {
+            Debug.Log("리스트에 하나의 값만 있기 때문에 정렬할 필요가 없습니다.");
+        }
+        else
+        {
+            Debug.Log("박스캐스트에 감지된 오브젝트가 존재하지 않습니다.");
+            return default;
+        }
+        return list[0];
+    }
+
+    private void PlayerUIUpdate()
     {
         GameManager.instance.uIManager.combatUI.HpBarUpdate(maxHp, curHp);
         GameManager.instance.uIManager.combatUI.StmBarUpdate(maxStm, curStm);
-        // Skill_Module의 쿨다운 정보를 UI에 전달
-        if (skillModule != null)
+        if (currentSkill != null)
         {
-            GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(skillModule.RemainingCoolDown, skillModule.coolDown);
+            GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
         }
     }
-
-    // --- 새로운 스킬 처리 메서드 ---
-    private void HandleSkillInput()
-    {
-        // 'C' 키를 눌렀을 때 스킬 사용 시도
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (skillModule != null && !attacking && !delayed) // 공격 중이 아닐 때만 사용 가능 (필요에 따라 조건 변경)
-            {
-                if (skillModule.TryUseSkill(this)) // this는 ISkillCaster를 구현한 PlayerController 자신을 의미
-                {
-                    // 스킬 사용 성공 시 애니메이션 등 후처리
-                    Debug.Log("스킬 사용 성공!");
-                    currentState = State.Attacking; // 예시: 스킬 사용 시 공격 상태로 변경
-                    anim.CrossFade("Skill_1", 0f); // 예시: 스킬 애니메이션 재생
-                }
-                else
-                {
-                    Debug.Log("스킬이 쿨다운 중입니다.");
-                }
-            }
-        }
-    }
-
-    // --- 기존 메서드들 (대부분 변경 없음) ---
     private void StatusInit()
     {
+        layerMask = 1 << PLATFORM_LAYER | 1 << INTERACTIVE_OBJECT_LAYER;
+
         level = 1;
         maxHp = 100;
         maxStm = 100;
@@ -151,7 +202,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         curStm = maxStm;
         regenSpeed = 10f;
         curMoveSpeed = WALK_SPEED;
-        jumpPower = 15;
+        jumpPower = 45;
         holdJumpPower = 20;
         att = 20;
         combo = 1;
@@ -164,8 +215,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         coyoteTime = 0.2f;
         CanAction = true;
         canJump = true;
+        damagabool = true;
+        dir = new Vector3(1, 0).normalized;
+
         rigid = this.GetComponent<Rigidbody2D>();
-        anim = this.GetComponent <Animator>();
+        anim = this.GetComponent<Animator>();
         sprite = this.GetComponent<SpriteRenderer>();
     }
 
@@ -190,34 +244,127 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         return gameObject;
     }
 
+    public string GetTag()
+    {
+        return this.gameObject.tag;
+    }
+
+    private void Climbing()
+    {
+        rigid.gravityScale = 0;
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            //rigid.velocity = new Vector2(0, 1 * curMoveSpeed);
+        }
+        else
+        {
+
+        }
+        rigid.velocity = Vector2.zero;
+        Debug.Log("벽에 붙어있는 중.");
+    }
+
+    private void CheckFlatForm() //플랫폼에 닿고 있는지 확인
+    {
+        RaycastHit2D hitPlatform = NearCastHit(platformHits); //접촉한 플랫폼 중 가장 가까운 플랫폼을 저장.
+        if (hitPlatform.collider != null) //접촉한 플랫폼이 존재할 경우.
+        {
+            if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
+            {
+                IMovablePlatForm momentumPlatForm = hitPlatform.collider.GetComponent<IMovablePlatForm>() != null ? hitPlatform.collider.GetComponent<IMovablePlatForm>() : null;
+
+                if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
+                {
+                    transform.SetParent(hitPlatform.collider.transform);
+                    scaleX = (float)(1 / transform.parent.localScale.x);
+                    scaleY = (float)(1 / transform.parent.localScale.y);
+                    momentum = momentumPlatForm.GetMomentum();
+                }
+                else //접촉한 플랫폼이 모멘텀 플랫폼이 아닌 일반 플랫폼인 경우.
+                {
+                    rigid.gravityScale = GRAVITY_SCALE;
+
+                    momentum = Vector2.zero;
+                    momentumX = momentum.x;
+                    momentumY = momentum.y;
+
+                    transform.SetParent(null);
+                    momentum = Vector2.zero;
+                    scaleX = 1;
+                    scaleY = 1;
+                }
+
+                currentState = State.Idle;
+                overground = false;
+            }
+        }
+        else //접촉한 플랫폼이 없는 경우 (공중에 있을 때.)
+        {
+            transform.SetParent(null);
+            rigid.gravityScale = GRAVITY_SCALE;
+            momentum = Vector2.zero;
+            scaleX = 1;
+            scaleY = 1;
+            overground = true;
+        }
+    }
+
+    private void InteractiveObject() //상호작용이 가능한 오브젝트에 닿고 있는지 확인.
+    {
+        RaycastHit2D hitObj;
+        hitObj = NearCastHit(interactHits);
+        if (hitObj.collider == null || hitObj.collider.GetComponent<IInteractable>() == null)
+        {
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            Debug.Log("레버 상호작용");
+            hitObj.collider.GetComponent<IInteractable>().Interact();
+        }
+    }
+
     private State StateUpdate()
     {
         float horizontal = moveX;
         bool checkAttack = attacking;
         bool _delayed = delayed;
+        bool _climbing = checkingWall;
+
         if (rigid.velocity.y > 0 && overground) { return State.Jumping; }
+
         else if (rigid.velocity.y < 0 && overground)
         {
             if (currentState == State.Jumping) { return State.Jumping; }
             else { if (curcoyoteTime >= coyoteTime) { return State.Jumping; } }
         }
-        return (horizontal, checkAttack, _delayed) switch
+
+        if (currentState != State.Jumping)
         {
-            (not 0, false, false) => State.Moving,
-            (0, false, false) => State.Idle,
-            (_, true, _) => State.Attacking,
-            (_, _, true) => State.Attacking
-        };
+            return (horizontal, checkAttack, _delayed, _climbing) switch
+            {
+                (not 0, false, false, false) => State.Moving,
+                (0, false, false, false) => State.Idle,
+                (_, true, _, false) => State.Attacking,
+                (_, _, true, false) => State.Attacking,
+                (_, _, _, true) => State.Climbing,
+            };
+        }
+        else
+        {
+            return State.Jumping;
+        }
     }
 
     private void StateAction(State curState)
     {
-        switch(curState)
+        switch (curState)
         {
-<<<<<<< HEAD
             case State.Idle:
-                rigid.velocity = new Vector2(0, rigid.velocity.y);
                 anim.CrossFade("Idle", 0f);
+                attacking = false;
+                Movement();
                 break;
 
             case State.Moving:
@@ -229,58 +376,94 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 anim.CrossFade("Jump", 0f);
                 Movement();
                 break;
-=======
-            case State.Idle: anim.CrossFade("Idle", 0f); break;
-            case State.Moving: anim.CrossFade("Run", 0f); Movement(); break;
-            case State.Jumping: anim.CrossFade("Jump", 0f); Movement(); break;
->>>>>>> 0c94e8b1578f783e5b2a7bea522a2004f9ec015d
+
+            case State.Climbing:
+                Climbing();
+                break;
         }
     }
 
     private void Movement()
     {
-        dir = new Vector3(moveX, 0).normalized;
-<<<<<<< HEAD
-        if (moveX == 0) {rigid.velocity = new Vector2 (0, rigid.velocity.y); } 
-        else { transform.localScale = new Vector3(dir.x, 1, 1);
-        rigid.velocity = new Vector2 (moveX * curMoveSpeed, rigid.velocity.y); } movingspeed = rigid.velocity.y;
-=======
-        if (moveX != 0) { transform.localScale = new Vector3(dir.x, 1, 1); }
-        transform.position += dir * curMoveSpeed * Time.deltaTime;
->>>>>>> 0c94e8b1578f783e5b2a7bea522a2004f9ec015d
+        if (moveX != 0)
+        {
+            dir = new Vector3(moveX, 0).normalized;
+        }
+        rigid.velocity = new Vector2((moveX + momentumX) * curMoveSpeed, rigid.velocity.y);
+        transform.localScale = new Vector3(scaleX * dir.x, scaleY, 1);
     }
 
     private void Jump()
     {
-<<<<<<< HEAD
         if (overground && rigid.velocity.y < 0 && currentState != State.Jumping)
         {
             curcoyoteTime += Time.deltaTime;
         }
-        else if(!overground && rigid.velocity.y >= 0)
+        else if (!overground && rigid.velocity.y >= 0)
         {
             curcoyoteTime = 0;
         }
-=======
-        if (rigid.velocity.y < 0 && currentState != State.Jumping) { curcoyoteTime += Time.deltaTime; }
-        else if(rigid.velocity.y == 0 || rigid.velocity.y > 0) { curcoyoteTime = 0; }
->>>>>>> 0c94e8b1578f783e5b2a7bea522a2004f9ec015d
 
         if (curcoyoteTime <= coyoteTime)
         {
-            if (Input.GetButtonDown("Jump") && currentState != State.Jumping && !delayed && !attacking)
+            if (Input.GetButtonDown("Jump"))
             {
-                rigid.velocity = new Vector2(rigid.velocity.x, 0);
-                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
-                curjumpHoldTime = 0;
-            }
-            if (Input.GetButton("Jump") && currentState == State.Jumping)
-            {
-                if (curjumpHoldTime < maxjumpHoldTime)
+                momentumX = momentum.x * .05f;
+                momentumY = momentum.y;
+
+                if (currentState == State.Climbing)
                 {
-                    rigid.velocity += new Vector2(0, holdJumpPower * Time.deltaTime);
-                    curjumpHoldTime += Time.deltaTime;
+                    Debug.Log("벽타기 중 점프 누름");
                 }
+
+                else if (currentState != State.Jumping && !delayed && !attacking)
+                {
+                    rigid.AddForce(Vector2.up * (jumpPower + momentumY), ForceMode2D.Impulse);
+                    curjumpHoldTime = 0;
+                }
+            }
+        }
+    }
+
+    private void UseSkill() //스킬 사용메서드
+    {
+        int skillNum = (Input.inputString.ToUpper()) switch //이것도 스위치문.
+        {
+            ("C") => 1,
+            ("V") => 2,
+            ("B") => 3,
+            _ => 0
+        };
+
+        if (skillNum == 0 || currentSkill == null) return;
+        if (currentSkill.OnCoolDown) return;
+
+        bool canUseSkill = false;
+
+        if (!attacking && !delayed)
+        {
+            canUseSkill = true;
+        }
+
+        else if (delayed && currentSkill.CancleDelay)
+        {
+            canUseSkill = true;
+        }
+
+        if (canUseSkill)
+        {
+            if (currentSkill.UseSkill(this))
+            {
+                if (delayed && currentSkill.CancleDelay)
+                {
+                    attacking = false;
+                    delayed = false;
+                    hitBox.enabled = false;
+                }
+                currentState = State.Attacking;
+                anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
+                currentSkill.UseSkill(this);
+                attacking = currentSkill.Attackable;
             }
         }
     }
@@ -312,16 +495,32 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     public void Damaged(int dmg, string attackType)
     {
-        Color txtcolor = new Color();
-        int totalDmg = 0;
-        if (attackType == "Physical") { totalDmg = dmg - defense; txtcolor = Color.white; }
-        else if (attackType == "Magical") { totalDmg = dmg - magicalDefense; txtcolor = Color.blue; }
-        DamagedProcess(totalDmg, txtcolor);
+        if (damagabool)
+        {
+            Debug.Log("크아악!");
+            Color txtcolor = new Color();
+            int totalDmg = 0;
+            damagabool = false;
+            if (attackType == "Physical") { totalDmg = dmg - defense; txtcolor = Color.white; }
+            else if (attackType == "Magical") { totalDmg = dmg - magicalDefense; txtcolor = Color.blue; }
+            DamagedProcess(totalDmg, txtcolor);
+            StartCoroutine(GraceTime());
+        }
+        else return;
+    }
+
+    IEnumerator GraceTime()
+    {
+        yield return gp;
+        damagabool = true;
     }
 
     private void DamagedProcess(int totalDmg, Color txtColor)
     {
+        //받은 데미지만큼 체력이 줄어듬
         curHp -= totalDmg;
+
+        //UI에 받은 데미지 띄우기, 디버깅 용.
         var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
         dmgText.transform.SetParent(this.transform.GetChild(0));
         dmgText.transform.localPosition = new Vector2(0, 4.5f);
@@ -335,7 +534,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void StmRegen()
     {
-        if(canRegen)
+        if (canRegen)
         {
             curStm += regenSpeed * Time.deltaTime;
         }
@@ -368,43 +567,20 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             damagable.StatusEffectProcess(5f, "Stun");
             GameManager.instance.InBattleState();
         }
-<<<<<<< HEAD
-
-        if (other.gameObject.layer == 6)
-        {
-            Debug.Log("땅에 닿음");
-            overground = false;
-            currentState = State.Idle;
-            attacking = false;
-        }
-    }
-
-    private void ontriggerStay2D(Collider2D ground)
-    {
-        if (ground.gameObject.layer == 6)
-        {
-            overground = false;
-            curcoyoteTime = 0f; //땅에 닿았을 때 코요테 타임 초기화
-        }
     }
 
     private void OnTriggerExit2D(Collider2D ground)
     {
         if (ground.gameObject.layer == 6)
         {
-            overground = true;
+            //overground = true;
+            //rigid.gravityScale = 12f;
         }
     }
 
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
-=======
-        if (other.gameObject.layer == 6) { currentState = State.Idle; attacking = false; }
-    }
-
-    private void ApplyEffect(StatusEffect effect)
->>>>>>> 0c94e8b1578f783e5b2a7bea522a2004f9ec015d
     {
-        if(!activeEffect.ContainsKey(effect.effectName))
+        if (!activeEffect.ContainsKey(effect.effectName))
         {
             activeEffect.Add(effect.effectName, effect);
             effect.ApplyEffect();
@@ -436,7 +612,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     IEnumerator ComboReset()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.2f);
         combo = 1;
     }
 
