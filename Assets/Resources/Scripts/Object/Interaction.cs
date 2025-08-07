@@ -7,7 +7,7 @@ public class Interaction : MonoBehaviour
     GameObject interactsign;
     [SerializeField] private GameObject player;
     bool isInteractable;
-    bool isinteracting;
+    bool isinteracting = false;
     void Start()
     {
         player = GameManager.instance.playerObj;
@@ -33,13 +33,7 @@ public class Interaction : MonoBehaviour
 
     private void Update()
     {
-        if (isInteractable && Input.GetKeyDown(KeyCode.I))
-        {
-            Debug.Log("세이브");
-            GetComponent<IInteractable>().Interact();
-            isinteracting = true;
-        }
-        if (!isInteractable) 
+        if (!isInteractable && isinteracting) 
         {
             GetComponent<Spawnpoint>().quitinteract();
             isinteracting = false;
@@ -48,6 +42,12 @@ public class Interaction : MonoBehaviour
         {
             GetComponent<Spawnpoint>().quitinteract();
             isinteracting = false;
+        }
+        if (isInteractable && Input.GetKeyDown(KeyCode.I))
+        {
+            Debug.Log("세이브");
+            GetComponent<IInteractable>().Interact();
+            isinteracting = true;
         }
     }
 }
