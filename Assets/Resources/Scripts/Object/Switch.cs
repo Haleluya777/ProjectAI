@@ -15,6 +15,10 @@ public class Switch : MonoBehaviour, IInteractable
     private void OnEnable()
     {
         col = this.GetComponent<BoxCollider2D>();
+        for (int i = 0; i < linkedObj.Count; i++)
+        {
+            linkedObjBoard.Add(linkedObj[i].GetComponent<ITriggerable>());
+        }
     }
 
     private void FixedUpdate()
