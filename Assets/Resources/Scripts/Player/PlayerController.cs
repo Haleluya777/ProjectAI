@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private IInteractable interactable; //상호작용 가능한 오브젝트.
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
+    [SerializeField] private State previousState;
     [SerializeField] private BoxCollider2D hitBox;
     [SerializeField] private BoxCollider2D col;
     [SerializeField] private GameObject particle;
@@ -81,7 +82,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public bool overground;
     [SerializeField] public float gracePeriod;
     private Coroutine GraceTimeCoroutine;
-    private new WaitForSeconds gp;
+    private WaitForSeconds gp;
     [SerializeField] private bool damagabool;
     [SerializeField] private Skill_Module currentSkill;
 
@@ -94,6 +95,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         contactFilter.useTriggers = true;
 
         gp = new WaitForSeconds(gracePeriod);
+        previousState = currentState;
     }
 
     void Update()
@@ -105,6 +107,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         if (CanAction)
         {
+            previousState = currentState;
             currentState = StateUpdate();
             StateAction(currentState);
         }
@@ -251,15 +254,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Climbing()
     {
+        Debug.Log(rigid.velocity.y);
         rigid.gravityScale = 0;
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            //rigid.velocity = new Vector2(0, 1 * curMoveSpeed);
-        }
-        else
-        {
-
-        }
         rigid.velocity = Vector2.zero;
         Debug.Log("벽에 붙어있는 중.");
     }
@@ -271,42 +267,65 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
             {
-                IMovablePlatForm momentumPlatForm = hitPlatform.collider.GetComponent<IMovablePlatForm>() != null ? hitPlatform.collider.GetComponent<IMovablePlatForm>() : null;
-
-                if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
-                {
-                    transform.SetParent(hitPlatform.collider.transform);
-                    scaleX = (float)(1 / transform.parent.localScale.x);
-                    scaleY = (float)(1 / transform.parent.localScale.y);
-                    momentum = momentumPlatForm.GetMomentum();
-                }
-                else //접촉한 플랫폼이 모멘텀 플랫폼이 아닌 일반 플랫폼인 경우.
-                {
-                    rigid.gravityScale = GRAVITY_SCALE;
-
-                    momentum = Vector2.zero;
-                    momentumX = momentum.x;
-                    momentumY = momentum.y;
-
-                    transform.SetParent(null);
-                    momentum = Vector2.zero;
-                    scaleX = 1;
-                    scaleY = 1;
-                }
-
-                currentState = State.Idle;
-                overground = false;
+                CheckNormalVectorDown(hitPlatform);
+            }
+            else if (Vector2.Dot(hitPlatform.normal, Vector2.left) > .9f || Vector2.Dot(hitPlatform.normal, Vector2.right) > .9f)
+            {
+                Debug.Log("옆으로 닿음");
+                //CheckNormalVectorSide(hitPlatform);
             }
         }
         else //접촉한 플랫폼이 없는 경우 (공중에 있을 때.)
         {
-            transform.SetParent(null);
+            if (currentState != State.Climbing)
+            {
+                transform.SetParent(null);
+                rigid.gravityScale = GRAVITY_SCALE;
+                momentum = Vector2.zero;
+                scaleX = 1;
+                scaleY = 1;
+                overground = true;
+            }
+            else
+            {
+                rigid.gravityScale = 0;
+            }
+        }
+    }
+
+    private void CheckNormalVectorDown(RaycastHit2D hit) //법선벡터 체크, 레이캐스트가 아래로 충돌할 때만 확인.
+    {
+        Debug.Log("수직으로 딛고 있음");
+        IMovablePlatForm momentumPlatForm = hit.collider.GetComponent<IMovablePlatForm>() != null ? hit.collider.GetComponent<IMovablePlatForm>() : null;
+
+        if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
+        {
+            transform.SetParent(hit.collider.transform);
+            scaleX = (float)(1 / transform.parent.localScale.x);
+            scaleY = (float)(1 / transform.parent.localScale.y);
+            momentum = momentumPlatForm.GetMomentum();
+        }
+        else //접촉한 플랫폼이 모멘텀 플랫폼이 아닌 일반 플랫폼인 경우.
+        {
             rigid.gravityScale = GRAVITY_SCALE;
+
+            momentum = Vector2.zero;
+            momentumX = momentum.x;
+            momentumY = momentum.y;
+
+            transform.SetParent(null);
             momentum = Vector2.zero;
             scaleX = 1;
             scaleY = 1;
-            overground = true;
         }
+
+        currentState = State.Idle;
+        overground = false;
+    }
+
+    private void CheckNormalVectorSide(RaycastHit2D hit)
+    {
+        this.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
     }
 
     private void InteractiveObject() //상호작용이 가능한 오브젝트에 닿고 있는지 확인.
@@ -332,29 +351,23 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         bool _delayed = delayed;
         bool _climbing = checkingWall;
 
-        if (rigid.velocity.y > 0 && overground) { return State.Jumping; }
+        if (rigid.velocity.y > 0 && overground && currentState != State.Climbing) { return State.Jumping; }
 
-        else if (rigid.velocity.y < 0 && overground)
+        else if (rigid.velocity.y < 0 && overground && currentState != State.Climbing)
         {
             if (currentState == State.Jumping) { return State.Jumping; }
             else { if (curcoyoteTime >= coyoteTime) { return State.Jumping; } }
         }
 
-        if (currentState != State.Jumping)
+        return (horizontal, checkAttack, _delayed, _climbing) switch
         {
-            return (horizontal, checkAttack, _delayed, _climbing) switch
-            {
-                (not 0, false, false, false) => State.Moving,
-                (0, false, false, false) => State.Idle,
-                (_, true, _, false) => State.Attacking,
-                (_, _, true, false) => State.Attacking,
-                (_, _, _, true) => State.Climbing,
-            };
-        }
-        else
-        {
-            return State.Jumping;
-        }
+            (not 0, false, false, false) => State.Moving,
+            (0, false, false, false) => State.Idle,
+            (_, true, _, false) => State.Attacking,
+            (_, _, true, false) => State.Attacking,
+            (0, _, _, true) => State.Climbing,
+            (not 0, _, _, true) => State.Jumping,
+        };
     }
 
     private void StateAction(State curState)
@@ -378,6 +391,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 break;
 
             case State.Climbing:
+                Movement();
                 Climbing();
                 break;
         }
