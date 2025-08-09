@@ -114,6 +114,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         InputAttack();
         UseSkill();
+        ProccessingPassive();
         StmRegen();
         PlayerUIUpdate();
         InteractiveObject();
@@ -487,6 +488,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 currentSkill.UseSkill(this);
                 attacking = currentSkill.Attackable;
             }
+        }
+    }
+
+    private void ProccessingPassive()
+    {
+        if (currentSkill.HavePassive)
+        {
+            currentSkill.ProccessPassive(this);
         }
     }
 

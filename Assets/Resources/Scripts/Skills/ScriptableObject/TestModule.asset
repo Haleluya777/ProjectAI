@@ -15,6 +15,8 @@ MonoBehaviour:
   coolDown: 2
   attackable: 0
   cancleDelay: 1
-  skills:
+  havePassive: 1
+  activeSkills:
   - {fileID: 11400000, guid: 41eb99799c69ade408cb27f8a6cf5b41, type: 2}
-  - {fileID: 11400000, guid: 9e9b2b4564af8684e83895d48615fbd6, type: 2}
+  passiveSkills:
+  - {fileID: 11400000, guid: f0586dd2f3414e6449808761ce3ab9b8, type: 2}
