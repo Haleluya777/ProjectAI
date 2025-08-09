@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - CanInteracte
   - Switch
+  - ClimbingWall
   layers:
   - Default
   - TransparentFX

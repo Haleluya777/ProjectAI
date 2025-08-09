@@ -4048,7 +4048,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 105.3, y: 1.9000001, z: -10}
+  m_LocalPosition: {x: 105.02, y: 12.139999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9312,9 +9312,9 @@ GameObject:
   - component: {fileID: 656761099}
   - component: {fileID: 656761102}
   - component: {fileID: 656761101}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: ClimbingWall
-  m_TagString: Untagged
+  m_TagString: ClimbingWall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9380,8 +9380,8 @@ Transform:
   m_GameObject: {fileID: 656761098}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 112.9, y: 0.29, z: 0}
-  m_LocalScale: {x: 1, y: 12.69, z: 1}
+  m_LocalPosition: {x: 112.9, y: 0.1033, z: 0}
+  m_LocalScale: {x: 1, y: 12.316005, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -18833,7 +18833,7 @@ Transform:
   m_GameObject: {fileID: 1915231743}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 105.3, y: -6.1, z: 0}
+  m_LocalPosition: {x: 105.02, y: 4.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18859,7 +18859,6 @@ MonoBehaviour:
   center: {fileID: 2009268171}
   statusEffectUI: {fileID: 566516037}
   currentState: 0
-  previousState: 0
   hitBox: {fileID: 1200567237}
   col: {fileID: 1915231747}
   particle: {fileID: 561683600}

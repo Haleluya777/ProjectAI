@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private IInteractable interactable; //상호작용 가능한 오브젝트.
     [SerializeField] private GameObject statusEffectUI;
     [SerializeField] private State currentState;
-    [SerializeField] private State previousState;
     [SerializeField] private BoxCollider2D hitBox;
     [SerializeField] private BoxCollider2D col;
     [SerializeField] private GameObject particle;
@@ -86,6 +85,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private bool damagabool;
     [SerializeField] private Skill_Module currentSkill;
 
+    private bool a;
+
+
     void Start()
     {
         StatusInit();
@@ -95,7 +97,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         contactFilter.useTriggers = true;
 
         gp = new WaitForSeconds(gracePeriod);
-        previousState = currentState;
     }
 
     void Update()
@@ -107,7 +108,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         if (CanAction)
         {
-            previousState = currentState;
             currentState = StateUpdate();
             StateAction(currentState);
         }
@@ -139,7 +139,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         platformHits.Clear();
         interactHits.Clear();
 
-        checkingWall = Physics2D.Raycast(center.position, Vector2.right, 1f, 1 << CAN_CLIMB_WALL);
+        checkingWall = Physics2D.Raycast(center.position, transform.right, 1f, 1 << CAN_CLIMB_WALL);
         hitCount = Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
 
         if (hitCount == 0)
@@ -254,9 +254,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Climbing()
     {
-        Debug.Log(rigid.velocity.y);
+        //transform.position = new Vector2(transform.position.x + .8f, transform.position.y);
         rigid.gravityScale = 0;
-        rigid.velocity = Vector2.zero;
         Debug.Log("벽에 붙어있는 중.");
     }
 
@@ -267,18 +266,21 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
             {
+                a = false;
                 CheckNormalVectorDown(hitPlatform);
             }
-            else if (Vector2.Dot(hitPlatform.normal, Vector2.left) > .9f || Vector2.Dot(hitPlatform.normal, Vector2.right) > .9f)
+            else if (Vector2.Dot(hitPlatform.normal, Vector2.left) > .9f || Vector2.Dot(hitPlatform.normal, Vector2.right) > .9f && hitPlatform.collider.tag == "ClimbingWall")
             {
                 Debug.Log("옆으로 닿음");
-                //CheckNormalVectorSide(hitPlatform);
+                CheckNormalVectorSide(hitPlatform);
             }
         }
         else //접촉한 플랫폼이 없는 경우 (공중에 있을 때.)
         {
             if (currentState != State.Climbing)
             {
+                a = false;
+                this.transform.rotation = Quaternion.Euler(Vector3.zero);
                 transform.SetParent(null);
                 rigid.gravityScale = GRAVITY_SCALE;
                 momentum = Vector2.zero;
@@ -325,7 +327,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void CheckNormalVectorSide(RaycastHit2D hit)
     {
-        this.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+        a = true;
+        //this.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
     }
 
     private void InteractiveObject() //상호작용이 가능한 오브젝트에 닿고 있는지 확인.
@@ -349,7 +352,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         float horizontal = moveX;
         bool checkAttack = attacking;
         bool _delayed = delayed;
-        bool _climbing = checkingWall;
+        bool _climbing = a;
 
         if (rigid.velocity.y > 0 && overground && currentState != State.Climbing) { return State.Jumping; }
 
@@ -366,7 +369,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             (_, true, _, false) => State.Attacking,
             (_, _, true, false) => State.Attacking,
             (0, _, _, true) => State.Climbing,
-            (not 0, _, _, true) => State.Jumping,
+            (not 0, _, _, true) => State.Moving,
         };
     }
 
@@ -399,6 +402,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Movement()
     {
+        if (moveX != 0)
+        {
+            dir = new Vector3(moveX, 0).normalized;
+        }
+
         if (moveX != 0)
         {
             dir = new Vector3(moveX, 0).normalized;
