@@ -20,4 +20,5 @@ public interface ISkillCaster
 
     // GameObject 자체를 넘겨야 하는 경우 (Instantiate 시 부모 설정 등)
     GameObject GetGameObject();
+    T GetCom<T>();
 }

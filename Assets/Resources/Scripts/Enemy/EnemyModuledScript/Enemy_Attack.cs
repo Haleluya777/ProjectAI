@@ -9,14 +9,14 @@ using UnityEngine.SocialPlatforms;
 
 public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequiredAnimator, ISkillCaster
 {
-    private enum AttackType {Melee, Range}
+    private enum AttackType { Melee, Range }
     private Animator anim;
     private IBlackBoard blackBoard;
     private List<float> meleeCools;
     private List<float> rangedCools;
-    
+
     //투사체를 쏘는 원거리 공격을 하는 경우에만 사용.
-    [SerializeField] private Transform shootingPos; 
+    [SerializeField] private Transform shootingPos;
     //
 
     //모듈화 된 스킬
@@ -149,4 +149,6 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     {
         return this.transform.parent.gameObject;
     }
+
+    public T GetCom<T>() => this.GetCom<T>();
 }

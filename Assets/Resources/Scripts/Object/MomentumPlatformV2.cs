@@ -35,12 +35,6 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
         previousPos = this.transform.position;
     }
 
-    private void Update()
-    {
-        //Debug.Log(local.Get<bool>("CanReturnMomentum"));
-        //Debug.Log(local.Get<Vector2>("MaxMomentum"));
-    }
-
     private void FixedUpdate()
     {
         CalculateMomentum();
