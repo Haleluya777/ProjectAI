@@ -229,7 +229,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     public Vector3 GetPosition()
     {
-        return transform.position;
+        return center.position;
     }
     public Quaternion GetRotation()
     {
@@ -491,6 +491,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
+    public T GetCom<T>() => this.GetComponent<T>();
+
     private void ProccessingPassive()
     {
         if (currentSkill.HavePassive)
@@ -597,15 +599,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             damagable.Damaged(att, "Physical");
             damagable.StatusEffectProcess(5f, "Stun");
             GameManager.instance.InBattleState();
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D ground)
-    {
-        if (ground.gameObject.layer == 6)
-        {
-            //overground = true;
-            //rigid.gravityScale = 12f;
         }
     }
 
