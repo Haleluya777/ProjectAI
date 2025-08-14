@@ -14,7 +14,7 @@ public class Skill_Passive_Test : SkillBase
 
         if (range.Length > 0) // 0이 아닌 경우 (즉, 1개 이상인 경우)
         {
-            Debug.Log("범위 내 벽 있음");
+            //Debug.Log("범위 내 벽 있음");
             line.positionCount = 2;
             System.Array.Sort(range, (x, y) =>
             {
@@ -33,7 +33,7 @@ public class Skill_Passive_Test : SkillBase
             line.positionCount = 0;
         }
 
-        Debug.Log("패시브 스킬 작동 중.");
+        //Debug.Log("패시브 스킬 작동 중.");
         return true;
     }
 }

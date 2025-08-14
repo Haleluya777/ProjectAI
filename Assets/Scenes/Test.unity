@@ -4047,7 +4047,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.3, y: 11.8, z: -10}
+  m_LocalPosition: {x: 108.81, y: 2.2800002, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9437,8 +9437,8 @@ Transform:
   m_GameObject: {fileID: 656761098}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 112.9, y: 0.1033, z: 0}
-  m_LocalScale: {x: 1, y: 12.316005, z: 1}
+  m_LocalPosition: {x: 112.9, y: 0.1, z: 0}
+  m_LocalScale: {x: 1, y: 12, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -14071,8 +14071,8 @@ Transform:
   m_GameObject: {fileID: 1268080225}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 94.68, y: 0.1033, z: 0}
-  m_LocalScale: {x: 1, y: 12.316005, z: 1}
+  m_LocalPosition: {x: 94.68, y: 0.18, z: 0}
+  m_LocalScale: {x: 1, y: 12, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -19311,7 +19311,7 @@ Transform:
   m_GameObject: {fileID: 1915231743}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.3, y: 3.8, z: 0}
+  m_LocalPosition: {x: 108.81, y: -5.72, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19441,7 +19441,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.09, y: 2.165}
+  m_Offset: {x: 0, y: 2}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -19452,7 +19452,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.5, y: 4.4}
+  m_Size: {x: 2, y: 4}
   m_EdgeRadius: 0
 --- !u!50 &1915231748
 Rigidbody2D:
@@ -20142,7 +20142,7 @@ GameObject:
   - component: {fileID: 2009268171}
   m_Layer: 7
   m_Name: Center
-  m_TagString: Respawn
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

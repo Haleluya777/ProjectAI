@@ -41,8 +41,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private int curMoveSpeed;
     [SerializeField] private int jumpPower;
     private int holdJumpPower;
-    [SerializeField] private float scaleX = 1;
-    [SerializeField] private float scaleY = 1;
+    private float scaleX = 1;
+    private float scaleY = 1;
     private int layerMask;
     private int combo;
     private bool isdead;
@@ -62,6 +62,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public bool CanAction { get; set; }
     private Vector3 dir;
     private float moveX;
+    private float moveY;
     private float regenSpeed;
     private bool canRegen;
     [SerializeField] private bool delayed;
@@ -85,12 +86,17 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     [SerializeField] private bool damagabool;
     [SerializeField] private Skill_Module currentSkill;
 
-    private bool a;
 
+    //콜라이더 크기 조정
+    private Vector2 climbingColSize;
+    private Vector2 defaultColSize;
 
     void Start()
     {
         StatusInit();
+
+        climbingColSize = new Vector2(4, 2);
+        defaultColSize = new Vector2(2, 4);
 
         contactFilter = new ContactFilter2D();
         contactFilter.SetLayerMask(layerMask);
@@ -101,6 +107,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     void Update()
     {
+        Debug.Log(dir);
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
 
@@ -111,6 +118,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             currentState = StateUpdate();
             StateAction(currentState);
         }
+
+        col.size = currentState != State.Climbing ? defaultColSize : climbingColSize;
 
         InputAttack();
         UseSkill();
@@ -140,8 +149,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         platformHits.Clear();
         interactHits.Clear();
 
-        checkingWall = Physics2D.Raycast(center.position, transform.right, 1f, 1 << CAN_CLIMB_WALL);
+        checkingWall = Physics2D.Raycast(center.position, transform.right * dir.x, 2.31f, 1 << CAN_CLIMB_WALL);
         hitCount = Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
+
+        Debug.DrawRay(center.position, transform.right * dir.x * 2.31f, Color.red, 0f);
 
         if (hitCount == 0)
         {
@@ -154,7 +165,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             RaycastHit2D currentHit = allRayCastHits[i];
             int currentLayer = currentHit.collider.gameObject.layer;
 
-            if (currentLayer == PLATFORM_LAYER)
+            if (currentLayer == PLATFORM_LAYER || currentLayer == CAN_CLIMB_WALL)
             {
                 platformHits.Add(currentHit);
             }
@@ -176,11 +187,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
         else if (list.Count == 1)
         {
-            Debug.Log("리스트에 하나의 값만 있기 때문에 정렬할 필요가 없습니다.");
+            //Debug.Log("리스트에 하나의 값만 있기 때문에 정렬할 필요가 없습니다.");
         }
         else
         {
-            Debug.Log("박스캐스트에 감지된 오브젝트가 존재하지 않습니다.");
+            //Debug.Log("박스캐스트에 감지된 오브젝트가 존재하지 않습니다.");
             return default;
         }
         return list[0];
@@ -197,7 +208,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     }
     private void StatusInit()
     {
-        layerMask = 1 << PLATFORM_LAYER | 1 << INTERACTIVE_OBJECT_LAYER;
+        layerMask = 1 << PLATFORM_LAYER | 1 << INTERACTIVE_OBJECT_LAYER | 1 << CAN_CLIMB_WALL;
 
         level = 1;
         maxHp = 100;
@@ -255,22 +266,29 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Climbing()
     {
-        //transform.position = new Vector2(transform.position.x + .8f, transform.position.y);
         rigid.gravityScale = 0;
+        moveY = Input.GetAxisRaw("Vertical");
+
+        rigid.velocity = new Vector2(0, moveY * curMoveSpeed);
+        transform.localScale = new Vector2(scaleX, scaleY * dir.y);
+
+        anim.CrossFade("Climbing", 0f);
+
+
         Debug.Log("벽에 붙어있는 중.");
     }
 
     private void CheckFlatForm() //플랫폼에 닿고 있는지 확인
     {
         RaycastHit2D hitPlatform = NearCastHit(platformHits); //접촉한 플랫폼 중 가장 가까운 플랫폼을 저장.
+        //col.size = new Vector2(2, 4);
         if (hitPlatform.collider != null) //접촉한 플랫폼이 존재할 경우.
         {
             if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
             {
-                a = false;
                 CheckNormalVectorDown(hitPlatform);
             }
-            else if (Vector2.Dot(hitPlatform.normal, Vector2.left) > .9f || Vector2.Dot(hitPlatform.normal, Vector2.right) > .9f && hitPlatform.collider.tag == "ClimbingWall")
+            else if (Vector2.Dot(hitPlatform.normal, Vector2.left) > .9f || Vector2.Dot(hitPlatform.normal, Vector2.right) > .9f)// && hitPlatform.collider.tag == "ClimbingWall")
             {
                 Debug.Log("옆으로 닿음");
                 CheckNormalVectorSide(hitPlatform);
@@ -280,7 +298,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             if (currentState != State.Climbing)
             {
-                a = false;
                 this.transform.rotation = Quaternion.Euler(Vector3.zero);
                 transform.SetParent(null);
                 rigid.gravityScale = GRAVITY_SCALE;
@@ -328,8 +345,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void CheckNormalVectorSide(RaycastHit2D hit)
     {
-        a = true;
-        //this.transform.rotation = Quaternion.Euler(new Vector3(0, 0, 90));
+
     }
 
     private void InteractiveObject() //상호작용이 가능한 오브젝트에 닿고 있는지 확인.
@@ -353,7 +369,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         float horizontal = moveX;
         bool checkAttack = attacking;
         bool _delayed = delayed;
-        bool _climbing = a;
+        bool _climbing = checkingWall;
 
         if (rigid.velocity.y > 0 && overground && currentState != State.Climbing) { return State.Jumping; }
 
@@ -369,8 +385,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             (0, false, false, false) => State.Idle,
             (_, true, _, false) => State.Attacking,
             (_, _, true, false) => State.Attacking,
-            (0, _, _, true) => State.Climbing,
-            (not 0, _, _, true) => State.Moving,
+            (_, _, _, true) => State.Climbing,
         };
     }
 
@@ -395,7 +410,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 break;
 
             case State.Climbing:
-                Movement();
+                //Movement();
+                col.size = new Vector2(4, 2);
                 Climbing();
                 break;
         }
@@ -403,14 +419,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Movement()
     {
-        if (moveX != 0)
+        if (moveX != 0 || moveY != 0)
         {
-            dir = new Vector3(moveX, 0).normalized;
-        }
-
-        if (moveX != 0)
-        {
-            dir = new Vector3(moveX, 0).normalized;
+            dir = new Vector3(moveX, moveY).normalized;
         }
         rigid.velocity = new Vector2((moveX + momentumX) * curMoveSpeed, rigid.velocity.y);
         transform.localScale = new Vector3(scaleX * dir.x, scaleY, 1);
@@ -592,6 +603,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     }
 
     private void OnTriggerEnter2D(Collider2D other)
+    {
+        CheckGetDamage(other);
+    }
+
+    private void CheckGetDamage(Collider2D other)
     {
         if (other.GetComponentInChildren<IDamageable>() != null && attacking)
         {
