@@ -48,7 +48,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private bool isdead;
     private bool canJump;
     private bool canDamaged;
-    private float curjumpHoldTime;
     private float maxjumpHoldTime;
     [SerializeField] private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
@@ -111,7 +110,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
 
-        Jump();
+        ProccessCoyoteTime();
+        if (Input.GetButtonDown("Jump"))
+        {
+            Jump();
+        }
 
         if (CanAction)
         {
@@ -225,7 +228,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         attTime = 0f;
         defense = 0;
         magicalDefense = 0;
-        curjumpHoldTime = 0f;
         maxjumpHoldTime = 3f;
         coyoteTime = 0.2f;
         CanAction = true;
@@ -270,7 +272,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         moveY = Input.GetAxisRaw("Vertical");
 
         rigid.velocity = new Vector2(0, moveY * curMoveSpeed);
-        transform.localScale = new Vector2(scaleX, scaleY * dir.y);
+        //transform.localScale = new Vector2(scaleX, scaleY * dir.y);
 
         anim.CrossFade("Climbing", 0f);
 
@@ -281,7 +283,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private void CheckFlatForm() //플랫폼에 닿고 있는지 확인
     {
         RaycastHit2D hitPlatform = NearCastHit(platformHits); //접촉한 플랫폼 중 가장 가까운 플랫폼을 저장.
-        //col.size = new Vector2(2, 4);
         if (hitPlatform.collider != null) //접촉한 플랫폼이 존재할 경우.
         {
             if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
@@ -427,7 +428,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         transform.localScale = new Vector3(scaleX * dir.x, scaleY, 1);
     }
 
-    private void Jump()
+    private void ProccessCoyoteTime()
     {
         if (overground && rigid.velocity.y < 0 && currentState != State.Jumping)
         {
@@ -437,24 +438,24 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         {
             curcoyoteTime = 0;
         }
+    }
 
+    private void Jump()
+    {
         if (curcoyoteTime <= coyoteTime)
         {
-            if (Input.GetButtonDown("Jump"))
+            momentumX = momentum.x * .05f;
+            momentumY = momentum.y;
+
+            if (currentState == State.Climbing)
             {
-                momentumX = momentum.x * .05f;
-                momentumY = momentum.y;
+                Debug.Log("벽타기 중 점프 누름");
+                rigid.AddForce((transform.right * dir.x) * (jumpPower + momentumX), ForceMode2D.Impulse);
+            }
 
-                if (currentState == State.Climbing)
-                {
-                    Debug.Log("벽타기 중 점프 누름");
-                }
-
-                else if (currentState != State.Jumping && !delayed && !attacking)
-                {
-                    rigid.AddForce(Vector2.up * (jumpPower + momentumY), ForceMode2D.Impulse);
-                    curjumpHoldTime = 0;
-                }
+            else if (currentState != State.Jumping && !delayed && !attacking)
+            {
+                rigid.AddForce(Vector2.up * (jumpPower + momentumY), ForceMode2D.Impulse);
             }
         }
     }
