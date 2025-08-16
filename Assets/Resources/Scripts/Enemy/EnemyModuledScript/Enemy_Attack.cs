@@ -120,6 +120,11 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         anim.CrossFade("Enemy_Attack", 0f);
     }
 
+    public void SetScale(int dir)
+    {
+
+    }
+
     public Vector3 GetPosition()
     {
         return blackBoard.Get<Transform>("ShootingPos").position;

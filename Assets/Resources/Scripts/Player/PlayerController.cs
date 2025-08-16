@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Experimental.AI;
 
 public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 {
@@ -15,11 +16,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     //레이캐스트 설정----
     private RaycastHit2D checkingWall;
+    private RaycastHit2D checkingGround;
     private List<RaycastHit2D> allRayCastHits = new List<RaycastHit2D>();
-    private int hitCount;
     private ContactFilter2D contactFilter; //레이어, isTrigger필터
-    private List<RaycastHit2D> platformHits = new List<RaycastHit2D>();
-    private List<RaycastHit2D> interactHits = new List<RaycastHit2D>();
 
     //레이어 마스크에 쓸 레이어들.
     private const int PLATFORM_LAYER = 6;
@@ -43,7 +42,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private int holdJumpPower;
     private float scaleX = 1;
     private float scaleY = 1;
-    private int layerMask;
+    //private int layerMask;
     private int combo;
     private bool isdead;
     private bool canJump;
@@ -89,6 +88,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     //콜라이더 크기 조정
     private Vector2 climbingColSize;
     private Vector2 defaultColSize;
+    private Vector2 checkingGroundCastSize;
 
     void Start()
     {
@@ -96,9 +96,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
         climbingColSize = new Vector2(4, 2);
         defaultColSize = new Vector2(2, 4);
+        checkingGroundCastSize = new Vector2(1.5f, .1f);
 
         contactFilter = new ContactFilter2D();
-        contactFilter.SetLayerMask(layerMask);
+        contactFilter.SetLayerMask(1 << INTERACTIVE_OBJECT_LAYER);
         contactFilter.useTriggers = true;
 
         gp = new WaitForSeconds(gracePeriod);
@@ -106,7 +107,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     void Update()
     {
-        Debug.Log(dir);
+        if (CanAction)
+        {
+            currentState = StateUpdate();
+            StateAction(currentState);
+        }
+
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
 
@@ -114,12 +120,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (Input.GetButtonDown("Jump"))
         {
             Jump();
-        }
-
-        if (CanAction)
-        {
-            currentState = StateUpdate();
-            StateAction(currentState);
         }
 
         col.size = currentState != State.Climbing ? defaultColSize : climbingColSize;
@@ -149,35 +149,13 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void FixedUpdate()
     {
-        platformHits.Clear();
-        interactHits.Clear();
-
-        checkingWall = Physics2D.Raycast(center.position, transform.right * dir.x, 2.31f, 1 << CAN_CLIMB_WALL);
-        hitCount = Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
-
-        Debug.DrawRay(center.position, transform.right * dir.x * 2.31f, Color.red, 0f);
-
-        if (hitCount == 0)
-        {
-            CheckFlatForm();
-            return;
-        }
-
-        for (int i = 0; i < hitCount; i++) //레이캐스트에 접촉한 모든 RaycastHit2d를 충돌한 오브젝트의 레이어에 맞게 분류하는 작업.
-        {
-            RaycastHit2D currentHit = allRayCastHits[i];
-            int currentLayer = currentHit.collider.gameObject.layer;
-
-            if (currentLayer == PLATFORM_LAYER || currentLayer == CAN_CLIMB_WALL)
-            {
-                platformHits.Add(currentHit);
-            }
-            else if (currentLayer == INTERACTIVE_OBJECT_LAYER)
-            {
-                interactHits.Add(currentHit);
-            }
-        }
-
+        //붙을 수 있는 벽을 탐지하는 레이캐스트
+        checkingWall = Physics2D.BoxCast(col.bounds.center, new Vector2(.5f, col.bounds.size.y - .1f), 0, transform.right * dir.x, 2f, 1 << CAN_CLIMB_WALL);
+        //주변 상호작용 가능한 오브젝트들을 모드 탐지하는 박스 캐스트.
+        Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
+        //플랫폼에 발을 딛고 있는지 체크하는 박스 캐스트.
+        checkingGround = Physics2D.BoxCast(transform.position, checkingGroundCastSize, 0, Vector2.zero, 0.1f, 1 << PLATFORM_LAYER);
+        Debug.DrawRay(col.bounds.center, transform.right * dir.x * 2f, Color.red);
         CheckFlatForm();
     }
 
@@ -194,7 +172,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
         else
         {
-            //Debug.Log("박스캐스트에 감지된 오브젝트가 존재하지 않습니다.");
             return default;
         }
         return list[0];
@@ -211,7 +188,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     }
     private void StatusInit()
     {
-        layerMask = 1 << PLATFORM_LAYER | 1 << INTERACTIVE_OBJECT_LAYER | 1 << CAN_CLIMB_WALL;
+        //layerMask = 1 << PLATFORM_LAYER | 1 << INTERACTIVE_OBJECT_LAYER | 1 << CAN_CLIMB_WALL;
 
         level = 1;
         maxHp = 100;
@@ -238,6 +215,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent<Animator>();
         sprite = this.GetComponent<SpriteRenderer>();
+    }
+
+    public void SetScale(int dir)
+    {
+        transform.localScale = new Vector3(scaleX * dir, scaleY, 1);
     }
 
     public Vector3 GetPosition()
@@ -268,6 +250,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Climbing()
     {
+        Debug.Log("벽에 붙어있는 중.");
         rigid.gravityScale = 0;
         moveY = Input.GetAxisRaw("Vertical");
 
@@ -275,28 +258,20 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         //transform.localScale = new Vector2(scaleX, scaleY * dir.y);
 
         anim.CrossFade("Climbing", 0f);
-
-
-        Debug.Log("벽에 붙어있는 중.");
     }
 
     private void CheckFlatForm() //플랫폼에 닿고 있는지 확인
     {
-        RaycastHit2D hitPlatform = NearCastHit(platformHits); //접촉한 플랫폼 중 가장 가까운 플랫폼을 저장.
-        if (hitPlatform.collider != null) //접촉한 플랫폼이 존재할 경우.
+        if (checkingGround.collider != null) //플랫폼에 플레이어가 수직으로 닿고 있을 때.
         {
-            if (Vector2.Dot(hitPlatform.normal, Vector2.up) > .9f)
-            {
-                CheckNormalVectorDown(hitPlatform);
-            }
-            else if (Vector2.Dot(hitPlatform.normal, Vector2.left) > .9f || Vector2.Dot(hitPlatform.normal, Vector2.right) > .9f)// && hitPlatform.collider.tag == "ClimbingWall")
-            {
-                Debug.Log("옆으로 닿음");
-                CheckNormalVectorSide(hitPlatform);
-            }
+            if (checkingWall.collider != null) return;
+            overground = false;
+            CheckNormalVectorDown(checkingGround);
         }
-        else //접촉한 플랫폼이 없는 경우 (공중에 있을 때.)
+
+        else //플랫폼에 발이 닿고 있지 않을 때.
         {
+            overground = true;
             if (currentState != State.Climbing)
             {
                 this.transform.rotation = Quaternion.Euler(Vector3.zero);
@@ -305,7 +280,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 momentum = Vector2.zero;
                 scaleX = 1;
                 scaleY = 1;
-                overground = true;
             }
             else
             {
@@ -314,7 +288,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
     }
 
-    private void CheckNormalVectorDown(RaycastHit2D hit) //법선벡터 체크, 레이캐스트가 아래로 충돌할 때만 확인.
+    private void CheckNormalVectorDown(RaycastHit2D hit) //플레이어가 지면에 닿아 있을 떄 실행하는 메서드
     {
         Debug.Log("수직으로 딛고 있음");
         IMovablePlatForm momentumPlatForm = hit.collider.GetComponent<IMovablePlatForm>() != null ? hit.collider.GetComponent<IMovablePlatForm>() : null;
@@ -341,7 +315,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
 
         currentState = State.Idle;
-        overground = false;
     }
 
     private void CheckNormalVectorSide(RaycastHit2D hit)
@@ -352,7 +325,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private void InteractiveObject() //상호작용이 가능한 오브젝트에 닿고 있는지 확인.
     {
         RaycastHit2D hitObj;
-        hitObj = NearCastHit(interactHits);
+        hitObj = NearCastHit(allRayCastHits);
         if (hitObj.collider == null || hitObj.collider.GetComponent<IInteractable>() == null)
         {
             return;
@@ -420,9 +393,19 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Movement()
     {
-        if (moveX != 0 || moveY != 0)
+        if (moveX != 0)
         {
-            dir = new Vector3(moveX, moveY).normalized;
+            //이동 중, 플레이어 진행 방향에 장애물이 존재하는지 확인.
+            bool isHittingWall = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0, new Vector2(moveX, 0), 0.1f, 1 << PLATFORM_LAYER);
+            if (isHittingWall)
+            {
+                moveX = 0;
+            }
+        }
+
+        if (moveX != 0)// || moveY != 0)
+        {
+            dir = new Vector3(moveX, 0).normalized;
         }
         rigid.velocity = new Vector2((moveX + momentumX) * curMoveSpeed, rigid.velocity.y);
         transform.localScale = new Vector3(scaleX * dir.x, scaleY, 1);
@@ -430,7 +413,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void ProccessCoyoteTime()
     {
-        if (overground && rigid.velocity.y < 0 && currentState != State.Jumping)
+        if (overground && rigid.velocity.y < 0 && currentState != State.Jumping && currentState != State.Climbing)
         {
             curcoyoteTime += Time.deltaTime;
         }
@@ -442,18 +425,21 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void Jump()
     {
+        if (currentState == State.Climbing)
+        {
+            Debug.Log("벽타기 중 점프 누름");
+            currentState = State.Jumping;
+            rigid.gravityScale = GRAVITY_SCALE;
+            rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            return;
+        }
+
         if (curcoyoteTime <= coyoteTime)
         {
             momentumX = momentum.x * .05f;
             momentumY = momentum.y;
 
-            if (currentState == State.Climbing)
-            {
-                Debug.Log("벽타기 중 점프 누름");
-                rigid.AddForce((transform.right * dir.x) * (jumpPower + momentumX), ForceMode2D.Impulse);
-            }
-
-            else if (currentState != State.Jumping && !delayed && !attacking)
+            if (currentState != State.Jumping && !delayed && !attacking)
             {
                 rigid.AddForce(Vector2.up * (jumpPower + momentumY), ForceMode2D.Impulse);
             }

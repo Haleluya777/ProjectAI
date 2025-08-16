@@ -17,6 +17,6 @@ MonoBehaviour:
   cancleDelay: 1
   havePassive: 1
   activeSkills:
-  - {fileID: 11400000, guid: 41eb99799c69ade408cb27f8a6cf5b41, type: 2}
+  - {fileID: 11400000, guid: 9a9aa3c66bdab9448be924f858d0411d, type: 2}
   passiveSkills:
   - {fileID: 11400000, guid: f0586dd2f3414e6449808761ce3ab9b8, type: 2}

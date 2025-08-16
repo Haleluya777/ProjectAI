@@ -7,6 +7,7 @@ public interface ISkillCaster
     string GetTag();
 
     // 스킬 사용자의 현재 위치
+    void SetScale(int dir);
     Vector3 GetPosition();
 
     // 스킬 사용자의 현재 회전 (예: 투사체 방향 결정에 사용)

@@ -1,15 +1,19 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // 스킬의 "실행과 조건"을 관리하는 컨트롤러 클래스
 [CreateAssetMenu(menuName = "Skill/Skill Module")]
 public class Skill_Module : ScriptableObject
 {
+    public BlackBoard blackBoard = new BlackBoard();
+
     public float coolDown;
     private float remainingCoolDown;
     [SerializeField] private bool attackable; //공격 판정이 존재하는 스킬 체크
     [SerializeField] private bool cancleDelay; //기본 공격의 후딜레이를 캔슬하고 작동하는 스킬 체크
     [SerializeField] private bool havePassive; //기본 지속 효과를 가지고 있는지 여부 체크
+    private bool condition; //액티브 스킬이 사용 가능한 상황인지 체크함.
     [SerializeField] private List<SkillBase> activeSkills = new List<SkillBase>();
     [SerializeField] private List<SkillBase> passiveSkills = new List<SkillBase>();
     public bool OnCoolDown => remainingCoolDown > 0;
@@ -18,10 +22,26 @@ public class Skill_Module : ScriptableObject
     public bool CancleDelay => cancleDelay;
     public bool HavePassive => havePassive;
 
+    private void OnEnable()
+    {
+        foreach (var skill in activeSkills)
+        {
+            if (skill != null) skill.Initialize(this);
+        }
+
+        foreach (var skill in passiveSkills)
+        {
+            if (skill != null) skill.Initialize(this);
+        }
+    }
+
     // 스킬 사용을 시도하는 메서드
     public bool UseSkill(ISkillCaster caster)
     {
-        if (OnCoolDown) return false;
+        if (OnCoolDown)// || !condition)
+        {
+            return false;
+        }
 
         // 쿨다운이 아니라면 모든 스킬을 실행
         foreach (var skill in activeSkills)
@@ -38,6 +58,11 @@ public class Skill_Module : ScriptableObject
     public void UpdateCoolDown(float deltaTime)
     {
         if (!OnCoolDown) return;
+        foreach (var skill in passiveSkills)
+        {
+            IPassiveSkills passiveSkill = skill as IPassiveSkills;
+            if (passiveSkill != null) passiveSkill.SkillOff();
+        }
         remainingCoolDown -= deltaTime;
     }
 
