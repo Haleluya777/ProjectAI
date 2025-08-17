@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public Vector3 respawn;
     private Dictionary<string, StatusEffect> activeEffect = new Dictionary<string, StatusEffect>();
     private Dictionary<string, Coroutine> activeEffectCoroutines = new Dictionary<string, Coroutine>();
+    private enum AttackType { Physical, Magical }
     [SerializeField] private Transform center;
 
     //레이캐스트 설정----
@@ -42,7 +43,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private int holdJumpPower;
     private float scaleX = 1;
     private float scaleY = 1;
-    //private int layerMask;
     private int combo;
     private bool isdead;
     private bool canJump;
@@ -55,6 +55,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     public int CurrentHp => curHp;
     public int Att => att;
+    public int TotalDmg { get; set; }
     public bool IsDead => isdead;
     public float Scale => scaleX;
     public bool CanAction { get; set; }
@@ -482,7 +483,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                     hitBox.enabled = false;
                 }
                 currentState = State.Attacking;
-                anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
+                //anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
                 currentSkill.UseSkill(this);
                 attacking = currentSkill.Attackable;
             }
@@ -490,6 +491,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     }
 
     public T GetCom<T>() => this.GetComponent<T>();
+
+    public BoxCollider2D GetHitBox()
+    {
+        return hitBox;
+    }
 
     private void ProccessingPassive()
     {
@@ -511,6 +517,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     {
         currentState = State.Attacking;
         anim.CrossFade("Attack_0" + combo, 0f);
+        TotalDmg = att;
         attacking = true;
         delayed = false;
         if (combo == 1) combo++;
@@ -591,7 +598,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        CheckGetDamage(other);
+        CheckGetDamage(other); //데미지를 주는 메서드.
     }
 
     private void CheckGetDamage(Collider2D other)
@@ -599,8 +606,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (other.GetComponentInChildren<IDamageable>() != null && attacking)
         {
             IDamageable damagable = other.GetComponentInChildren<IDamageable>();
-            damagable.Damaged(att, "Physical");
-            damagable.StatusEffectProcess(5f, "Stun");
+            damagable.Damaged(TotalDmg, "Physical");
+            //damagable.StatusEffectProcess(5f, "Stun");
             GameManager.instance.InBattleState();
         }
     }

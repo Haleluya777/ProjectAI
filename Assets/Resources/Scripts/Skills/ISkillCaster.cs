@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface ISkillCaster
 {
+    int TotalDmg { get; set; }
     string GetTag();
 
     // 스킬 사용자의 현재 위치
@@ -21,5 +22,8 @@ public interface ISkillCaster
 
     // GameObject 자체를 넘겨야 하는 경우 (Instantiate 시 부모 설정 등)
     GameObject GetGameObject();
+
+    //원하는 컴포넌트를 받아옴.
     T GetCom<T>();
+    BoxCollider2D GetHitBox();
 }

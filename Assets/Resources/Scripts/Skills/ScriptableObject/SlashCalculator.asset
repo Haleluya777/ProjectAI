@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
-  m_Name: TestModule2
+  m_Script: {fileID: 11500000, guid: 7bb714bc1b5b17649b17c74239783ba1, type: 3}
+  m_Name: SlashCalculator
   m_EditorClassIdentifier: 
-  coolDown: 0.25
-  attackable: 0
-  cancleDelay: 0
-  skills:
-  - {fileID: 11400000, guid: 9e9b2b4564af8684e83895d48615fbd6, type: 2}
+  baseDmg: 20
+  dmgWeight: 3

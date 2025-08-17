@@ -14,6 +14,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     private IBlackBoard blackBoard;
     private List<float> meleeCools;
     private List<float> rangedCools;
+    [SerializeField] private BoxCollider2D hitBox;
 
     //투사체를 쏘는 원거리 공격을 하는 경우에만 사용.
     [SerializeField] private Transform shootingPos;
@@ -28,6 +29,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     //
 
     private int att;
+    private int totalDmg;
     private float mainAttCool;
     private float detectionRange;
     private float guardRange;
@@ -38,6 +40,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     private bool canAttack;
 
     public int Att => att;
+    public int TotalDmg { get; set; }
     public bool CanAttack => canAttack;
     public float MeleeAttackRange => meleeRange;
     public float RangedAttackRange => rangedRange;
@@ -123,6 +126,11 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     public void SetScale(int dir)
     {
 
+    }
+
+    public BoxCollider2D GetHitBox()
+    {
+        return hitBox;
     }
 
     public Vector3 GetPosition()

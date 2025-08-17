@@ -2,7 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using System.Runtime.CompilerServices;
 
-[CreateAssetMenu(menuName = "Skill/Action/Iron/Skill_0")] // 메뉴 경로를 Action으로 명확화
+[CreateAssetMenu(fileName = "IronDash", menuName = "Skill/Action/Iron/IronDash")] // 메뉴 경로를 Action으로 명확화
 public class Skill_Iron_0 : SkillBase
 {
     [SerializeField] private float duration = 0.2f;

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cabc1a789fb283459a620e539e38d37, type: 3}
+  m_Name: Slash
+  m_EditorClassIdentifier: 
+  damagType: 0
+  damageCalculator: {fileID: 11400000, guid: 1af1bf84bdfea594aa147a9ab28e2321, type: 2}
+  hitBoxRange: {x: 5, y: 3}
+  hitBoxOffSet: {x: 3, y: 2}

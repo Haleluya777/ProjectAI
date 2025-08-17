@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
-  m_Name: TestModule
+  m_Name: IronSlash
   m_EditorClassIdentifier: 
-  coolDown: 2
-  attackable: 0
+  coolDown: 1.5
+  attackable: 1
   cancleDelay: 1
-  havePassive: 1
+  havePassive: 0
   activeSkills:
-  - {fileID: 11400000, guid: 9a9aa3c66bdab9448be924f858d0411d, type: 2}
-  passiveSkills:
-  - {fileID: 11400000, guid: f0586dd2f3414e6449808761ce3ab9b8, type: 2}
+  - {fileID: 11400000, guid: b7b39b8efde71464781e04481c7926ae, type: 2}
+  passiveSkills: []
