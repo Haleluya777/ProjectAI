@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41fb63a2f7e31594b9ad5b19cd42ec13, type: 3}
-  m_Name: New Skill_Dash
+  m_Script: {fileID: 11500000, guid: 9cabc1a789fb283459a620e539e38d37, type: 3}
+  m_Name: Slash
   m_EditorClassIdentifier: 
   damagType: 0
-  damageCalculator: {fileID: 0}
-  dashDistance: 10
-  duration: 0.2
+  damageCalculator: {fileID: 11400000, guid: 1af1bf84bdfea594aa147a9ab28e2321, type: 2}
+  hitBoxRange: {x: 5, y: 3}
+  hitBoxOffSet: {x: 3, y: 2}

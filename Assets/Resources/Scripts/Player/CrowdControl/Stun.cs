@@ -14,7 +14,7 @@ public class Stun : StatusEffect
     public override void ApplyEffect()
     {
         this.target.CanAction = false;
-        Debug.Log("스턴!");
+            Debug.Log("스턴!");
     }
 
     public override void RemoveEffect()
