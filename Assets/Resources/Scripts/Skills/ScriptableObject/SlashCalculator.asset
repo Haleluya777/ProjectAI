@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bb714bc1b5b17649b17c74239783ba1, type: 3}
   m_Name: SlashCalculator
   m_EditorClassIdentifier: 
-  baseDmg: 20
-  dmgWeight: 3
+  baseDmg: 100
+  dmgWeight: 3000

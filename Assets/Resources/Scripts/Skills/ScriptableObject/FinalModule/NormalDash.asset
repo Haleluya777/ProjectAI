@@ -9,10 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41fb63a2f7e31594b9ad5b19cd42ec13, type: 3}
-  m_Name: New Skill_Dash
+  m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
+  m_Name: NormalDash
   m_EditorClassIdentifier: 
-  damagType: 0
-  damageCalculator: {fileID: 0}
-  dashDistance: 10
-  duration: 0.2
+  coolDown: 1
+  attackable: 0
+  cancleDelay: 0
+  havePassive: 0
+  activeSkills:
+  - {fileID: 11400000, guid: 41eb99799c69ade408cb27f8a6cf5b41, type: 2}
+  passiveSkills: []

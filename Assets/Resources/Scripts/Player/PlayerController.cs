@@ -84,6 +84,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private WaitForSeconds gp;
     [SerializeField] private bool damagabool;
     [SerializeField] private Skill_Module currentSkill;
+    [SerializeField] private Skill_Module dashModule;
 
 
     //콜라이더 크기 조정
@@ -123,6 +124,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             Jump();
         }
 
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            Dash();
+        }
+
         col.size = currentState != State.Climbing ? defaultColSize : climbingColSize;
 
         InputAttack();
@@ -136,6 +142,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         if (currentSkill != null)
         {
             currentSkill.UpdateCoolDown(Time.deltaTime);
+        }
+
+        if (dashModule != null)
+        {
+            dashModule.UpdateCoolDown(Time.deltaTime);
         }
 
         curHp = Mathf.Clamp(curHp, 0, maxHp);
@@ -410,6 +421,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
         rigid.velocity = new Vector2((moveX + momentumX) * curMoveSpeed, rigid.velocity.y);
         transform.localScale = new Vector3(scaleX * dir.x, scaleY, 1);
+    }
+
+    private void Dash()
+    {
+        dashModule.UseSkill(this);
     }
 
     private void ProccessCoyoteTime()
