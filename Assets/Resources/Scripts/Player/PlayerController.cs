@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private Coroutine GraceTimeCoroutine;
     private WaitForSeconds gp;
     [SerializeField] private bool damagabool;
-    [SerializeField] private Skill_Module currentSkill;
+    [SerializeField] private Skill_Module[] skills = new Skill_Module[4];
     [SerializeField] private Skill_Module dashModule;
 
 
@@ -139,9 +139,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         InteractiveObject();
 
         // 스킬 모듈의 쿨다운을 매 프레임 업데이트
-        if (currentSkill != null)
+        if (skills != null)
         {
-            currentSkill.UpdateCoolDown(Time.deltaTime);
+            foreach (Skill_Module skill in skills)
+            {
+                skill.UpdateCoolDown(Time.deltaTime);
+            }
         }
 
         if (dashModule != null)
@@ -193,9 +196,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     {
         GameManager.instance.uIManager.combatUI.HpBarUpdate(maxHp, curHp);
         GameManager.instance.uIManager.combatUI.StmBarUpdate(maxStm, curStm);
-        if (currentSkill != null)
+        if (skills != null)
         {
-            GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(currentSkill.RemainingCoolDown, currentSkill.coolDown);
+            for (int i = 0; i < skills.Length; i++)
+            {
+                GameManager.instance.uIManager.combatUI.CheckSkillCoolDown(skills[i].RemainingCoolDown, skills[i].coolDown, i);
+            }
         }
     }
     private void StatusInit()
@@ -470,11 +476,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             ("C") => 1,
             ("V") => 2,
             ("B") => 3,
+            ("N") => 4,
             _ => 0
         };
 
-        if (skillNum == 0 || currentSkill == null) return;
-        if (currentSkill.OnCoolDown) return;
+        if (skillNum == 0 || skills == null) return;
+        if (skills[skillNum - 1].OnCoolDown) return;
 
         bool canUseSkill = false;
 
@@ -483,16 +490,16 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
             canUseSkill = true;
         }
 
-        else if (delayed && currentSkill.CancleDelay)
+        else if (delayed && skills[skillNum - 1].CancleDelay)
         {
             canUseSkill = true;
         }
 
         if (canUseSkill)
         {
-            if (currentSkill.UseSkill(this))
+            if (skills[skillNum - 1].UseSkill(this))
             {
-                if (delayed && currentSkill.CancleDelay)
+                if (delayed && skills[skillNum - 1].CancleDelay)
                 {
                     attacking = false;
                     delayed = false;
@@ -500,8 +507,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 }
                 currentState = State.Attacking;
                 //anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
-                currentSkill.UseSkill(this);
-                attacking = currentSkill.Attackable;
+                skills[skillNum - 1].UseSkill(this);
+                attacking = skills[skillNum - 1].Attackable;
             }
         }
     }
@@ -515,9 +522,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
 
     private void ProccessingPassive()
     {
-        if (currentSkill.HavePassive)
+        foreach (Skill_Module skill in skills)
         {
-            currentSkill.ProccessPassive(this);
+            if (skill.HavePassive)
+            {
+                skill.ProccessPassive(this);
+            }
         }
     }
 

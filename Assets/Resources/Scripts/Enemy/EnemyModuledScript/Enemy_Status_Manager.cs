@@ -76,6 +76,11 @@ public class Enemy_Status_Manager : MonoBehaviour, IDamageable, IInitializable, 
     {
         Debug.Log(totalDmg + "만큼 데미지 받음");
         currentHp -= totalDmg;
+        var dmgText = GameManager.instance.objectPoolManger_DmgTxt.Pool.Get();
+        //dmgText.transform.parent = this.transform.GetChild(0);
+        dmgText.transform.SetParent(this.transform.parent.transform.GetChild(0));
+        dmgText.transform.localPosition = new Vector2(0, 4f);
+        dmgText.GetComponent<DmgText>().SetDmgText(totalDmg, txtColor);
         if (currentHp <= 0) Dead();
     }
 

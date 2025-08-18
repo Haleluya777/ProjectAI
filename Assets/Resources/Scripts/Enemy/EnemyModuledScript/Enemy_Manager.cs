@@ -85,6 +85,6 @@ public class Enemy_Manager : MonoBehaviour
         {
             updatedData.UpdateDataPerFrame(local);
         }
-        //ui.HpBarUpdate(100, istatus.CurrentHp);
+        ui.HpBarUpdate(100, istatus.CurrentHp);
     }
 }

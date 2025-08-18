@@ -38,7 +38,12 @@ public class EnemyUI : MonoBehaviour, IInitializable
 
     public void UpdateDataPerFrame(IBlackBoard local)
     {
-        HpBarUpdate(local.Get<int>("MaxHp"), local.Get<int>("CurHp"));
-        GuardGageUpdate(local.Get<float>("GuardGage"), local.Get<float>("CurrentTime"));
+        //if (local.HasKey("MaxHp") && local.HasKey("CurHp") && local.HasKey("GuardGage") && local.HasKey("CurrentTime"))
+        //{
+        //    Debug.Log(local.Get<int>("CurHp"));
+        //    HpBarUpdate(local.Get<int>("MaxHp"), local.Get<int>("CurHp"));
+        //    GuardGageUpdate(local.Get<float>("GuardGage"), local.Get<float>("CurrentTime"));
+        //}
+        //else return;
     }
 }

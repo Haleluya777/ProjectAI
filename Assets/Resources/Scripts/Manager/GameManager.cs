@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public ObjectPoolingManager1 objectPoolManger_EffectTime;
     public EventManager eventManager;
     public PlayerUIManager uIManager;
+    public DialogueFuncManager dialogueFunc;
 
     private WaitForSeconds battleTime = new WaitForSeconds(5f);
     public bool inBattle = false;

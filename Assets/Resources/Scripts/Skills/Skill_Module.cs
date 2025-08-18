@@ -13,7 +13,6 @@ public class Skill_Module : ScriptableObject
     [SerializeField] private bool attackable; //공격 판정이 존재하는 스킬 체크
     [SerializeField] private bool cancleDelay; //기본 공격의 후딜레이를 캔슬하고 작동하는 스킬 체크
     [SerializeField] private bool havePassive; //기본 지속 효과를 가지고 있는지 여부 체크
-    private bool condition; //액티브 스킬이 사용 가능한 상황인지 체크함.
     [SerializeField] private List<SkillBase> activeSkills = new List<SkillBase>();
     [SerializeField] private List<SkillBase> passiveSkills = new List<SkillBase>();
     public bool OnCoolDown => remainingCoolDown > 0;
@@ -24,6 +23,7 @@ public class Skill_Module : ScriptableObject
 
     private void OnEnable()
     {
+        blackBoard.Set("Condition", true);
         foreach (var skill in activeSkills)
         {
             if (skill != null) skill.Initialize(this);
@@ -38,7 +38,7 @@ public class Skill_Module : ScriptableObject
     // 스킬 사용을 시도하는 메서드
     public bool UseSkill(ISkillCaster caster)
     {
-        if (OnCoolDown)// || !condition)
+        if (OnCoolDown || !blackBoard.Get<bool>("Condition"))
         {
             return false;
         }

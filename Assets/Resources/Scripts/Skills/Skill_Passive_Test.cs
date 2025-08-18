@@ -49,15 +49,16 @@ public class Skill_Passive_Test : SkillBase, IPassiveSkills
             if (parentModule != null)
             {
                 parentModule.blackBoard.Set("TargetPos", target.collider.transform.position);
+                parentModule.blackBoard.Set("Condition", true);
             }
         }
-        else // 4. 유효한 타겟을 하나도 못 찾은 경우
+        else
         {
             line.positionCount = 0;
-            // 블랙보드의 데이터도 비워줍니다.
             if (parentModule != null)
             {
                 parentModule.blackBoard.Remove("TargetPos");
+                parentModule.blackBoard.Set("Condition", false);
             }
         }
 
