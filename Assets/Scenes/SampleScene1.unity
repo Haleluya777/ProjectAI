@@ -13638,7 +13638,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.000030517578}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 120}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &920848593
 MonoBehaviour:
@@ -16768,7 +16768,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 80, y: -570}
+  m_AnchoredPosition: {x: 80, y: -90}
   m_SizeDelta: {x: 160, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1210849320
@@ -17133,8 +17133,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1277252905}
   m_HandleRect: {fileID: 1277252904}
   m_Direction: 2
-  m_Value: 0.9999999
-  m_Size: 0.39215687
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -17572,8 +17572,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1429233163}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.60784304}
-  m_AnchorMax: {x: 1, y: 0.9999999}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -20340,6 +20340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatUI: {fileID: 1621182954}
+  story: []
   combatUIPanel: {fileID: 1621182950}
   menuUIPanel: {fileID: 415260538}
   saveUIPanel: {fileID: 2053441120}
@@ -20958,7 +20959,7 @@ MonoBehaviour:
   hpBar: {fileID: 1795839688}
   stmBar: {fileID: 460103999}
   dashCoolDown: {fileID: 1196596650}
-  skillCoolDown_1: {fileID: 885191337}
+  skillCoolDown: []
   effectList: []
 --- !u!95 &1621182955
 Animator:
@@ -24648,7 +24649,11 @@ MonoBehaviour:
   overground: 0
   gracePeriod: 2
   damagabool: 0
-  currentSkill: {fileID: 11400000, guid: 2126e559884e746498c27b314de0b06d, type: 2}
+  skills:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   dashModule: {fileID: 0}
 --- !u!212 &1915231746
 SpriteRenderer:

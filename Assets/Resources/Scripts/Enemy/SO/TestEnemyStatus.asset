@@ -70,11 +70,11 @@ MonoBehaviour:
       scale: 2
     combatStatus:
       atk: 10
-      detectionRange: 25
-      escapeRange: 15
+      detectionRange: 20
+      escapeRange: 5
       guardRange: 0
       shortAttackRange: 10
-      longAttackRange: 20
+      longAttackRange: 10
       mainAttCool: 1
       shortDisAttCool:
       - 2
