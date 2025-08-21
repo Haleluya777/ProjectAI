@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
         }
 
-        globalBlackBoard.Set<Transform>("PlayerCenter", playerObj.transform.GetChild(3).transform);
+        globalBlackBoard.Set<Transform>("PlayerCenter", playerObj.transform.GetChild(2).transform);
     }
 
     void Update()

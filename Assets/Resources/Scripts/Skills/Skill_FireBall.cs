@@ -28,16 +28,17 @@ public class Skill_FireBall : SkillBase
             }
             else
             {
-                Debug.LogWarning("Damage Calculator가 할당되지 않아 기본 데미지 0으로 설정됩니다.");
+                //Debug.LogWarning("Damage Calculator가 할당되지 않아 기본 데미지 0으로 설정됩니다.");
             }
-            fireballComponent.ObjInit(caster.GetGameObject().transform, calculatedDamage, damagType.ToString(), caster.GetTag());
+            //임시 값 할당.
+            fireballComponent.ObjInit(caster.GetDirection(), calculatedDamage, damagType.ToString(), caster.GetTag());
         }
         else
         {
-            Debug.LogError("FireBall Prefab에 FireBall 컴포넌트가 없음.");
+            //Debug.LogError("FireBall Prefab에 FireBall 컴포넌트가 없음.");
         }
 
-        Debug.Log("파이어볼 발사!");
+        //Debug.Log("파이어볼 발사!");
         return true;
     }
 }

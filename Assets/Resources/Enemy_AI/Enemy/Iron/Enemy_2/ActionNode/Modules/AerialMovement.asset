@@ -9,8 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94e82df21a0f3eb48832d584758fcd17, type: 3}
-  m_Name: ChasingPlayer
+  m_Script: {fileID: 11500000, guid: 7e71cbbead83118428180100caf15df3, type: 3}
+  m_Name: AerialMovement
   m_EditorClassIdentifier: 
-  nodeName: 
-  Action: {fileID: 11400000, guid: 84b50b34432052f4da4634611c0e95a9, type: 2}

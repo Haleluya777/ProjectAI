@@ -14,7 +14,6 @@ public class Shooting : EnemyActionSO
 
         if (controller.LocalBlackboard.Get<int>("AttackTime") >= attackCount)
         {
-            Debug.Log("공격 끝");
             controller.LocalBlackboard.Set("AttackTime", 0);
             controller.LocalBlackboard.Set("Attacking", false);
             return NodeState.Success;
@@ -22,7 +21,6 @@ public class Shooting : EnemyActionSO
 
         if (!skill.OnCoolDown)
         {
-            Debug.Log("발싸!");
             controller.LocalBlackboard.Set("Attacking", true);
             skill.UseSkill(caster);
             controller.LocalBlackboard.Set("AttackTime", controller.LocalBlackboard.Get<int>("AttackTime") + 1);

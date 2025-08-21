@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
   m_Name: NormalDash
   m_EditorClassIdentifier: 
+  skillName: Normal Dash
+  skillDetail: Nope
   coolDown: 1
   attackable: 0
   cancleDelay: 0
@@ -19,3 +21,8 @@ MonoBehaviour:
   activeSkills:
   - {fileID: 11400000, guid: 41eb99799c69ade408cb27f8a6cf5b41, type: 2}
   passiveSkills: []
+  data:
+    SkillName: 
+    SkillDetail: 
+    BaseDamage: 0
+    Wieght: 0

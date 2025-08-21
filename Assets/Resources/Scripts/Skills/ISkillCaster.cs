@@ -10,6 +10,7 @@ public interface ISkillCaster
     // 스킬 사용자의 현재 위치
     void SetScale(int dir);
     Vector3 GetPosition();
+    Vector3 GetDirection();
 
     // 스킬 사용자의 현재 회전 (예: 투사체 방향 결정에 사용)
     Quaternion GetRotation();

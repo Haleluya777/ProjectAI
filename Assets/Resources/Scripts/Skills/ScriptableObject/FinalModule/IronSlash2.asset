@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
   m_Name: IronSlash2
   m_EditorClassIdentifier: 
+  skillName: iron slash
+  skillDetail: fucking bug
   coolDown: 4
   attackable: 1
   cancleDelay: 1
@@ -19,3 +21,8 @@ MonoBehaviour:
   activeSkills:
   - {fileID: 11400000, guid: b7b39b8efde71464781e04481c7926ae, type: 2}
   passiveSkills: []
+  data:
+    SkillName: 
+    SkillDetail: 
+    BaseDamage: 0
+    Wieght: 0

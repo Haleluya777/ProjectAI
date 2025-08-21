@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc7c1f3ccf75f1e418588bb82811e358, type: 3}
-  m_Name: Shooting
+  m_Script: {fileID: 11500000, guid: 94e82df21a0f3eb48832d584758fcd17, type: 3}
+  m_Name: Movement
   m_EditorClassIdentifier: 
-  attackCount: 3
+  nodeName: 
+  Action: {fileID: 0}

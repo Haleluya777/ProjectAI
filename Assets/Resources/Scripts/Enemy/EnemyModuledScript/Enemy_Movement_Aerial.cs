@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, IInitializable, IRequiredAnimator
 {
+    [SerializeField] private Transform raycastCenterPos; //Enemy 오브젝트 가운데에 위치할 레이캐스트 시작점.
+
     private Transform parentTransform;
     private Vector3 initPos;
     private Animator anim;
@@ -26,18 +28,23 @@ public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, I
         moveSpeed = info.Movement_Status.MoveSpeed;
 
         initPos = parentTransform.position;
-        
-        local.Set("Movement", this.GetComponent<IMovable>());
-        local.Set("Transform", parentTransform);
-        local.Set("MoveSpeed", moveSpeed);
-        local.Set("ShouldMove", true);
-        local.Set("CanChangeMode", true);
-        local.Set("State", 1);
+
+        blackBoard.Set("Movement", this.GetComponent<IMovable>());
+        blackBoard.Set("Transform", parentTransform);
+        blackBoard.Set("InitPosition", initPos);
+        blackBoard.Set("MoveSpeed", moveSpeed);
+        blackBoard.Set("CanChangeMode", true);
+        blackBoard.Set("ModeChangeCoolDown", 7f);
+        blackBoard.Set("Direction", 1);
+        blackBoard.Set("Patrolling", true);
+        blackBoard.Set("ShouldMove", false);
+        blackBoard.Set("RayCastCenterPos", raycastCenterPos);
     }
 
     public void UpdateDataPerFrame(IBlackBoard local) //매 프레임당 로컬 블랙 보드에 갱신될 정보들.
     {
-        MoveToTarget();
+        local.Set("DistanceToPlayer", Vector2.Distance(GameManager.instance.globalBlackBoard.Get<Transform>("PlayerTransform").position, parentTransform.position));
+        //MoveToTarget();
     }
 
     public void InjectAnimator(Animator _anim)
@@ -70,8 +77,6 @@ public class Enemy_Movement_Aerial : MonoBehaviour, IMovable, IMovable_Aerial, I
         {
             anim.CrossFade("Enemy_Moving", 0f);
             parentTransform.Translate(dir * moveSpeed * Time.deltaTime, Space.World);
-
-            UpdateAngle();
         }
     }
 

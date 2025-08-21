@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class EnemyUI : MonoBehaviour, IInitializable
 {
     [SerializeField] private Slider hpBar, guardGage;
+    int MaxHp, CurHp;
+    float GuardGage, CurrentTime;
 
     private IBlackBoard localBlackBoard;
 
@@ -18,16 +20,13 @@ public class EnemyUI : MonoBehaviour, IInitializable
 
     public void HpBarUpdate(float maxHp, float curHp)
     {
+        if (maxHp == 0 || curHp == 0) return;
         hpBar.value = curHp / maxHp;
     }
 
     public void GuardGageUpdate(float _guardGage, float startTime)
     {
-        //if (!localBlackBoard.HasKey("GuardGage"))
-        //{
-        //    guardGage.value = 0;
-        //    return;
-        //}
+        if (_guardGage == 0 || startTime == 0) return;
         guardGage.value = (Time.time - startTime) / (_guardGage - startTime);
     }
 
@@ -38,12 +37,13 @@ public class EnemyUI : MonoBehaviour, IInitializable
 
     public void UpdateDataPerFrame(IBlackBoard local)
     {
-        //if (local.HasKey("MaxHp") && local.HasKey("CurHp") && local.HasKey("GuardGage") && local.HasKey("CurrentTime"))
-        //{
-        //    Debug.Log(local.Get<int>("CurHp"));
-        //    HpBarUpdate(local.Get<int>("MaxHp"), local.Get<int>("CurHp"));
-        //    GuardGageUpdate(local.Get<float>("GuardGage"), local.Get<float>("CurrentTime"));
-        //}
-        //else return;
+        CurHp = local.Get<int>("CurHp");
+        MaxHp = local.Get<int>("MaxHp");
+
+        GuardGage = local.Get<float>("GuardGage");
+        CurrentTime = local.Get<float>("CurrentTime");
+
+        HpBarUpdate(MaxHp, CurHp);
+        GuardGageUpdate(GuardGage, CurrentTime);
     }
 }

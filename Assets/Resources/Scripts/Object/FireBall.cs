@@ -12,12 +12,12 @@ public class FireBall : SkillObjectBase
     private const int OBJECT_SPEED = 10;
 
 
-    private void Start() 
+    private void Start()
     {
-        Destroy(gameObject, 3f);    
+        Destroy(gameObject, 3f);
     }
 
-    private void Update() 
+    private void Update()
     {
         ObjectMovment();
     }
@@ -27,16 +27,16 @@ public class FireBall : SkillObjectBase
         transform.position += dir.normalized * OBJECT_SPEED * Time.deltaTime;
     }
 
-    public void ObjInit(Transform _localScale, int _dmg, string _tag, string _caster)
+    public void ObjInit(Vector3 direction, int _dmg, string _tag, string _caster)
     {
-        dir = _localScale.localScale.x < 0 ? Vector3.left : Vector3.right;
-        transform.localScale = _localScale.localScale;
+        dir = direction;
+        //transform.localScale = direction;
         dmg = _dmg;
         this.gameObject.tag = _tag;
         caster = _caster;
     }
 
-    private void OnTriggerEnter2D(Collider2D other) 
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag != caster && other.GetComponentInChildren<IDamageable>() != null)
         {

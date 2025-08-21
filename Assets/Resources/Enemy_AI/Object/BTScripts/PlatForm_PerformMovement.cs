@@ -15,12 +15,12 @@ public class PlatForm_PerformMovement : EnemyActionSO
 
         if (transform.position == destination)
         {
-            Debug.Log("목적지 도착");
+            //Debug.Log("목적지 도착");
             return NodeState.Failure;
         }
         else
         {
-            Debug.Log("이동중");
+            //Debug.Log("이동중");
             controller.LocalBlackboard.Set("CanReturnMomentum", false);
             controller.LocalBlackboard.Remove("MomentumInitTime");
             transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);

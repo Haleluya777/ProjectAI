@@ -8,7 +8,10 @@ public class Skill_Module : ScriptableObject
 {
     public BlackBoard blackBoard = new BlackBoard();
 
+    [SerializeField] private string skillName;
+    [SerializeField] private string skillDetail;
     public float coolDown;
+
     private float remainingCoolDown;
     [SerializeField] private bool attackable; //공격 판정이 존재하는 스킬 체크
     [SerializeField] private bool cancleDelay; //기본 공격의 후딜레이를 캔슬하고 작동하는 스킬 체크
@@ -20,9 +23,20 @@ public class Skill_Module : ScriptableObject
     public bool Attackable => attackable;
     public bool CancleDelay => cancleDelay;
     public bool HavePassive => havePassive;
+    public SkillData data;
+
+    [System.Serializable]
+    public struct SkillData
+    {
+        public string SkillName;
+        public string SkillDetail;
+    }
 
     private void OnEnable()
     {
+        data.SkillName = skillName;
+        data.SkillDetail = skillDetail;
+
         blackBoard.Set("Condition", true);
         foreach (var skill in activeSkills)
         {

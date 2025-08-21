@@ -6,7 +6,8 @@ using UnityEngine;
 public class Aiming : EnemyActionSO
 {
     [SerializeField] private float duration;
-    Vector2 aimPos;
+    private Vector2 aimPos;
+    private Vector3 aimDir;
 
     public override NodeState Execute(EnemyAIController controller)
     {
@@ -27,6 +28,9 @@ public class Aiming : EnemyActionSO
             else
             {
                 Debug.Log("조준 중!");
+                //aimDir = (GameManager.instance.globalBlackBoard.Get<Transform>("PlayerCenter").position - controller.LocalBlackboard.Get<Transform>("Transform").position).normalized;
+                //controller.LocalBlackboard.Set("AimDirection", aimDir);
+                //Debug.Log(aimDir);
                 return NodeState.Running;
             }
         }

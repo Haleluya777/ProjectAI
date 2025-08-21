@@ -138,6 +138,11 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
         return blackBoard.Get<Transform>("ShootingPos").position;
     }
 
+    public Vector3 GetDirection()
+    {
+        return blackBoard.Get<Vector3>("AimDirection");
+    }
+
     public Quaternion GetRotation()
     {
         return blackBoard.Get<Transform>("ShootingPos").rotation;

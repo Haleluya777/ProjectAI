@@ -7,14 +7,14 @@ public class CheckPlayerInRangedRange : EnemyConditionSO
 {
     public override NodeState Evaluate(EnemyAIController controller)
     {
-        if(!controller.LocalBlackboard.HasKey("RangedRange") || !GameManager.instance.globalBlackBoard.HasKey("DistanceToPlayer"))
+        if (!controller.LocalBlackboard.HasKey("RangedRange") || !controller.LocalBlackboard.HasKey("DistanceToPlayer"))
         {
             return NodeState.Failure;
         }
 
         float attRange = controller.LocalBlackboard.Get<float>("RangedRange");
         float escapeRange = controller.LocalBlackboard.Get<float>("EscapeRange");
-        float dis = GameManager.instance.globalBlackBoard.Get<float>("DistanceToPlayer");
+        float dis = controller.LocalBlackboard.Get<float>("DistanceToPlayer");
 
         if (dis <= attRange)
         {

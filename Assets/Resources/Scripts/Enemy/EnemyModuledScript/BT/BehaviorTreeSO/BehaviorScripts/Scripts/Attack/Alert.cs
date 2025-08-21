@@ -6,6 +6,11 @@ using UnityEngine;
 public class Alert : EnemyActionSO
 {
     [SerializeField] private int duration;
+    [SerializeField] private bool canAiming;
+
+    private Vector2 aimPos;
+    private Vector3 aimDir;
+
     public override NodeState Execute(EnemyAIController controller)
     {
         if (!controller.LocalBlackboard.HasKey("WaitTime"))
@@ -30,6 +35,12 @@ public class Alert : EnemyActionSO
             else
             {
                 Debug.Log("경고중!");
+                if (canAiming)
+                {
+                    aimDir = (GameManager.instance.globalBlackBoard.Get<Transform>("PlayerCenter").position - controller.LocalBlackboard.Get<Transform>("ShootingPos").position).normalized;
+                    controller.LocalBlackboard.Set("AimDirection", aimDir);
+                    Debug.Log(aimDir);
+                }
                 return NodeState.Running;
             }
         }

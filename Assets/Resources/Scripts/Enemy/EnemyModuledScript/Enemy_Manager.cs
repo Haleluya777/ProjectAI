@@ -45,6 +45,7 @@ public class Enemy_Manager : MonoBehaviour
     private void Update()
     {
         UpdateDataPerFrame(localBlackBoard);
+        //Debug.Log(localBlackBoard.Get<bool>("Attacking"));
     }
 
     private void InterfaceInjection()
@@ -85,6 +86,6 @@ public class Enemy_Manager : MonoBehaviour
         {
             updatedData.UpdateDataPerFrame(local);
         }
-        ui.HpBarUpdate(100, istatus.CurrentHp);
+        //ui.HpBarUpdate(100, istatus.CurrentHp);
     }
 }

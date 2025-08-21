@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Experimental.AI;
 
-public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
+public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkillDataAccessable
 {
     private enum State { Idle, Moving, Dash, Attacking, Jumping, Climbing }
     public Vector3 respawn;
@@ -83,7 +83,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     private Coroutine GraceTimeCoroutine;
     private WaitForSeconds gp;
     [SerializeField] private bool damagabool;
-    [SerializeField] private Skill_Module[] skills = new Skill_Module[4];
+    [SerializeField] private Skill_Module[] skills = new Skill_Module[4]; //4개의 스킬 모듈 칸
+    public List<Skill_Module.SkillData> AccessSkillData { get; set; } = new List<Skill_Module.SkillData>();
     [SerializeField] private Skill_Module dashModule;
 
 
@@ -95,6 +96,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     void Start()
     {
         StatusInit();
+        UpdateSkillData();
 
         climbingColSize = new Vector2(4, 2);
         defaultColSize = new Vector2(2, 4);
@@ -183,7 +185,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
         }
         else if (list.Count == 1)
         {
-            //Debug.Log("리스트에 하나의 값만 있기 때문에 정렬할 필요가 없습니다.");
+            return list[0];
         }
         else
         {
@@ -243,6 +245,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
     public Vector3 GetPosition()
     {
         return center.position;
+    }
+
+    public Vector3 GetDirection()
+    {
+        return dir;
     }
     public Quaternion GetRotation()
     {
@@ -509,6 +516,18 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster
                 //anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
                 skills[skillNum - 1].UseSkill(this);
                 attacking = skills[skillNum - 1].Attackable;
+            }
+        }
+    }
+
+    private void UpdateSkillData()
+    {
+        foreach (Skill_Module skill in skills)
+        {
+            if (skill != null)
+            {
+                AccessSkillData.Add(skill.data);
+                Debug.Log(AccessSkillData[0].SkillName);
             }
         }
     }

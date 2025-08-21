@@ -17,7 +17,7 @@ public class CheckingTrackingRange : EnemyConditionSO
         {
             if (Physics2D.Raycast(raycastPos.position, raycastDir, detRange, layerMask))
             {
-                
+
                 controller.LocalBlackboard.Set("Patrolling", true);
                 return NodeState.Success;
             }
@@ -37,6 +37,7 @@ public class CheckingTrackingRange : EnemyConditionSO
         else
         {
             Debug.Log("탐색 모드 전환");
+            controller.LocalBlackboard.Set("Patrolling", true);
             return NodeState.Success;
         }
     }

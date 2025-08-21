@@ -12,10 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
   m_Name: FireBallEnemy
   m_EditorClassIdentifier: 
-  coolDown: 1.5
+  skillName: 
+  skillDetail: 
+  coolDown: 0.1
   attackable: 1
   cancleDelay: 1
   havePassive: 0
   activeSkills:
   - {fileID: 11400000, guid: 9e9b2b4564af8684e83895d48615fbd6, type: 2}
   passiveSkills: []
+  data:
+    SkillName: 
+    SkillDetail: 
