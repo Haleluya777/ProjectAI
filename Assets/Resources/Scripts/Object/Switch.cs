@@ -26,6 +26,7 @@ public class Switch : MonoBehaviour, IInteractable
         box = Physics2D.BoxCast(this.transform.position, col.bounds.size, 0, Vector2.zero, 0, 1 << 7);
         if (box.collider != null)
         {
+            Debug.Log("트리거 온");
             trigger = true;
             Interact();
         }

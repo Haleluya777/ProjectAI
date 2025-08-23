@@ -18,12 +18,16 @@ public class DialogueParser : MonoBehaviour
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i];
+            //Debug.Log($"라인{line}");
             if (string.IsNullOrWhiteSpace(line)) continue;
 
             List<string> parts = new List<string>(line.Split(','));
+            parts.RemoveAll(s => string.IsNullOrEmpty(s));
+
             for (int j = 0; j < parts.Count; j++)
             {
                 parts[j] = parts[j].Trim();
+                Debug.Log(parts[j]);
             }
 
             string command = "";

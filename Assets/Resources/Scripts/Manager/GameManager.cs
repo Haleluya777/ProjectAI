@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
     public bool inBattle = false;
     private Coroutine inBattleCoroutine;
     public IBlackBoard globalBlackBoard = new BlackBoard(); //공용 블랙보드.
+    public Dictionary<string, object> operandDic = new Dictionary<string, object>();
+    public int testCondition = 5;
+
     private void Awake()
     {
         if (null == instance)
@@ -38,7 +41,14 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
         }
 
+        OperandInit(operandDic);
+        dialogueFunc.InitMethods();
         globalBlackBoard.Set<Transform>("PlayerCenter", playerObj.transform.GetChild(2).transform);
+    }
+
+    private void OperandInit(Dictionary<string, object> dic)
+    {
+        dic.Add("Level", 15);
     }
 
     void Update()

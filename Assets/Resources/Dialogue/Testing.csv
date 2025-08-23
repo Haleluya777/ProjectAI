@@ -1,26 +1,25 @@
-Dialogue,,,
-김,안녕?,,
-Func,Greeting,,
-이,안녕,,
-김,또 안녕?,,
-DialogueEnd,,,
->>,줘 팬다.,,
-,Result,,
-,,Dialogue,
-,,김,"아얏!
-이것은 줄 바꿈을 테스트하는 문장."
-,,이,적당히 해
-,,DialogueEnd,
-,ResultEnd,,
->>,한번 더 인사한다.,,
-,Result,,
-,,Func,Add
-,,Dialogue,
-,,이,그래..안녕
-,,김,히히
-,,DialogueEnd,
-,ResultEnd,,
-Dialogue,,,
-김,이제 뭐 하고 놀까?,,
-이,몰루,,
-DialogueEnd,,,
+,,,,Dialogue,,,
+,,,,,???,"안녕하세요? 저는 고속 승강기의 안내를 맡은 AI, 디아나라고 해요.
+\n이동하실 건가요? 원하시는 플랫폼의 버튼을 누르면 제가 순식간에 데려다 드릴게요.",
+,,,,DialogueEnd,,,
+,,,,Selector,,,
+,,,,>>>,무슨 일이야?,,
+,,,,,Result,,
+,,,,,,Dialogue,
+,,,,,,디아나,"어머! 알아보셨군요. 오늘은 짝수 날이니까 파란색 리본을 매봤어요.
+\n어때요, 예쁘죠?"
+,,,,,,DialogueEnd,
+,,,,,ResultEnd,,
+,,,,>>>,....,,
+,,,,,Result,,
+,,,,,,Dialogue,
+,,,,,,디아나,어....이거 아닌가요?
+,,,,,,DialogueEnd,
+,,,,,ResultEnd,,
+,,,,>>>,엘리베이터.,,
+,,,,,Result,,
+,,,,,,Dialogue,
+,,,,,,디아나,안내해드리겠습니다.
+,,,,,,DialogueEnd,
+,,,,,ResultEnd,,
+,,,,SelectorEnd,,,

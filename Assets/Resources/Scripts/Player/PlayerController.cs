@@ -527,7 +527,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
             if (skill != null)
             {
                 AccessSkillData.Add(skill.data);
-                Debug.Log(AccessSkillData[0].SkillName);
+                //Debug.Log(AccessSkillData[0].SkillName);
             }
         }
     }
