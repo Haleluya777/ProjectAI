@@ -39,7 +39,7 @@ public class Alert : EnemyActionSO
                 {
                     aimDir = (GameManager.instance.globalBlackBoard.Get<Transform>("PlayerCenter").position - controller.LocalBlackboard.Get<Transform>("ShootingPos").position).normalized;
                     controller.LocalBlackboard.Set("AimDirection", aimDir);
-                    Debug.Log(aimDir);
+                    //Debug.Log(aimDir);
                 }
                 return NodeState.Running;
             }

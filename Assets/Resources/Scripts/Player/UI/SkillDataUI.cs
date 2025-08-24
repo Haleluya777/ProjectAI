@@ -14,7 +14,7 @@ public class SkillDataUI : MonoBehaviour
     private new RectTransform transform;
     float width, height;
 
-    private void Start()
+    void Awake()
     {
         skillDataAccessable = GameManager.instance.playerObj.GetComponent<ISkillDataAccessable>();
         transform = this.GetComponent<RectTransform>();
@@ -30,6 +30,7 @@ public class SkillDataUI : MonoBehaviour
     {
         this.gameObject.SetActive(true);
 
+        Debug.Log(skillDataAccessable == null);
         uiNum = int.Parse(transform.parent.name.Split('_')[1]);
 
         skillNameTxt.text = skillDataAccessable.AccessSkillData[uiNum].SkillName;

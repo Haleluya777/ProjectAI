@@ -29,26 +29,9 @@ public class Lever : MonoBehaviour, IInteractable
 
     private void Start()
     {
-        returnSwitch = new WaitForSeconds(returnTime);
-
         for (int i = 0; i < linkedObj.Count; i++)
         {
             linkedObjBoard.Add(linkedObj[i].GetComponent<ITriggerable>());
-        }
-    }
-
-    IEnumerator ReturnSwitch()
-    {
-        yield return returnSwitch;
-        trigger = false;
-        for (int i = 0; i < linkedObjBoard.Count; i++)
-        {
-            if (linkedObjBoard[i].GetBlackBoard().HasKey("Trigger"))
-            {
-                linkedObjBoard[i].GetBlackBoard().Set("Trigger", trigger);
-            }
-
-            linkedObjBoard[i].Trigger();
         }
     }
 

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
+  m_Name: FallingAttack
+  m_EditorClassIdentifier: 
+  skillName: 
+  skillDetail: 
+  coolDown: 2
+  attackable: 0
+  cancleDelay: 0
+  havePassive: 0
+  activeSkills:
+  - {fileID: 11400000, guid: 913ef95898f32814194224ab521836ae, type: 2}
+  passiveSkills: []
+  data:
+    SkillName: 
+    SkillDetail: 

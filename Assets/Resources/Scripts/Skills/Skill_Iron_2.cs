@@ -1,29 +1,26 @@
-using UnityEngine;
-using DG.Tweening;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-[CreateAssetMenu(fileName = "IronDash", menuName = "Skill/Action/Iron/IronDash")] // 메뉴 경로를 Action으로 명확화
-public class Skill_Iron_0 : SkillBase
+[CreateAssetMenu(fileName = "FallingAttack", menuName = "Skill/Action/Iron/FallingAttack")]
+public class Skill_Iron_2 : SkillBase
 {
-    private WaitForSeconds waitSec;
     private Rigidbody2D rigid;
-
+    private RaycastHit2D hit;
     Transform casterTransform;
     Vector3 target;
     Vector3 dir;
 
     public override bool UseSkill(ISkillCaster caster)
     {
+        hit = Physics2D.Raycast(caster.GetPosition(), Vector2.down, float.PositiveInfinity, 1 << 6);
         rigid = caster.GetCom<Rigidbody2D>();
 
         casterTransform = caster.GetGameObject().transform;
-        target = parentModule.blackBoard.Get<Vector3>("TargetPos");
+        target = hit.point;
         dir = (target - caster.GetPosition()).normalized;
 
-        //caster.SetScale(-1);
-        //caster.GetCom<Rigidbody2D>().DOMove(newtargetPos, duration).SetEase(Ease.OutQuad).OnComplete(() => { casterTransform.position = newtargetPos; });
-
-        GameManager.instance.coroutineRunner.StartRunnerCoroutine(PerformIronDash(rigid, casterTransform, target));
+        GameManager.instance.coroutineRunner.StartCoroutine(PerformIronDash(rigid, casterTransform, target));
 
         return true;
     }

@@ -19,7 +19,7 @@ public class Skill_Slash : SkillBase
         hitBox.size = hitBoxRange;
         hitBox.offset = hitBoxOffSet;
         caster.TotalDmg = damageCalculator.CalculateDmg(caster);
-        anim.CrossFade("Slash", 0f);
+        anim.CrossFade("Skill_2", 0f);
 
         return true;
     }

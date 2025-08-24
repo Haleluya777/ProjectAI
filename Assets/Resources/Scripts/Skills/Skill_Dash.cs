@@ -1,7 +1,8 @@
 using UnityEngine;
-using DG.Tweening; // DOTween 라이브러리 사용
+using DG.Tweening;
+using System.Collections;
 
-[CreateAssetMenu(menuName = "Skill/Action/Dash")] // 메뉴 경로를 Action으로 명확화
+[CreateAssetMenu(menuName = "Skill/Action/Dash")]
 public class Skill_Dash : SkillBase
 {
     [SerializeField] private float dashDistance = 5f; // 대쉬 거리
@@ -11,14 +12,37 @@ public class Skill_Dash : SkillBase
     {
         Transform casterTransform = caster.GetGameObject().transform;
 
-        // 캐릭터가 바라보는 방향으로 대쉬
         float direction = Mathf.Sign(casterTransform.localScale.x);
         float targetX = casterTransform.position.x + (direction * dashDistance);
 
-        // DOTween을 사용하여 부드러운 이동 구현
-        casterTransform.DOMoveX(targetX, duration).SetEase(Ease.OutQuad);
+        Vector3 target = new Vector3(targetX, caster.GetGameObject().transform.position.y, caster.GetGameObject().transform.position.z);
 
-        Debug.Log($"{caster.GetGameObject().name}이(가) 대쉬 사용!");
+        GameManager.instance.coroutineRunner.StartRunnerCoroutine(PerformDash(caster, caster.GetCom<Rigidbody2D>(), casterTransform, target));
+
         return true;
+    }
+
+    private IEnumerator PerformDash(ISkillCaster caster, Rigidbody2D rigid, Transform casterTransform, Vector3 target)
+    {
+        float dashSpeed = 100f; // 대쉬 속도
+        float minSqrDistance = 5f;
+
+        while (((Vector2)target - rigid.position).sqrMagnitude > minSqrDistance)
+        {
+            Debug.Log("대쉬중");
+            if (Physics2D.Raycast(caster.GetPosition(), Vector2.right * caster.GetGameObject().transform.localScale.x, 2f, 1 << 6))
+            {
+                Debug.Log("대쉬 취소");
+                break;
+            }
+
+            Vector2 direction = ((Vector2)target - rigid.position).normalized;
+            Vector3 newPos = rigid.position + direction * dashSpeed * Time.fixedDeltaTime;
+
+            rigid.MovePosition(newPos);
+
+            yield return new WaitForFixedUpdate();
+        }
+        yield return null;
     }
 }

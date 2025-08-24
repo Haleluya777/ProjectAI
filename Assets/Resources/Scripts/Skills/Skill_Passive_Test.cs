@@ -36,6 +36,8 @@ public class Skill_Passive_Test : SkillBase, IPassiveSkills
                     break;
                 }
             }
+
+            targetPos = Physics2D.Raycast(caster.GetPosition(), (Vector3)validTarget.Value.point - caster.GetPosition(), 10f, 1 << 8);
         }
 
         if (validTarget.HasValue)
@@ -43,14 +45,15 @@ public class Skill_Passive_Test : SkillBase, IPassiveSkills
             RaycastHit2D target = validTarget.Value; // 실제 값 가져오기
             line.positionCount = 2;
 
-            line.SetPosition(0, target.point);
+            Debug.Log(targetPos);
+            line.SetPosition(0, targetPos.point);
             line.SetPosition(1, caster.GetPosition());
-            
+
             Debug.Log("가장 가까운 붙을 수 있는 벽" + target.collider.name);
 
             if (parentModule != null)
             {
-                parentModule.blackBoard.Set("TargetPos", (Vector3)target.point);
+                parentModule.blackBoard.Set("TargetPos", (Vector3)targetPos.point);
                 parentModule.blackBoard.Set("Condition", true);
             }
         }

@@ -113,9 +113,15 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
     {
         if (CanAction)
         {
-            currentState = StateUpdate();
+            currentState = StateUpdate(moveX, attacking, delayed, checkingWall);
             StateAction(currentState);
         }
+
+        //if (currentState == State.Attacking && (!anim.GetCurrentAnimatorClipInfo(0)[0].clip.name.Contains("Skill") || !anim.GetCurrentAnimatorClipInfo(0)[0].clip.name.Contains("Attack")))
+        //{
+        //    currentState = State.Idle;
+        //    attacking = false;
+        //}
 
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
@@ -168,12 +174,21 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
     {
         //붙을 수 있는 벽을 탐지하는 레이캐스트
         checkingWall = Physics2D.BoxCast(col.bounds.center, new Vector2(.5f, col.bounds.size.y - .1f), 0, transform.right * dir.x, 2f, 1 << CAN_CLIMB_WALL);
+
         //주변 상호작용 가능한 오브젝트들을 모드 탐지하는 박스 캐스트.
         Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
+
         //플랫폼에 발을 딛고 있는지 체크하는 박스 캐스트.
         checkingGround = Physics2D.BoxCast(transform.position, checkingGroundCastSize, 0, Vector2.zero, 0.1f, 1 << PLATFORM_LAYER);
         Debug.DrawRay(col.bounds.center, transform.right * dir.x * 2f, Color.red);
         CheckFlatForm();
+
+        //Debug.Log(checkingWall.collider == null);
+
+        if (checkingWall.collider != null)
+        {
+            //currentState = State.Climbing;
+        }
     }
 
     private RaycastHit2D NearCastHit(List<RaycastHit2D> list) //분류된 RaycastHit2d를 플레이어와 거리가 가까운 순으로 정렬.
@@ -342,11 +357,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         currentState = State.Idle;
     }
 
-    private void CheckNormalVectorSide(RaycastHit2D hit)
-    {
-
-    }
-
     private void InteractiveObject() //상호작용이 가능한 오브젝트에 닿고 있는지 확인.
     {
         RaycastHit2D hitObj;
@@ -358,21 +368,16 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            Debug.Log("레버 상호작용");
+            Debug.Log("오브젝트");
             hitObj.collider.GetComponent<IInteractable>().Interact();
         }
     }
 
-    private State StateUpdate()
+    private State StateUpdate(float horizontal, bool checkAttack, bool _delayed, bool _climbing)
     {
-        float horizontal = moveX;
-        bool checkAttack = attacking;
-        bool _delayed = delayed;
-        bool _climbing = checkingWall;
+        if (rigid.velocity.y > 0 && overground && !_climbing) { return State.Jumping; }
 
-        if (rigid.velocity.y > 0 && overground && currentState != State.Climbing) { return State.Jumping; }
-
-        else if (rigid.velocity.y < 0 && overground && currentState != State.Climbing)
+        else if (rigid.velocity.y < 0 && overground && !_climbing)
         {
             if (currentState == State.Jumping) { return State.Jumping; }
             else { if (curcoyoteTime >= coyoteTime) { return State.Jumping; } }
@@ -384,7 +389,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
             (0, false, false, false) => State.Idle,
             (_, true, _, false) => State.Attacking,
             (_, _, true, false) => State.Attacking,
-            (_, _, _, true) => State.Climbing,
+            (_, _, _, true) => State.Climbing
         };
     }
 
@@ -457,10 +462,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
     {
         if (currentState == State.Climbing)
         {
-            Debug.Log("벽타기 중 점프 누름");
+            Vector3 newPos = new Vector3(rigid.position.x + (1f * transform.localScale.x), rigid.position.y, 0);
             currentState = State.Jumping;
             rigid.gravityScale = GRAVITY_SCALE;
             rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            rigid.MovePosition(newPos);
             return;
         }
 
@@ -489,6 +495,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
         if (skillNum == 0 || skills == null) return;
         if (skills[skillNum - 1].OnCoolDown) return;
+        if (attacking) return;
 
         bool canUseSkill = false;
 
@@ -638,6 +645,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
     public void DelayEnd()
     {
+        Debug.Log("딜레이 끝");
         delayed = false;
     }
 
