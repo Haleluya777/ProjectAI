@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public EventManager eventManager;
     public PlayerUIManager uIManager;
     public DialogueFuncManager dialogueFunc;
+    public CoroutineRunner coroutineRunner;
 
     private WaitForSeconds battleTime = new WaitForSeconds(5f);
     public bool inBattle = false;
