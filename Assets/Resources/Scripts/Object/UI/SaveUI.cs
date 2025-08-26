@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Spawnpoint : MonoBehaviour, IInteractable
+public class SaveUI : MonoBehaviour, IInteractable
 {
     public void Interact()
     {
