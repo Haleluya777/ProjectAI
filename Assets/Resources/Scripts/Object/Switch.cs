@@ -21,21 +21,25 @@ public class Switch : MonoBehaviour, IInteractable
         }
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        box = Physics2D.BoxCast(this.transform.position, col.bounds.size, 0, Vector2.zero, 0, 1 << 7);
-        if (box.collider != null)
+        if (box.collider == null)
+        {
+            trigger = false;
+            Interact();
+            return;
+        }
+        else
         {
             Debug.Log("트리거 온");
             trigger = true;
             Interact();
         }
-        else
-        {
-            trigger = false;
-            Interact();
-        }
+    }
 
+    private void FixedUpdate()
+    {
+        box = Physics2D.BoxCast(this.transform.position, col.bounds.size, 0, Vector2.zero, 0, 1 << 7);
     }
 
     public void Interact()
@@ -45,6 +49,7 @@ public class Switch : MonoBehaviour, IInteractable
             if (linkedObjBoard[i].GetBlackBoard().HasKey("Trigger"))
             {
                 linkedObjBoard[i].GetBlackBoard().Set("Trigger", trigger);
+                Debug.Log(linkedObjBoard[i].GetBlackBoard().Get<bool>("Trigger"));
             }
 
             linkedObjBoard[i].Trigger();
