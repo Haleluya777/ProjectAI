@@ -35,12 +35,12 @@ public class Interaction : MonoBehaviour
     {
         if (!isInteractable && isinteracting) 
         {
-            GetComponent<Spawnpoint>().quitinteract();
+            GetComponent<SaveUI>().quitinteract();
             isinteracting = false;
         }
         if (isinteracting && Input.GetKeyDown(KeyCode.I))
         {
-            GetComponent<Spawnpoint>().quitinteract();
+            GetComponent<SaveUI>().quitinteract();
             isinteracting = false;
         }
         if (isInteractable && Input.GetKeyDown(KeyCode.I))

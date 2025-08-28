@@ -23,6 +23,6 @@ public class MainScreen : MonoBehaviour
     }
     public void QuitGame()
     {
-        
+        Application.Quit();
     }
 }
