@@ -125,6 +125,18 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         {
             climbJumpX -= climbJumpX > 0 ? Time.deltaTime : -Time.deltaTime;
         }
+
+        if (this.transform.parent == null)
+        {
+            scaleX = 1;
+            scaleY = 1;
+            momentum = Vector2.zero;
+        }
+        else
+        {
+            scaleX = (float)(1 / transform.parent.localScale.x);
+            scaleY = (float)(1 / transform.parent.localScale.y);
+        }
         //Debug.Log($"Velocity.x = {rigid.velocity.x}, moveX = {moveX}, climbjumpX = {climbJumpX}");
 
         //if (currentState == State.Attacking && (!anim.GetCurrentAnimatorClipInfo(0)[0].clip.name.Contains("Skill") || !anim.GetCurrentAnimatorClipInfo(0)[0].clip.name.Contains("Attack")))
@@ -298,8 +310,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
     private void Climbing()
     {
-        if (checkingWall.collider.transform.parent != null)
+        if (checkingWall.collider.transform.parent.parent != null)
         {
+            Debug.Log("모멘텀 플랫폼 옆에 붙어있는 중");
             this.transform.SetParent(checkingWall.collider.transform.parent.parent);
             momentumPlatForm = transform.parent.GetComponent<IMovablePlatForm>();
         }
@@ -348,21 +361,15 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         if (momentumPlatForm != null) //접촉한 플랫폼이 모멘텀 플랫폼인 경우.
         {
             transform.SetParent(hit.collider.transform);
-            scaleX = (float)(1 / transform.parent.localScale.x);
-            scaleY = (float)(1 / transform.parent.localScale.y);
         }
         else //접촉한 플랫폼이 모멘텀 플랫폼이 아닌 일반 플랫폼인 경우.
         {
             rigid.gravityScale = GRAVITY_SCALE;
 
-            momentum = Vector2.zero;
             momentumX = momentum.x;
             momentumY = momentum.y;
 
             transform.SetParent(null);
-            momentum = Vector2.zero;
-            scaleX = 1;
-            scaleY = 1;
         }
 
         currentState = State.Idle;

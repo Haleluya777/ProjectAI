@@ -25505,15 +25505,12 @@ MonoBehaviour:
   particle: {fileID: 561683600}
   curMoveSpeed: 0
   jumpPower: 0
-  att: 0
-  defense: 0
-  magicalDefense: 0
   attacking: 0
   castingSkill: 0
   delayed: 0
-  coyoteTime: 0
   curcoyoteTime: 0
   momentum: {x: 0, y: 0}
+  climbJumpX: 0
   overground: 0
   gracePeriod: 2
   damagabool: 0
