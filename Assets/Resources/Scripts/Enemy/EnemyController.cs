@@ -1,14 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Build.Content;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour, IDamageable
 {
     //PlayerController랑 별 차이도 없음.
     //EnemyModuleScript폴더 내 스크립트들은 아직 미완.
-    
+
     private enum State { Idle, Guarding, Tracking, Attack }
     public enum EnemyAttackType { Physical, Magical }
 
@@ -89,20 +87,20 @@ public class EnemyController : MonoBehaviour, IDamageable
         attCool = 2f;
         attTime = 0f;
         attRange = 2f;
-        
+
         moveSpeed = 2f;
         detectionRange = 10f;
         boundaryRange = 12f;
 
         currentState = State.Idle;
         anim = this.GetComponent<Animator>();
-        sprite = this.GetComponent <SpriteRenderer>();
+        sprite = this.GetComponent<SpriteRenderer>();
     }
 
     //현재 상태에 따른 행동 규정정
     private void StateAction(State curState)
     {
-        switch(curState)
+        switch (curState)
         {
             case State.Idle:
                 anim.SetBool("isMoving", false);
@@ -131,12 +129,12 @@ public class EnemyController : MonoBehaviour, IDamageable
         _ when distance <= attRange && canAttack => State.Attack,
 
         _ => State.Idle
-        
+
     };
 
     private void Targeting(int dir)
     {
-        if(targeting)
+        if (targeting)
         {
             transform.localScale = new Vector3(dir, 1, 1);
         }
@@ -153,7 +151,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private void AttackTime()
     {
-        if(attTime >= attCool && distance <= attRange)
+        if (attTime >= attCool && distance <= attRange)
         {
             Attack();
         }
@@ -207,7 +205,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private void ApplyEffect(StatusEffect effect) //상태 이상 적용.
     {
-        if(!activeEffect.ContainsKey(effect.effectName)) //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있지 않을 경우.
+        if (!activeEffect.ContainsKey(effect.effectName)) //적용하려는 상태 이상이 현재 플레이어에게 작용하고 있지 않을 경우.
         {
             activeEffect.Add(effect.effectName, effect);
             effect.ApplyEffect();
@@ -237,9 +235,9 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.GetComponent<IDamageable>() != null)
+        if (other.GetComponent<IDamageable>() != null)
         {
-            IDamageable damagable =  other.GetComponent<IDamageable>();
+            IDamageable damagable = other.GetComponent<IDamageable>();
             damagable.Damaged(att, enemyAttackType.ToString());
             damagable.StatusEffectProcess(.5f, "Stun");
             GameManager.instance.InBattleState();

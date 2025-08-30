@@ -49,7 +49,7 @@ public class Switch : MonoBehaviour, IInteractable
             if (linkedObjBoard[i].GetBlackBoard().HasKey("Trigger"))
             {
                 linkedObjBoard[i].GetBlackBoard().Set("Trigger", trigger);
-                Debug.Log(linkedObjBoard[i].GetBlackBoard().Get<bool>("Trigger"));
+                //Debug.Log(linkedObjBoard[i].GetBlackBoard().Get<bool>("Trigger"));
             }
 
             linkedObjBoard[i].Trigger();

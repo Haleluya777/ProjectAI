@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
     void Update()
     {
-        Debug.Log(transform.localScale.x);
+        //Debug.Log(transform.localScale.x);
         if (CanAction)
         {
             currentState = StateUpdate(moveX, attacking, delayed, checkingWall, canClimbing);

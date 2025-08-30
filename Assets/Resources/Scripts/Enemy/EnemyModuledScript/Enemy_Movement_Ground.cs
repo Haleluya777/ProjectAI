@@ -1,15 +1,9 @@
 using System;
-using System.Collections.Generic;
-using DG.Tweening;
-using JetBrains.Annotations;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Animations;
 
 public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IRequiredAnimator
 {
-    private enum MovementMode {Horizontal, Vertical}
+    private enum MovementMode { Horizontal, Vertical }
     [SerializeField] private Transform raycastPos; // 레이캐스트 시작 위치를 위한 Transform
     [SerializeField] private Transform raycastCenterPos; //Enemy 오브젝트 가운데에 위치할 레이캐스트 시작점.
     private Transform parentTransform;
@@ -112,7 +106,7 @@ public class Enemy_Movement_Ground : MonoBehaviour, IMovable, IInitializable, IR
 
     public void MoveToTarget()
     {
-        
+
     }
 
     public void InjectAnimator(Animator _anim)

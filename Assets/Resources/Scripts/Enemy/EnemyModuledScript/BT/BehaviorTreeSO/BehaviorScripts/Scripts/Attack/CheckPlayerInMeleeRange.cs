@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PlayerInAttackRange", menuName = "BehaviorTree/Conditions/PlayerInAttackRange")]
@@ -8,7 +7,7 @@ public class CheckPlayerInMeleeRange : EnemyConditionSO
 {
     public override NodeState Evaluate(EnemyAIController controller)
     {
-        if(!controller.LocalBlackboard.HasKey("MeleeRange") || !controller.LocalBlackboard.HasKey("DistanceToPlayer"))
+        if (!controller.LocalBlackboard.HasKey("MeleeRange") || !controller.LocalBlackboard.HasKey("DistanceToPlayer"))
         {
             return NodeState.Failure;
         }

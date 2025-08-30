@@ -1,8 +1,5 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Animations;
 using UnityEngine;
 
 
@@ -26,10 +23,10 @@ public class EnemyStatusInfo
 public class Enemy_Visualize
 {
     [SerializeField] private Sprite sprite;
-    [SerializeField] private AnimatorController anim;
+    [SerializeField] private RuntimeAnimatorController anim;
 
     public Sprite Sprite => sprite;
-    public AnimatorController Anim => anim;
+    public RuntimeAnimatorController Anim => anim;
 }
 
 [System.Serializable]
