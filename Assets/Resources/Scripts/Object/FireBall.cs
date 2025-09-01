@@ -27,10 +27,9 @@ public class FireBall : SkillObjectBase
         transform.position += dir.normalized * OBJECT_SPEED * Time.deltaTime;
     }
 
-    public void ObjInit(Vector3 direction, int _dmg, string _tag, string _caster)
+    public override void ObjInit(Vector3 direction, int _dmg, string _tag, string _caster)
     {
         dir = direction;
-        //transform.localScale = direction;
         dmg = _dmg;
         this.gameObject.tag = _tag;
         caster = _caster;

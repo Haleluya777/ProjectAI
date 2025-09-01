@@ -51,6 +51,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
     private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
     [SerializeField] private bool castingSkill;
+    private Vector2 basicHitBoxSize;
+    private Vector2 basicHitBoxOffSet;
     //
 
     public int CurrentHp => curHp;
@@ -114,7 +116,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
     void Update()
     {
-        //Debug.Log(transform.localScale.x);
         if (CanAction)
         {
             currentState = StateUpdate(moveX, attacking, delayed, checkingWall, canClimbing);
@@ -137,13 +138,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
             scaleX = (float)(1 / transform.parent.localScale.x);
             scaleY = (float)(1 / transform.parent.localScale.y);
         }
-        //Debug.Log($"Velocity.x = {rigid.velocity.x}, moveX = {moveX}, climbjumpX = {climbJumpX}");
-
-        //if (currentState == State.Attacking && (!anim.GetCurrentAnimatorClipInfo(0)[0].clip.name.Contains("Skill") || !anim.GetCurrentAnimatorClipInfo(0)[0].clip.name.Contains("Attack")))
-        //{
-        //    currentState = State.Idle;
-        //    attacking = false;
-        //}
 
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
@@ -266,6 +260,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         canJump = true;
         damagabool = true;
         dir = new Vector3(1, 0).normalized;
+
+        basicHitBoxSize = new Vector2(2f, 3f);
+        basicHitBoxOffSet = new Vector2(1.5f, 2f);
 
         rigid = this.GetComponent<Rigidbody2D>();
         anim = this.GetComponent<Animator>();
@@ -596,8 +593,13 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         currentState = State.Attacking;
         anim.CrossFade("Attack_0" + combo, 0f);
         TotalDmg = att;
+
         attacking = true;
         delayed = false;
+
+        hitBox.size = basicHitBoxSize;
+        hitBox.offset = basicHitBoxOffSet;
+
         if (combo == 1) combo++;
         else if (combo == 2) combo--;
         curStm -= 10;

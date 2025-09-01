@@ -24,7 +24,7 @@ public class ScreenManager : MonoBehaviour
     private void Start()
     {
         currentResolutionNum = resolutions.Length - 1;
-        currentFrame = 0;
+        currentFrame = 1;
 
         Screen.SetResolution(resolutions[0].width, resolutions[0].height, true);
         resolutionTxt.text = resolutions[0].ToString().Split('@')[0];

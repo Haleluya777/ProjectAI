@@ -10,4 +10,5 @@ public abstract class SkillObjectBase : MonoBehaviour
     public AttackType attackType;
 
     public abstract void ObjectMovment();
+    public abstract void ObjInit(Vector3 direction, int _dmg, string _tag, string _caster);
 }

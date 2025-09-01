@@ -10,19 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
-  m_Name: IronSlash2
+  m_Name: Fire_UpRise
   m_EditorClassIdentifier: 
-  skillName: iron slash
-  skillDetail: fucking bug
-  coolDown: 4
+  skillName: Seung Ryong Guan
+  skillDetail: O-A!
+  coolDown: 1
   attackable: 1
-  cancleDelay: 1
+  cancleDelay: 0
   havePassive: 0
   activeSkills:
-  - {fileID: 11400000, guid: b7b39b8efde71464781e04481c7926ae, type: 2}
+  - {fileID: 11400000, guid: d1b4330e8ab689b418c73695ef8ff4ba, type: 2}
   passiveSkills: []
   data:
-    SkillName: 
-    SkillDetail: 
-    BaseDamage: 0
-    Wieght: 0
+    SkillName: Seung Ryong Guan
+    SkillDetail: O-A!

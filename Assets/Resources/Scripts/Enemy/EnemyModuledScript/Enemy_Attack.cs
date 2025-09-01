@@ -21,7 +21,8 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     //
 
     //모듈화 된 스킬
-    [SerializeField] private Skill_Module skill;
+    [SerializeField] private Skill_Module skillTemplate;
+    private Skill_Module skill;
     //
 
     //공격 타입 (원,근거리)
@@ -49,6 +50,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
     {
         blackBoard = local;
+        if (skillTemplate != null) skill = Instantiate(skillTemplate);
 
         att = info.Combat_Status.Atk;
 

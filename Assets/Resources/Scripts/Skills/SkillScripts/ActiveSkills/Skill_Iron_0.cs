@@ -10,7 +10,6 @@ public class Skill_Iron_0 : SkillBase
 
     Transform casterTransform;
     Vector3 target;
-    Vector3 dir;
 
     public override bool UseSkill(ISkillCaster caster)
     {
@@ -18,7 +17,6 @@ public class Skill_Iron_0 : SkillBase
 
         casterTransform = caster.GetGameObject().transform;
         target = parentModule.blackBoard.Get<Vector3>("TargetPos");
-        dir = (target - caster.GetPosition()).normalized;
 
         //caster.SetScale(-1);
         //caster.GetCom<Rigidbody2D>().DOMove(newtargetPos, duration).SetEase(Ease.OutQuad).OnComplete(() => { casterTransform.position = newtargetPos; });

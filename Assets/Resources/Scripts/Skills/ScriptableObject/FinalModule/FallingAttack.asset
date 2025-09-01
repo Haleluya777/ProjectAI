@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757c6cb61a7c1f544a2680da6612dde0, type: 3}
   m_Name: FallingAttack
   m_EditorClassIdentifier: 
-  skillName: 
-  skillDetail: 
+  skillName: FallingAttack
+  skillDetail: Player Fall and Attack
   coolDown: 2
-  attackable: 0
+  attackable: 1
   cancleDelay: 0
   havePassive: 0
   activeSkills:
   - {fileID: 11400000, guid: 913ef95898f32814194224ab521836ae, type: 2}
   passiveSkills: []
   data:
-    SkillName: 
-    SkillDetail: 
+    SkillName: FallingAttack
+    SkillDetail: Player Fall and Attack

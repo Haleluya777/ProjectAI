@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Skill/Passive/TestPassive")]
-public class Skill_Passive_Test : SkillBase, IPassiveSkills
+[CreateAssetMenu(fileName = "FindWallPassive", menuName = "Skill/Passive/FindWall")]
+public class Skill_Passive_FindWall : SkillBase, IPassiveSkills
 {
     RaycastHit2D[] range;
     LineRenderer line;
