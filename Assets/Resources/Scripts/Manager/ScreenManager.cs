@@ -9,26 +9,28 @@ public class ScreenManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI frameRateTxt;
     [SerializeField] private TextMeshProUGUI fullScreenTxt;
 
-    private Resolution[] resolutions;
+    private Resolution[] resolutions =
+    {
+        new Resolution {width = 1280, height = 720},
+        new Resolution {width = 1920, height = 1080},
+        new Resolution {width = 2560, height = 1440},
+        new Resolution {width = 3840, height = 2160}
+    };
     private FullScreenMode[] screenModes = { FullScreenMode.Windowed, FullScreenMode.ExclusiveFullScreen, FullScreenMode.FullScreenWindow };
     private int[] frameRates = { 30, 60, 120, -1 };
     private int currentResolutionNum;
-    private int currentScreenMode;
     private int currentFrame;
 
     private void Start()
     {
-        resolutions = Screen.resolutions;
-
         currentResolutionNum = resolutions.Length - 1;
-        currentScreenMode = 0;
         currentFrame = 0;
 
-        Screen.SetResolution(resolutions[resolutions.Length - 1].width, resolutions[resolutions.Length - 1].height, true);
-        resolutionTxt.text = resolutions[resolutions.Length - 1].ToString().Split('@')[0];
+        Screen.SetResolution(resolutions[0].width, resolutions[0].height, true);
+        resolutionTxt.text = resolutions[0].ToString().Split('@')[0];
 
-        Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
-        fullScreenTxt.text = Screen.fullScreenMode.ToString();
+        Screen.fullScreen = false;
+        fullScreenTxt.text = "Windowed";
 
         Application.targetFrameRate = frameRates[currentFrame];
         frameRateTxt.text = Application.targetFrameRate + "FPS";
@@ -59,14 +61,10 @@ public class ScreenManager : MonoBehaviour
         else frameRateTxt.text = Application.targetFrameRate.ToString() + "FPS";
     }
 
-    public void SetFullScreen(int num)
+    public void SetFullScreen(bool value)
     {
-        currentScreenMode += num;
-
-        if (currentScreenMode > screenModes.Length - 1) currentScreenMode = 0;
-        else if (currentScreenMode < 0) currentScreenMode = screenModes.Length - 1;
-
-        Screen.fullScreenMode = screenModes[currentScreenMode];
-        fullScreenTxt.text = Screen.fullScreenMode.ToString();
+        Screen.SetResolution(resolutions[currentResolutionNum].width, resolutions[currentResolutionNum].height, value);
+        if (value) fullScreenTxt.text = "Full Screen";
+        else fullScreenTxt.text = "Windowed";
     }
 }
