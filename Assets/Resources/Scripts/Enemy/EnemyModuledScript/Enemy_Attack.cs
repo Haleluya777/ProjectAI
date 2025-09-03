@@ -46,6 +46,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     public float MeleeAttackRange => meleeRange;
     public float RangedAttackRange => rangedRange;
     public int MeleeAttackCount => meleeCount;
+    public bool Attacking { get; set; }
 
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
     {

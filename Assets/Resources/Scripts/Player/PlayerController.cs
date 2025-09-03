@@ -50,6 +50,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
     private float maxjumpHoldTime;
     private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
+    public bool Attacking { get { return attacking; } set { attacking = value; } }
+
     [SerializeField] private bool castingSkill;
     private Vector2 basicHitBoxSize;
     private Vector2 basicHitBoxOffSet;
@@ -195,8 +197,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         Physics2D.BoxCast(col.bounds.center, new Vector2(col.bounds.size.x + .1f, col.bounds.size.y + .1f), 0, Vector2.zero, contactFilter, allRayCastHits, 0f);
 
         //플랫폼에 발을 딛고 있는지 체크하는 박스 캐스트.
-        checkingGround = Physics2D.BoxCast(transform.position, checkingGroundCastSize, 0, Vector2.zero, 0.1f, 1 << PLATFORM_LAYER);
-        Debug.DrawRay(col.bounds.center, transform.right * dir.x * 2f, Color.red);
+        checkingGround = Physics2D.BoxCast(transform.position, checkingGroundCastSize, 0, Vector2.zero, 1f, 1 << PLATFORM_LAYER);
+        Debug.DrawRay(transform.position, transform.up * -1 * .1f, Color.red);
         CheckFlatForm();
         if (momentumPlatForm != null)
         {

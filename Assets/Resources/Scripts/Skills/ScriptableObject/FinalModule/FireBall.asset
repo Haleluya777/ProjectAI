@@ -15,14 +15,12 @@ MonoBehaviour:
   skillName: FireBall
   skillDetail: Player Throw a FireBall
   coolDown: 1.5
-  attackable: 1
+  attackable: 0
   cancleDelay: 1
   havePassive: 0
   activeSkills:
   - {fileID: 11400000, guid: 9e9b2b4564af8684e83895d48615fbd6, type: 2}
   passiveSkills: []
   data:
-    SkillName: 
-    SkillDetail: 
-    BaseDamage: 0
-    Wieght: 0
+    SkillName: FireBall
+    SkillDetail: Player Throw a FireBall

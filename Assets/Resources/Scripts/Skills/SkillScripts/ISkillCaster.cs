@@ -5,6 +5,7 @@ using UnityEngine;
 public interface ISkillCaster
 {
     int TotalDmg { get; set; }
+    bool Attacking { get; set; }
     string GetTag();
 
     // 스킬 사용자의 현재 위치
