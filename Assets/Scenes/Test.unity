@@ -4688,6 +4688,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5045837281637603433, guid: 5009882fcdf203745a42105636c67e8d, type: 3}
+      propertyPath: m_ColliderPaths.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5045837281637603433, guid: 5009882fcdf203745a42105636c67e8d, type: 3}
       propertyPath: m_CompositePaths.m_Paths.Array.data[0].Array.data[0].x
       value: 1.205873
       objectReference: {fileID: 0}
@@ -5270,6 +5274,10 @@ PrefabInstance:
     - target: {fileID: 5306165160155964229, guid: 5009882fcdf203745a42105636c67e8d, type: 3}
       propertyPath: m_Name
       value: Test
+      objectReference: {fileID: 0}
+    - target: {fileID: 5306165160155964229, guid: 5009882fcdf203745a42105636c67e8d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6638496491411165672, guid: 5009882fcdf203745a42105636c67e8d, type: 3}
       propertyPath: m_BodyType
@@ -81874,7 +81882,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1542079793
 Transform:
   m_ObjectHideFlags: 0
@@ -86991,6 +86999,7 @@ MonoBehaviour:
   delayed: 0
   curcoyoteTime: 0
   momentum: {x: 0, y: 0}
+  inertiaY: 0
   climbJumpX: 0
   overground: 0
   gracePeriod: 2
@@ -157231,6 +157240,10 @@ PrefabInstance:
     - target: {fileID: 4952316589838180622, guid: 1a17d47e3a02b3644a4c3c0b4cbd32f2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5450630681332368274, guid: 1a17d47e3a02b3644a4c3c0b4cbd32f2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5450630681332368274, guid: 1a17d47e3a02b3644a4c3c0b4cbd32f2, type: 3}
       propertyPath: behaviorTreeRoot

@@ -11,7 +11,6 @@ public class PlatForm_PerformMovement : EnemyActionSO
     {
         Transform transform = controller.LocalBlackboard.Get<Transform>("Transform");
         Vector3 destination = controller.LocalBlackboard.Get<bool>("Trigger") ? controller.LocalBlackboard.Get<Transform>("Destination").position : controller.LocalBlackboard.Get<Vector3>("InitPos");
-        //Vector3 destination = controller.LocalBlackboard.Get<Transform>("Destination").position;
         float moveSpeed = controller.LocalBlackboard.Get<bool>("Trigger") ? controller.LocalBlackboard.Get<float>("MoveSpeed") : controller.LocalBlackboard.Get<float>("MoveSpeed") / 2;
 
         if (transform.position == destination)
@@ -25,6 +24,7 @@ public class PlatForm_PerformMovement : EnemyActionSO
             controller.LocalBlackboard.Set("CanReturnMomentum", false);
             controller.LocalBlackboard.Remove("MomentumInitTime");
             transform.position = Vector2.MoveTowards(transform.position, destination, moveSpeed * Time.deltaTime);
+
             return NodeState.Running;
         }
     }

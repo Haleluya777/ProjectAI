@@ -3,7 +3,7 @@ using DG.Tweening;
 using System.Collections;
 using Unity.VisualScripting;
 
-public class MomentumPlatform : MonoBehaviour, IMovablePlatForm
+public class MomentumPlatform : MonoBehaviour//, IMovablePlatForm
 {
     [SerializeField] private float moveSpeed = 2f; // 이동 속도
     [SerializeField] private Transform destination; // 플랫폼의 목표

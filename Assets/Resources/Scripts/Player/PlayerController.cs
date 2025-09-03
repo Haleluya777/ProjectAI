@@ -73,7 +73,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
     private float coyoteTime;
     [SerializeField] private float curcoyoteTime;
     [SerializeField] private Vector2 momentum;
-    private float momentumX, momentumY;
+    private float momentumX, momentumY; //플랫폼에서 벗어날 때 사용할 모멘텀
+    [SerializeField] private float inertiaY = 1; //플랫폼이 정지할 때 물리 효과로 인한 관성.
     [SerializeField] private float climbJumpX;
     private float attCool, attTime;
     private Rigidbody2D rigid;
@@ -118,17 +119,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
     void Update()
     {
-        if (CanAction)
-        {
-            currentState = StateUpdate(moveX, attacking, delayed, checkingWall, canClimbing);
-            StateAction(currentState);
-        }
-
-        if (Mathf.Abs(climbJumpX) > 0)
-        {
-            climbJumpX -= climbJumpX > 0 ? Time.deltaTime : -Time.deltaTime;
-        }
-
         if (this.transform.parent == null)
         {
             scaleX = 1;
@@ -140,6 +130,19 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
             scaleX = (float)(1 / transform.parent.localScale.x);
             scaleY = (float)(1 / transform.parent.localScale.y);
         }
+
+        if (CanAction)
+        {
+            currentState = StateUpdate(moveX, attacking, delayed, checkingWall, canClimbing);
+            StateAction(currentState);
+        }
+
+        if (Mathf.Abs(climbJumpX) > 0)
+        {
+            climbJumpX -= climbJumpX > 0 ? Time.deltaTime : -Time.deltaTime;
+        }
+
+
 
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
@@ -203,6 +206,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         if (momentumPlatForm != null)
         {
             momentum = momentumPlatForm.GetMomentum();
+            //inertiaY = momentumPlatForm.GetMomentumY();
+            inertiaY = 1;
         }
         //Debug.Log(checkingWall.collider == null);
     }
@@ -455,7 +460,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         {
             dir = new Vector3(moveX, 0).normalized;
         }
-        rigid.velocity = new Vector2((moveX + momentumX + climbJumpX) * curMoveSpeed, rigid.velocity.y);
+        rigid.velocity = new Vector2((moveX + momentumX + climbJumpX) * curMoveSpeed, rigid.velocity.y * inertiaY);
         transform.localScale = new Vector3(scaleX * dir.x, scaleY, 1);
     }
 

@@ -37,6 +37,7 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
 
     private void FixedUpdate()
     {
+        //this.GetComponent<Rigidbody2D>().velocity = new Vector2(-2, 0);
         CalculateMomentum();
     }
 
@@ -83,6 +84,19 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
         {
             return Vector2.zero;
         }
+    }
+
+    public int GetMomentumY()
+    {
+        //if (local.Get<bool>("CanReturnMomentum"))
+        //{
+        //    return 0;
+        //}
+        //else
+        //{
+        //    return 1;
+        //}
+        return 1;
     }
 
     public BlackBoard GetBlackBoard()
