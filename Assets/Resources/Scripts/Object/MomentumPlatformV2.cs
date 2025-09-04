@@ -86,17 +86,16 @@ public class MomentumPlatformV2 : MonoBehaviour, IMovablePlatForm, ITriggerable
         }
     }
 
-    public int GetMomentumY()
+    public float GetMomentumY()
     {
-        //if (local.Get<bool>("CanReturnMomentum"))
-        //{
-        //    return 0;
-        //}
-        //else
-        //{
-        //    return 1;
-        //}
-        return 1;
+        if (local.Get<bool>("CanReturnMomentum"))
+        {
+            return 0;
+        }
+        else
+        {
+            return moveSpeed;
+        }
     }
 
     public BlackBoard GetBlackBoard()

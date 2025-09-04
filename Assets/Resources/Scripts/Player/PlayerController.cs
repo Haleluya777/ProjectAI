@@ -193,6 +193,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
     private void FixedUpdate()
     {
+        if (CanAction)
+        {
+            Movement();
+        }
+
         //붙을 수 있는 벽을 탐지하는 레이캐스트
         checkingWall = Physics2D.BoxCast(col.bounds.center, new Vector2(.5f, col.bounds.size.y - .1f), 0, transform.right * dir.x, 2f, 1 << CAN_CLIMB_WALL);
 
@@ -203,6 +208,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         checkingGround = Physics2D.BoxCast(transform.position, checkingGroundCastSize, 0, Vector2.zero, 1f, 1 << PLATFORM_LAYER);
         Debug.DrawRay(transform.position, transform.up * -1 * .1f, Color.red);
         CheckFlatForm();
+
         if (momentumPlatForm != null)
         {
             momentum = momentumPlatForm.GetMomentum();
@@ -423,21 +429,17 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
             case State.Idle:
                 anim.CrossFade("Idle", 0f);
                 attacking = false;
-                Movement();
                 break;
 
             case State.Moving:
                 anim.CrossFade("Run", 0f);
-                Movement();
                 break;
 
             case State.Jumping:
                 anim.CrossFade("Jump", 0f);
-                Movement();
                 break;
 
             case State.Climbing:
-                //Movement();
                 col.size = new Vector2(4, 2);
                 Climbing();
                 break;
@@ -460,7 +462,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         {
             dir = new Vector3(moveX, 0).normalized;
         }
-        rigid.velocity = new Vector2((moveX + momentumX + climbJumpX) * curMoveSpeed, rigid.velocity.y * inertiaY);
+        rigid.velocity = new Vector2((moveX + momentumX + climbJumpX) * curMoveSpeed, rigid.velocity.y);
         transform.localScale = new Vector3(scaleX * dir.x, scaleY, 1);
     }
 

@@ -5,5 +5,5 @@ using UnityEngine;
 public interface IMovablePlatForm
 {
     Vector2 GetMomentum();
-    int GetMomentumY();
+    float GetMomentumY();
 }
