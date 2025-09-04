@@ -9,6 +9,7 @@ public class Skill_Iron_2 : SkillBase
 
     private Rigidbody2D rigid;
     private RaycastHit2D hit;
+    private BoxCollider2D hitBox;
     private int targetLayer;
     Transform casterTransform;
     Vector3 target;
@@ -20,7 +21,10 @@ public class Skill_Iron_2 : SkillBase
         hit = Physics2D.Raycast(caster.GetPosition(), Vector2.down, float.PositiveInfinity, 1 << 6 | 1 << 0);
         rigid = caster.GetCom<Rigidbody2D>();
         anim = caster.GetCom<Animator>();
+        hitBox = caster.GetHitBox();
 
+        hitBox.size = HitBoxSize;
+        hitBox.offset = HitBoxOffSet;
         casterTransform = caster.GetGameObject().transform;
         target = hit.point;
         targetLayer = hit.collider.gameObject.layer;
@@ -34,9 +38,9 @@ public class Skill_Iron_2 : SkillBase
     private IEnumerator PerformIronDash(Rigidbody2D rigid, Transform casterTransform, Vector3 target, int targetLayer, ISkillCaster caster)
     {
         float dashSpeed = 100f; // 대쉬 속도
-        float minSqrDistance = 5f;
+        float minSqrDistance = .5f;
 
-        while (((Vector2)target - rigid.position).sqrMagnitude > minSqrDistance)
+        while (((Vector2)target - rigid.position).magnitude > minSqrDistance)
         {
             Vector2 direction = ((Vector2)target - rigid.position).normalized;
             Vector3 newPos = rigid.position + direction * dashSpeed * Time.fixedDeltaTime;

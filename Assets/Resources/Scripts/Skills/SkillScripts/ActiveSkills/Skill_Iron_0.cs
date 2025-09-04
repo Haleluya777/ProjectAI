@@ -21,18 +21,19 @@ public class Skill_Iron_0 : SkillBase
         //caster.SetScale(-1);
         //caster.GetCom<Rigidbody2D>().DOMove(newtargetPos, duration).SetEase(Ease.OutQuad).OnComplete(() => { casterTransform.position = newtargetPos; });
 
-        GameManager.instance.coroutineRunner.StartRunnerCoroutine(PerformIronDash(rigid, casterTransform, target));
+        GameManager.instance.coroutineRunner.StartRunnerCoroutine(PerformIronDash(rigid, casterTransform, target, caster));
 
         return true;
     }
 
-    private IEnumerator PerformIronDash(Rigidbody2D rigid, Transform casterTransform, Vector3 target)
+    private IEnumerator PerformIronDash(Rigidbody2D rigid, Transform casterTransform, Vector3 target, ISkillCaster caster)
     {
         float dashSpeed = 100f; // 대쉬 속도
-        float minSqrDistance = 5f;
+        float minSqrDistance = .5f;
 
-        while (((Vector2)target - rigid.position).sqrMagnitude > minSqrDistance)
+        while (((Vector2)target - rigid.position).magnitude > minSqrDistance)
         {
+            if (caster.CancleAllSkill) break;
             Vector2 direction = ((Vector2)target - rigid.position).normalized;
             Vector3 newPos = rigid.position + direction * dashSpeed * Time.fixedDeltaTime;
 
@@ -40,5 +41,6 @@ public class Skill_Iron_0 : SkillBase
 
             yield return new WaitForFixedUpdate();
         }
+        Debug.Log("스킬 완료 혹은 취소");
     }
 }

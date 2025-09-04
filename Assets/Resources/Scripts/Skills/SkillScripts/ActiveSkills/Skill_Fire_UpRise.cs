@@ -27,9 +27,9 @@ public class Skill_Fire_UpRise : SkillBase
     private IEnumerator PerformUpRise(Rigidbody2D rigid, Transform casterTransform, Vector3 target, ISkillCaster caster)
     {
         float dashSpeed = 50f; // 대쉬 속도
-        float minSqrDistance = 5f;
+        float minSqrDistance = .5f;
 
-        while (((Vector2)target - rigid.position).sqrMagnitude > minSqrDistance)
+        while (((Vector2)target - rigid.position).magnitude > minSqrDistance)
         {
             Vector2 direction = ((Vector2)target - rigid.position).normalized;
             Vector3 newPos = rigid.position + direction * dashSpeed * Time.fixedDeltaTime;

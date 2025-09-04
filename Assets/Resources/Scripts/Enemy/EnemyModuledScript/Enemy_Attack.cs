@@ -39,6 +39,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     private float rangedRange;
     private int meleeCount;
     private bool canAttack;
+    private bool cancleAllSkill;
 
     public int Att => att;
     public int TotalDmg { get; set; }
@@ -47,6 +48,7 @@ public class Enemy_Attack : MonoBehaviour, IAttackable, IInitializable, IRequire
     public float RangedAttackRange => rangedRange;
     public int MeleeAttackCount => meleeCount;
     public bool Attacking { get; set; }
+    public bool CancleAllSkill => cancleAllSkill;
 
     public void DataInitialize(EnemyStatusInfo info, IBlackBoard local)
     {

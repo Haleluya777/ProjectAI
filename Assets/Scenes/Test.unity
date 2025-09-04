@@ -7420,7 +7420,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.94, y: 3.29, z: -10}
+  m_LocalPosition: {x: 58.43, y: 7.77, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -85588,7 +85588,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5973459087827419009, guid: 44eba9fb987ee504080d66e23e1da990, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 177
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5973459087827419009, guid: 44eba9fb987ee504080d66e23e1da990, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -86962,7 +86962,7 @@ Transform:
   m_GameObject: {fileID: 1915231743}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.94, y: -4.71, z: 0}
+  m_LocalPosition: {x: 58.43, y: -0.23, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -86994,6 +86994,7 @@ MonoBehaviour:
   particle: {fileID: 561683600}
   curMoveSpeed: 0
   jumpPower: 0
+  cancleAllSkill: 0
   attacking: 0
   castingSkill: 0
   delayed: 0

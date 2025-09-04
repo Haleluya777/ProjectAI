@@ -47,10 +47,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
     private bool isdead;
     private bool canJump;
     private bool canDamaged;
+    [SerializeField] private bool cancleAllSkill;
     private float maxjumpHoldTime;
     private int att, defense, magicalDefense;
     [SerializeField] private bool attacking;
     public bool Attacking { get { return attacking; } set { attacking = value; } }
+    public bool CancleAllSkill => cancleAllSkill;
 
     [SerializeField] private bool castingSkill;
     private Vector2 basicHitBoxSize;
@@ -133,7 +135,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
         if (CanAction)
         {
-            currentState = StateUpdate(moveX, attacking, delayed, checkingWall, canClimbing);
+            currentState = StateUpdate(Input.GetAxisRaw("Horizontal"), attacking, delayed, checkingWall, canClimbing);
             StateAction(currentState);
         }
 
@@ -143,7 +145,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         }
 
 
-
+        CancleSkillState();
         moveX = Input.GetAxisRaw("Horizontal");
         if (currentState == State.Idle) { canRegen = true; } else { canRegen = false; }
 
@@ -446,6 +448,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
         }
     }
 
+    private void CancleSkillState()
+    {
+        cancleAllSkill = currentState == State.Climbing ? true : false;
+    }
+
     private void Movement()
     {
         if (moveX != 0)
@@ -454,6 +461,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
             bool isHittingWall = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0, new Vector2(moveX, 0), 0.1f, 1 << PLATFORM_LAYER);
             if (isHittingWall)
             {
+                Debug.Log("이동 못하게 함!");
                 moveX = 0;
             }
         }
