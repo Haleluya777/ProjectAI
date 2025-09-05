@@ -17,4 +17,4 @@ MonoBehaviour:
   damageCalculator: {fileID: 11400000, guid: 6e5294f56672bcf49b061baa5c8db531, type: 2}
   HitBoxSize: {x: 0, y: 0}
   HitBoxOffSet: {x: 0, y: 0}
-  throwableObj: {fileID: 5306165160155964229, guid: 5009882fcdf203745a42105636c67e8d, type: 3}
+  throwableObj: {fileID: 1075130919853390557, guid: 5dc986abbd2277f4aab02153dd34148e, type: 3}
