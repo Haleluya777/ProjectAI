@@ -551,18 +551,13 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
         if (canUseSkill)
         {
-            if (skills[skillNum - 1].UseSkill(this))
+            if (skills[skillNum - 1].UseSkill(this)) //스킬을 정상적으로 사용하여 true를 반환한 상태.
             {
                 if (delayed && skills[skillNum - 1].CancleDelay)
                 {
                     attacking = false;
                     delayed = false;
-                    hitBox.enabled = false;
                 }
-                currentState = State.Attacking;
-                //anim.CrossFade("Skill_" + skillNum.ToString(), 0f);
-                skills[skillNum - 1].UseSkill(this);
-                attacking = skills[skillNum - 1].Attackable;
             }
         }
     }
@@ -696,7 +691,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        CheckGetDamage(other); //데미지를 주는 메서드.
+        //CheckGetDamage(other); //데미지를 주는 메서드.
     }
 
     private void CheckGetDamage(Collider2D other)
@@ -706,7 +701,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ISkillCaster, ISkill
             IDamageable damagable = other.GetComponentInChildren<IDamageable>();
             damagable.Damaged(TotalDmg, "Physical");
             //damagable.StatusEffectProcess(5f, "Stun");
-            GameManager.instance.InBattleState();
+            //GameManager.instance.InBattleState();
         }
     }
 

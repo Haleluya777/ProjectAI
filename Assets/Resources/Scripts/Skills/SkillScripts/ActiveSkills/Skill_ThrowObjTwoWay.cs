@@ -1,10 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Skill/Action/ThrowObj")] // 메뉴 경로를 Action으로 명확화
-public class Skill_ThrowObj : SkillBase
+public class Skill_ThrowObjTwoWay : SkillBase
 {
     public GameObject throwableObj;
-    public bool reverse; //투사체를 플레이어 방향 반대로 던지는 경우에 체크.
 
     public override bool UseSkill(ISkillCaster caster)
     {
@@ -32,14 +32,12 @@ public class Skill_ThrowObj : SkillBase
                 //Debug.LogWarning("Damage Calculator가 할당되지 않아 기본 데미지 0으로 설정됩니다.");
             }
             //임시 값 할당.
-            objComponent.ObjInit(reverse ? -caster.GetDirection() : caster.GetDirection(), calculatedDamage, damagType.ToString(), caster.GetTag());
+            objComponent.ObjInit(caster.GetDirection(), calculatedDamage, damagType.ToString(), caster.GetTag());
         }
         else
         {
             //Debug.LogError("FireBall Prefab에 FireBall 컴포넌트가 없음.");
         }
-
-        //Debug.Log("파이어볼 발사!");
         caster.Attacking = false;
         return true;
     }

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56601e3e32e7c694880eaefec2237a9a, type: 3}
+  m_Name: New Skill_Fire Ball 1
+  m_EditorClassIdentifier: 
+  explanation: 
+  damagType: 1
+  damageCalculator: {fileID: 11400000, guid: 6e5294f56672bcf49b061baa5c8db531, type: 2}
+  HitBoxSize: {x: 0, y: 0}
+  HitBoxOffSet: {x: 0, y: 0}
+  throwableObj: {fileID: 1075130919853390557, guid: 5dc986abbd2277f4aab02153dd34148e, type: 3}
+  reverse: 1

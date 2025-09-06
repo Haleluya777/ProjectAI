@@ -20,7 +20,7 @@ public class FlameCircle : SkillObjectBase
 
     private void FixedUpdate()
     {
-        Debug.Log(((Vector2)des - rigid.position).magnitude);
+        //Debug.Log(((Vector2)des - rigid.position).magnitude);
         ObjectMovment();
     }
 
@@ -38,10 +38,9 @@ public class FlameCircle : SkillObjectBase
     public override void ObjInit(Vector3 direction, int _dmg, string _tag, string _caster)
     {
         rigid = this.GetComponent<Rigidbody2D>();
-        des = new Vector3(rigid.position.x + 10, rigid.position.y, 0);
-
-        rigid = this.GetComponent<Rigidbody2D>();
         dir = direction;
+
+        des = new Vector3(rigid.position.x + (10 * dir.x), rigid.position.y, 0);
         dmg = _dmg;
         this.gameObject.tag = _tag;
         caster = _caster;

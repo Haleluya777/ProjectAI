@@ -57,6 +57,7 @@ public class Skill_Module : ScriptableObject
             return false;
         }
 
+        caster.Attacking = true;
         // 쿨다운이 아니라면 모든 스킬을 실행
         foreach (var skill in activeSkills)
         {
