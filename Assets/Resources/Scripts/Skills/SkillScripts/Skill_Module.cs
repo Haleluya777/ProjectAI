@@ -50,6 +50,8 @@ public class Skill_Module : ScriptableObject
     }
 
     // 스킬 사용을 시도하는 메서드
+    //caster.Attacking은 플레이어가 공격 중인지 체크하는 boolean.
+    //공격 판정이 아닌 스킬도 존재하기에 (버프 스킬), attacking을 조정하는 코드는 스킬 개인 모듈에 넣어야 함.
     public bool UseSkill(ISkillCaster caster)
     {
         if (OnCoolDown || !blackBoard.Get<bool>("Condition"))
@@ -57,7 +59,6 @@ public class Skill_Module : ScriptableObject
             return false;
         }
 
-        caster.Attacking = true;
         // 쿨다운이 아니라면 모든 스킬을 실행
         foreach (var skill in activeSkills)
         {

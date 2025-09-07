@@ -16,7 +16,7 @@ MonoBehaviour:
   damagType: 0
   damageCalculator: {fileID: 11400000, guid: debd9cf7c1138d04d804c0762f3c7fd7, type: 2}
   HitBoxSize: {x: 1.5, y: 2}
-  HitBoxOffSet: {x: 0.1, y: 0.5}
+  HitBoxOffSet: {x: 0.1, y: 0}
   chainedSkill:
   - {fileID: 11400000, guid: 9e9b2b4564af8684e83895d48615fbd6, type: 2}
   - {fileID: 11400000, guid: b602f66116f44a74db46a7133a1dbc05, type: 2}

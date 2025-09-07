@@ -21,13 +21,14 @@ public class Skill_Iron_2 : SkillBase
         hit = Physics2D.Raycast(caster.GetPosition(), Vector2.down, float.PositiveInfinity, 1 << 6 | 1 << 9);
         if (hit.collider == null) return false;
 
+        caster.Attacking = true;
+
         rigid = caster.GetCom<Rigidbody2D>();
         anim = caster.GetCom<Animator>();
         hitBox = caster.GetHitBox();
 
         hitBox.size = HitBoxSize;
         hitBox.offset = HitBoxOffSet;
-        hitBox.enabled = true;
 
         casterTransform = caster.GetGameObject().transform;
         targetLayer = hit.collider.gameObject.layer;
@@ -36,7 +37,7 @@ public class Skill_Iron_2 : SkillBase
 
         if (overlap != null)
         {
-            //overlap.transform.GetChild(2).GetComponent<IDamageable>().Damaged(damageCalculator.CalculateDmg(caster), "Physical");
+            overlap.GetComponentInChildren<IDamageable>().Damaged(damageCalculator.CalculateDmg(caster), "Physical");
             Landing(caster, targetLayer, rigid, hitBox);
         }
         else
@@ -50,9 +51,10 @@ public class Skill_Iron_2 : SkillBase
 
     private IEnumerator PerformIronDash(Rigidbody2D rigid, Transform casterTransform, Vector3 target, int targetLayer, ISkillCaster caster)
     {
-        Debug.Log("우랄ㄹ라");
         float dashSpeed = 100f; // 대쉬 속도
         float minSqrDistance = 1f;
+
+        hitBox.enabled = true;
 
         while (((Vector2)target - rigid.position).magnitude > minSqrDistance)
         {
@@ -88,6 +90,7 @@ public class Skill_Iron_2 : SkillBase
         {
             Debug.Log("스킬 종료");
             caster.Attacking = false;
+            hitBox.enabled = false;
         }
     }
 }
